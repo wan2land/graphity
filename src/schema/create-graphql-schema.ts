@@ -6,13 +6,13 @@ import {
   } from "graphql"
 import { ConstructType, GraphQLGuard } from "../interfaces/common"
 import { metadataResolvers, metadataResolvesMap } from "../metadata"
-import { createGraphQLTypeFromEntity } from "./create-graphql-type-from-entity"
+import { createGraphQLObjectType } from "./create-graphql-object-type"
 import { createResolve } from "./create-resolve"
 
 
 const defaultCreate: (ctor: new (...args: any[]) => any) => Promise<any> = (ctor) => Promise.resolve(new ctor())
 
-export async function createGraphQLSchemaFromResolvers(
+export async function createGraphQLSchema(
   resolvers: Array<ConstructType<any>> = [],
   create: (ctor: new (...args: any[]) => any) => Promise<any> = defaultCreate): Promise<GraphQLSchema> {
 
@@ -25,7 +25,7 @@ export async function createGraphQLSchemaFromResolvers(
       continue
     }
     const typeOrCtor = metadataResolver.typeFactory(undefined)
-    const type = isOutputType(typeOrCtor) ? typeOrCtor : createGraphQLTypeFromEntity(typeOrCtor)
+    const type = isOutputType(typeOrCtor) ? typeOrCtor : createGraphQLObjectType(typeOrCtor)
 
     const instance = await create(metadataResolver.target)
     for (const resolve of metadataResolvesMap.get(resolver) || []) {

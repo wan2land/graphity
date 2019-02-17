@@ -1,5 +1,5 @@
 import { printSchema, execute, parse } from "graphql"
-import { createGraphQLSchemaFromResolvers } from "../../src/schema/create-graphql-schema-from-resolvers"
+import { createGraphQLSchema } from "../../src/schema/create-graphql-schema"
 import { ArticleResolver } from "../stubs/resolvers/article-resolver"
 
 
@@ -19,9 +19,9 @@ expect.extend({
   },
 })
 
-describe("testsuite create-graphql-schema-from-resolvers", () => {
+describe("testsuite create-graphql-schema", () => {
   it("test default schema", async () => {
-    const schema = await createGraphQLSchemaFromResolvers()
+    const schema = await createGraphQLSchema()
     const expector = expect(schema) as any
     expector.toGraphQLSchema(`
       type Query { }
@@ -29,7 +29,7 @@ describe("testsuite create-graphql-schema-from-resolvers", () => {
   })
 
   it("test simple resolver", async () => {
-    const schema = await createGraphQLSchemaFromResolvers([
+    const schema = await createGraphQLSchema([
       ArticleResolver,
     ])
     const expector = expect(schema) as any
