@@ -10,6 +10,7 @@ export * from "./interfaces/decorator"
 export * from "./interfaces/application"
 export * from "./interfaces/graphql"
 
+export * from "./graphql/types/input-pagination"
 export * from "./graphql/types/edges-of"
 export * from "./graphql/types/list-of"
 export * from "./graphql/types/page-info"

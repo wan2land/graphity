@@ -5,7 +5,7 @@ import {
   isOutputType
   } from "graphql"
 import { ConstructType, GraphQLGuard } from "../interfaces/common"
-import { metadataResolvers, metadataResolvesMap } from "../metadata"
+import { metadataMutationsMap, metadataQueriesMap, metadataResolversMap } from "../metadata"
 import { createGraphQLObjectType } from "./create-graphql-object-type"
 import { createResolve } from "./create-resolve"
 
@@ -20,7 +20,7 @@ export async function createGraphQLSchema(
   const mutations: GraphQLFieldConfigMap<any, any> = {}
 
   for (const resolver of resolvers) {
-    const metadataResolver = metadataResolvers.get(resolver)
+    const metadataResolver = metadataResolversMap.get(resolver)
     if (!metadataResolver) {
       continue
     }
@@ -28,14 +28,26 @@ export async function createGraphQLSchema(
     const type = isOutputType(typeOrCtor) ? typeOrCtor : createGraphQLObjectType(typeOrCtor)
 
     const instance = await create(metadataResolver.target)
-    for (const resolve of metadataResolvesMap.get(resolver) || []) {
-      queries[resolve.name] = {
-        type: resolve.returns ? resolve.returns(type) : type,
-        args: resolve.input,
+    for (const query of metadataQueriesMap.get(resolver) || []) {
+      queries[query.name] = {
+        type: query.returns ? query.returns(type) : type,
+        args: query.input,
         resolve: createResolve(
-          ([] as GraphQLGuard[]).concat(metadataResolver.guards, resolve.guards),
+          ([] as GraphQLGuard[]).concat(metadataResolver.guards, query.guards),
           instance,
-          resolve.property
+          query.property
+        ),
+      }
+    }
+
+    for (const mutation of metadataMutationsMap.get(resolver) || []) {
+      mutations[mutation.name] = {
+        type: mutation.returns ? mutation.returns(type) : type,
+        args: mutation.input,
+        resolve: createResolve(
+          ([] as GraphQLGuard[]).concat(metadataResolver.guards, mutation.guards),
+          instance,
+          mutation.property
         ),
       }
     }

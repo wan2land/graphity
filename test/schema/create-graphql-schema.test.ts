@@ -44,9 +44,15 @@ describe("testsuite create-graphql-schema", () => {
         nodes: [Article!]!
       }
 
+      type Mutation {
+        createArticle(title: String!): Article
+        updateArticle(id: ID!, title: String): Article
+        deleteArticle(id: ID!): Article
+      }
+
       type Query {
         article(id: ID!): Article
-        articles: ListOfArticle
+        articles(first: Int, after: String, offset: Int): ListOfArticle
       }
     `)
 

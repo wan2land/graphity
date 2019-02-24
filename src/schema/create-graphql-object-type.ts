@@ -3,10 +3,10 @@ import {
   GraphQLObjectType
   } from "graphql"
 import { ConstructType } from "../interfaces/common"
-import { metadataEntities, metadataFieldsMap } from "../metadata"
+import { metadataEntitiesMap, metadataFieldsMap } from "../metadata"
 
 export function createGraphQLObjectType(entity: ConstructType<any>): GraphQLObjectType {
-  const metadataEntity = metadataEntities.get(entity)
+  const metadataEntity = metadataEntitiesMap.get(entity)
   const metadataFields = metadataFieldsMap.get(entity) || []
 
   return new GraphQLObjectType({

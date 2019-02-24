@@ -1,5 +1,6 @@
 import {
   GraphQLFieldConfigArgumentMap,
+  GraphQLInputObjectType,
   GraphQLObjectType,
   GraphQLOutputType,
   GraphQLScalarType
@@ -14,7 +15,7 @@ export type GraphQLReturnFactory = (type: GraphQLScalarType|GraphQLObjectType) =
 
 export interface ResolveDecoratorFactoryOption {
   name?: string
-  input?: GraphQLFieldConfigArgumentMap,
+  input?: GraphQLInputObjectType | GraphQLFieldConfigArgumentMap,
   guards?: GraphQLGuard | GraphQLGuard[]
   returns?: GraphQLReturnFactory
 }
