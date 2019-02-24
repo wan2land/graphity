@@ -1,5 +1,5 @@
-import { GraphQLNonNull, GraphQLID, GraphQLObjectType, GraphQLInputObjectType } from "graphql"
-import { GraphQLListOf, GraphQLResolver, Query } from "../../../src"
+import { GraphQLNonNull, GraphQLID } from "graphql"
+import { GraphQLListOf, GraphQLResolver, Query, listOf } from "../../../src"
 import { Article } from "../entities/article"
 
 @GraphQLResolver(returns => Article)
@@ -11,22 +11,19 @@ export class ArticleResolver {
     },
   })
   public async article(parent: null, input: {id: string}) {
-    const node = new Article()
-    node.id = `${input.id}`
-    node.title = `this is ${input.id}`
-    return node
+    return Object.assign(new Article(), {
+      id: `${input.id}`,
+      title: `this is ${input.id}`,
+    })
   }
 
   @Query({returns: article => GraphQLListOf(article)})
   public async articles() {
-    const node = new Article()
-    node.id = "1"
-    node.title = `this is 1`
-    return {
-      totalCount: 1,
-      nodes: [
-        node,
-      ],
-    }
+    return listOf([
+      Object.assign(new Article(), {
+        id: "1",
+        title: "this is 1",
+      })
+    ])
   }
 }
