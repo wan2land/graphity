@@ -1,5 +1,5 @@
 import { printType } from "graphql"
-import { createGraphQLObjectType } from "../../src/schema/create-graphql-object-type"
+import { createGraphQLObjectTypeFactory } from "../../src/entity/create-graphql-object-type-factory"
 import { Article } from "../stubs/entities/article"
 
 class UndefinedEntity {}
@@ -20,18 +20,19 @@ expect.extend({
   },
 })
 
-describe("testsuite create-graphql-object-type", () => {
-  it("test create type", async () => {
-    const schema = await createGraphQLObjectType(Article)
+describe("testsuite entity.create-graphql-object-type-factory", () => {
+  it("test create type factory", async () => {
+    const schema = createGraphQLObjectTypeFactory(Article).factory()
     const expector = expect(schema) as any
     expector.toGraphQLType(`type Article {
       id: ID!
       title: String!
+      contents: String
     }`)
   })
 
-  it("test undefined entity type", async () => {
-    const schema = await createGraphQLObjectType(UndefinedEntity)
+  it("test undefined entity type factory", async () => {
+    const schema = createGraphQLObjectTypeFactory(UndefinedEntity).factory()
     const expector = expect(schema) as any
     expector.toGraphQLType(`type UndefinedEntity {
     }`)

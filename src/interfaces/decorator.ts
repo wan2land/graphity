@@ -11,21 +11,23 @@ export interface ResolverDecoratorFactoryOption {
   guards?: GraphQLGuard | GraphQLGuard[]
 }
 
-export type GraphQLReturnFactory = (type: GraphQLScalarType|GraphQLObjectType) => GraphQLOutputType
+export type GraphQLParentTypeFactory = (type: any) => ConstructType<any>
+export type GraphQLReturnFactory = (type: GraphQLScalarType | GraphQLObjectType) => GraphQLOutputType
 
-export interface ResolveDecoratorFactoryOption {
+export interface ResolveDecoratorOption {
   name?: string
+  parent?: GraphQLParentTypeFactory
   input?: GraphQLInputObjectType | GraphQLFieldConfigArgumentMap,
   guards?: GraphQLGuard | GraphQLGuard[]
   returns?: GraphQLReturnFactory
 }
 
 
-export interface EntityDecoratorFactoryOption {
+export interface EntityDecoratorOption {
   name?: string
 }
 
-export interface FieldDecoratorFactoryOption {
+export interface FieldDecoratorOption {
   name?: string
   guards?: GraphQLGuard | GraphQLGuard[]
 }
@@ -35,7 +37,7 @@ export type GraphQLResolverTypeFactory = (type: any) => GraphQLScalarType | Cons
 export type GraphQLFieldTypeFactory = (type: any) => GraphQLOutputType
 
 export type ResolverDecoratorFactory = (typeFactory: GraphQLResolverTypeFactory, options?: ResolverDecoratorFactoryOption) => ClassDecorator
-export type ResolveDecoratorFactory = (options?: ResolveDecoratorFactoryOption) => MethodDecorator
+export type ResolveDecoratorFactory = (options?: ResolveDecoratorOption) => MethodDecorator
 
-export type EntityDecoratorFactory = (options?: EntityDecoratorFactoryOption) => ClassDecorator
-export type FieldDecoratorFactory = (typeFactory: GraphQLFieldTypeFactory, options?: FieldDecoratorFactoryOption) => PropertyDecorator
+export type EntityDecoratorFactory = (options?: EntityDecoratorOption) => ClassDecorator
+export type FieldDecoratorFactory = (typeFactory: GraphQLFieldTypeFactory, options?: FieldDecoratorOption) => PropertyDecorator

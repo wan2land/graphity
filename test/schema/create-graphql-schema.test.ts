@@ -1,6 +1,7 @@
 import { printSchema, execute, parse } from "graphql"
 import { createGraphQLSchema } from "../../src/schema/create-graphql-schema"
 import { ArticleResolver } from "../stubs/resolvers/article-resolver"
+import { UserResolver } from "../stubs/resolvers/user-resolver";
 
 
 expect.extend({
@@ -12,8 +13,9 @@ expect.extend({
         pass: true,
       }
     }
+
     return {
-      message: () => `expected ${type} to be ${expected}`,
+      message: () => `expected ${type} to be ${expected.replace(/\s+/g, " ").trim()}`,
       pass: false,
     }
   },
@@ -32,11 +34,13 @@ describe("testsuite create-graphql-schema", () => {
     const schema = await createGraphQLSchema([
       ArticleResolver,
     ])
+    // schema.
     const expector = expect(schema) as any
     expector.toGraphQLSchema(`
       type Article {
         id: ID!
         title: String!
+        contents: String
       }
 
       type ListOfArticle {
@@ -85,6 +89,99 @@ describe("testsuite create-graphql-schema", () => {
               title: "this is 1",
             }
           ],
+        },
+      }
+    })
+  })
+
+  it("test recursive resolver", async () => {
+    const schema = await createGraphQLSchema([
+      UserResolver,
+    ])
+    const expector = expect(schema) as any
+    expector.toGraphQLSchema(`
+      type ListOfUser {
+        totalCount: Int!
+        nodes: [User!]!
+      }
+
+      type Query {
+        user(id: ID!): User
+      }
+
+      type User {
+        id: ID!
+        name: String!
+        users: ListOfUser!
+      }
+      `)
+
+    expect(await execute({
+      schema,
+      document: parse(`query {
+        user(id: "1") {
+          id
+          name
+          users {
+            totalCount
+            nodes {
+              id
+              name
+              users {
+                totalCount
+                nodes {
+                  id
+                  name
+                }
+              }  
+            }
+          }
+        }
+      }`),
+    })).toEqual({
+      data: {
+        user: {
+          id: "1",
+          name: "name is 1",
+          users: {
+            totalCount: 2,
+            nodes: [
+              {
+                id: "1_1",
+                name: "name is 1_1",
+                users: {
+                  totalCount: 2,
+                  nodes: [
+                    {
+                      id: "1_1_1",
+                      name: "name is 1_1_1",
+                    },
+                    {
+                      id: "1_1_2",
+                      name: "name is 1_1_2",
+                    },
+                  ],
+                },
+              },
+              {
+                id: "1_2",
+                name: "name is 1_2",
+                users: {
+                  totalCount: 2,
+                  nodes: [
+                    {
+                      id: "1_2_1",
+                      name: "name is 1_2_1",
+                    },
+                    {
+                      id: "1_2_2",
+                      name: "name is 1_2_2",
+                    },
+                  ],
+                },
+              },
+            ],
+          },
         },
       }
     })

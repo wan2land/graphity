@@ -13,6 +13,7 @@ export const Mutation: ResolveDecoratorFactory = (options) => (target, property)
   const input = options && options.input
   resolves.push({
     target,
+    parent: options && options.parent,
     property,
     guards: Array.isArray(guard) ? guard : [guard],
     // parent: Mutation

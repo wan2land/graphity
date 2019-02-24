@@ -1,6 +1,11 @@
 import { GraphQLFieldConfigArgumentMap } from "graphql"
 import { GraphQLGuard } from "./common"
-import { GraphQLFieldTypeFactory, GraphQLResolverTypeFactory, GraphQLReturnFactory } from "./decorator"
+import {
+  GraphQLFieldTypeFactory,
+  GraphQLParentTypeFactory,
+  GraphQLResolverTypeFactory,
+  GraphQLReturnFactory
+  } from "./decorator"
 
 export interface MetadataResolver {
   target: any
@@ -10,6 +15,7 @@ export interface MetadataResolver {
 
 export interface MetadataResolve {
   target: any
+  parent?: GraphQLParentTypeFactory
   property: string | symbol
   guards: GraphQLGuard[]
   name: string
