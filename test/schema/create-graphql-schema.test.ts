@@ -45,7 +45,7 @@ describe("testsuite create-graphql-schema", () => {
       }
 
       type Query {
-        article: Article
+        article(id: ID!): Article
         articles: ListOfArticle
       }
     `)
@@ -53,6 +53,10 @@ describe("testsuite create-graphql-schema", () => {
     expect(await execute({
       schema,
       document: parse(`query {
+        article(id: "1") {
+          id
+          title
+        }
         articles {
           totalCount
           nodes {
@@ -63,12 +67,16 @@ describe("testsuite create-graphql-schema", () => {
       }`),
     })).toEqual({
       data: {
+        article: {
+          id: "1",
+          title: "this is 1"
+        },
         articles: {
           totalCount: 1,
           nodes: [
             {
               id: "1",
-              title: "hello world",
+              title: "this is 1",
             }
           ],
         },

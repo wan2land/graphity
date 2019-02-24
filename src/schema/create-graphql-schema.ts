@@ -31,6 +31,7 @@ export async function createGraphQLSchema(
     for (const resolve of metadataResolvesMap.get(resolver) || []) {
       queries[resolve.name] = {
         type: resolve.returns ? resolve.returns(type) : type,
+        args: resolve.input,
         resolve: createResolve(
           ([] as GraphQLGuard[]).concat(metadataResolver.guards, resolve.guards),
           instance,
