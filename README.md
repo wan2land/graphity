@@ -19,8 +19,10 @@
 ## Install
 
 ```
-npm install graphity --save
+npm i graphity --save
 ```
+
+
 
 ## License
 
