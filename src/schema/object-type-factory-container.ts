@@ -1,6 +1,6 @@
-import { createGraphQLObjectTypeFactory } from "../entity/create-graphql-object-type-factory"
-import { GraphQLObjectTypeFactory } from "../entity/graphql-object-type-factory"
 import { ConstructType } from "../interfaces/common"
+import { createGraphQLObjectTypeFactory } from "./create-graphql-object-type-factory"
+import { GraphQLObjectTypeFactory } from "./graphql-object-type-factory"
 
 
 export class ObjectTypeFactoryContainer {

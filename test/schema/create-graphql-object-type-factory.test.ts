@@ -1,6 +1,7 @@
 import { printType } from "graphql"
-import { createGraphQLObjectTypeFactory } from "../../src/entity/create-graphql-object-type-factory"
+import { createGraphQLObjectTypeFactory } from "../../src/schema/create-graphql-object-type-factory"
 import { Article } from "../stubs/entities/article"
+
 
 class UndefinedEntity {}
 

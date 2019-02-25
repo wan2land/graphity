@@ -1,16 +1,17 @@
 import { GraphQLSchema, isOutputType } from "graphql"
-import { GraphQLObjectTypeFactory } from "../entity/graphql-object-type-factory"
-import { ConstructType, GraphQLGuard } from "../interfaces/common"
+import { ConstructType, GraphQLGuard, ResolverFactory } from "../interfaces/common"
 import { metadataMutationsMap, metadataQueriesMap, metadataResolversMap } from "../metadata"
 import { createResolve } from "./create-resolve"
+import { GraphQLObjectTypeFactory } from "./graphql-object-type-factory"
 import { ObjectTypeFactoryContainer } from "./object-type-factory-container"
 
 
-const defaultCreate: (ctor: new (...args: any[]) => any) => Promise<any> = (ctor) => Promise.resolve(new ctor())
+const defaultCreate: ResolverFactory = (ctor) => Promise.resolve(new ctor())
 
 export async function createGraphQLSchema(
   resolvers: Array<ConstructType<any>> = [],
-  create: (ctor: new (...args: any[]) => any) => Promise<any> = defaultCreate): Promise<GraphQLSchema> {
+  create: ResolverFactory = defaultCreate
+): Promise<GraphQLSchema> {
 
   const container = new ObjectTypeFactoryContainer()
   const queries = new GraphQLObjectTypeFactory("Query")

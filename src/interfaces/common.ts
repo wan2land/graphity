@@ -3,6 +3,10 @@ import { GraphQLResolveInfo } from "graphql"
 
 export type ConstructType<P> = {new (...args: any[]): P} | Function // tslint:disable-line
 
+export type MaybeArray<P> = P | P[]
+
+export type ResolverFactory = (ctor: new (...args: any[]) => any) => Promise<any>
+
 export type GraphQLNext = <TArgs, TContext>(
   parent: any,
   args: TArgs,
