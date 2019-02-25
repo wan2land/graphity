@@ -22,3 +22,6 @@
 npm install graphity --save
 ```
 
+## License
+
+MIT
