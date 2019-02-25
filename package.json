@@ -1,10 +1,9 @@
 {
-  "name": "slur",
+  "name": "graphity",
   "version": "0.0.1",
-  "description": "Simple Rest Web Framework based Async syntax. support Javascript(& Typescript).",
+  "description": "GraphQL Typescript Framework",
   "keywords": [
-    "web",
-    "rest",
+    "graphql",
     "api",
     "typescript"
   ],
@@ -12,7 +11,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git://github.com/corgidisco/slur.git"
+    "url": "git://github.com/corgidisco/graphity.git"
   },
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
