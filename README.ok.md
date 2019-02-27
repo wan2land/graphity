@@ -16,12 +16,26 @@
   <a href="https://www.npmjs.com/package/graphity"><img alt="NPM" src="https://nodei.co/npm/graphity.png" /></a>
 </p>
 
-## Install
+## How to use
+
+### Installation
 
 ```
-npm i graphity --save
+npm i graphql graphity
+npm i @types/graphql -D
 ```
 
+### Typescript Confituration
+
+set this option in `tsconfig.json` file of your project.
+
+```json
+{
+  "experimentalDecorators": true
+}
+```
+
+## Example
 
 
 ## License
