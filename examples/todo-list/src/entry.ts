@@ -1,17 +1,16 @@
 import { ApolloServer } from "apollo-server"
-import { create } from "graphity"
+import { createSchema } from "graphity"
+import { TodoResolver } from "./resolvers/todo-resolver"
 
 async function main() {
-  const schema = await create({
-    resolvers: [
-      __dirname + "/resolvers/**/*.ts",
-      __dirname + "/resolvers/**/*.js",
-    ],
-  })
   const server = new ApolloServer({
-    schema,
+    schema: createSchema([
+      TodoResolver,
+    ]),
   })
+
   server.listen(8888)
+
   console.log("listen on 8888")
 }
 

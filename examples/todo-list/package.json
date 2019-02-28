@@ -6,7 +6,7 @@
   "dependencies": {
     "apollo-server": "^2.4.6",
     "apollo-server-lambda": "^2.4.8",
-    "graphity": "0.0.2",
+    "graphity": "^0.1.0",
     "graphql": "^14.1.1"
   },
   "devDependencies": {

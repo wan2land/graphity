@@ -6,8 +6,9 @@ import {
   Query
   } from "graphity"
 import { GraphQLID, GraphQLNonNull, GraphQLString } from "graphql"
-import * as uuid from "uuid"
 import { Todo } from "../entities/todo"
+
+let increment = 1
 
 @GraphQLResolver(type => Todo)
 export class TodoResolver {
@@ -38,9 +39,12 @@ export class TodoResolver {
     },
   })
   public async createTodo(parent: null, input: {contents?: string | null}) {
-    const id = uuid()
-    const todo = new Todo(id, input.contents)
-    this.repo.set(id, todo)
+    const id = increment++
+    const todo = Object.assign(new Todo(), {
+      id: `${id}`,
+      contents: input.contents,
+    })
+    this.repo.set(`${id}`, todo)
     return todo
   }
 
