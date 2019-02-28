@@ -12,9 +12,8 @@ export const Mutation: ResolveDecoratorFactory = (options = {}) => (target, prop
   const guard = options.guards || []
   const input = options.input
   resolves.push({
-    target,
+    target: (target as any)[property],
     parent: options.parent,
-    property,
     guards: Array.isArray(guard) ? guard : [guard],
     input: isInputObjectType(input) ? input.getFields() : input,
     name: options.name || ((typeof property === "string") ? property : property.toString()),

@@ -1,16 +1,24 @@
 import { GraphQLFieldResolver } from "graphql"
-import { GraphQLGuard } from "../interfaces/common"
+import { GraphQLGuard, ResolverFactory } from "../interfaces/common"
 import { executeResolver } from "./execute-resolver"
 
 
 export function createResolve(
   guards: GraphQLGuard[],
-  instance: any,
-  method: string | symbol): GraphQLFieldResolver<any, any> {
-  return (parent, args, ctx, info) => {
-    return executeResolver(
+  ctor: any,
+  method: (...args: any[]) => any,
+  instances: Map<any, any>,
+  create: ResolverFactory
+): GraphQLFieldResolver<any, any> {
+  return async (parent, args, ctx, info) => {
+    let instance = instances.get(ctor)
+    if (!instance) {
+      instance = await create(ctor)
+      instances.set(ctor, instance)
+    }
+    return await executeResolver(
       guards,
-      instance[method].bind(instance),
+      method.bind(instance),
       parent,
       args,
       ctx,

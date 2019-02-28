@@ -1,5 +1,5 @@
 import { printType } from "graphql"
-import { createGraphQLObjectTypeFactory } from "../../src/schema/create-graphql-object-type-factory"
+import { createObjectTypeFactory } from "../../src/schema/create-object-type-factory"
 import { Article } from "../stubs/entities/article"
 
 
@@ -23,7 +23,7 @@ expect.extend({
 
 describe("testsuite entity.create-graphql-object-type-factory", () => {
   it("test create type factory", async () => {
-    const schema = createGraphQLObjectTypeFactory(Article).factory()
+    const schema = createObjectTypeFactory(Article).factory()
     const expector = expect(schema) as any
     expector.toGraphQLType(`
       """article entity"""
@@ -37,7 +37,7 @@ describe("testsuite entity.create-graphql-object-type-factory", () => {
   })
 
   it("test undefined entity type factory", async () => {
-    const schema = createGraphQLObjectTypeFactory(UndefinedEntity).factory()
+    const schema = createObjectTypeFactory(UndefinedEntity).factory()
     const expector = expect(schema) as any
     expector.toGraphQLType(`type UndefinedEntity {
     }`)

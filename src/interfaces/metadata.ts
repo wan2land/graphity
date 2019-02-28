@@ -14,9 +14,8 @@ export interface MetadataResolver {
 }
 
 export interface MetadataResolve {
-  target: any
+  target: (...args: any[]) => any
   parent?: GraphQLParentTypeFactory
-  property: string | symbol
   guards: GraphQLGuard[]
   name: string
   input?: GraphQLFieldConfigArgumentMap

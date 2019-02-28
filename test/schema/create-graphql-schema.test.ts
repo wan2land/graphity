@@ -1,5 +1,5 @@
 import { printSchema, execute, parse } from "graphql"
-import { createGraphQLSchema } from "../../src/schema/create-graphql-schema"
+import { createSchema } from "../../src/schema/create-schema"
 import { ArticleResolver } from "../stubs/resolvers/article-resolver"
 import { UserResolver } from "../stubs/resolvers/user-resolver";
 
@@ -23,7 +23,7 @@ expect.extend({
 
 describe("testsuite create-graphql-schema", () => {
   it("test default schema", async () => {
-    const schema = await createGraphQLSchema()
+    const schema = createSchema()
     const expector = expect(schema) as any
     expector.toGraphQLSchema(`
       type Query { }
@@ -31,7 +31,7 @@ describe("testsuite create-graphql-schema", () => {
   })
 
   it("test simple resolver", async () => {
-    const schema = await createGraphQLSchema([
+    const schema = createSchema([
       ArticleResolver,
     ])
     // schema.
@@ -99,7 +99,7 @@ describe("testsuite create-graphql-schema", () => {
   })
 
   it("test recursive resolver", async () => {
-    const schema = await createGraphQLSchema([
+    const schema = await createSchema([
       UserResolver,
     ])
     const expector = expect(schema) as any

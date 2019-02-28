@@ -18,8 +18,6 @@ export * from "./graphql/types/node-of"
 
 export * from "./graphql/helpers/list-of"
 
-export * from "./schema/create-graphql-schema"
+export * from "./schema/create-schema"
 
 export * from "./metadata"
-
-export * from "./foundation/create"

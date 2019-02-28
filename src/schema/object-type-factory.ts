@@ -2,7 +2,7 @@ import { GraphQLFieldConfigMap, GraphQLObjectType } from "graphql"
 import { GraphQLFieldConfigFactoryMap } from "../interfaces/graphql"
 
 
-export class GraphQLObjectTypeFactory {
+export class ObjectTypeFactory {
 
   public objectType?: GraphQLObjectType
 
