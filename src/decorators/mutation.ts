@@ -3,22 +3,22 @@ import { ResolveDecoratorFactory } from "../interfaces/decorator"
 import { metadataMutationsMap } from "../metadata"
 
 
-export const Mutation: ResolveDecoratorFactory = (options) => (target, property) => {
+export const Mutation: ResolveDecoratorFactory = (options = {}) => (target, property) => {
   let resolves = metadataMutationsMap.get(target.constructor)
   if (!resolves) {
     resolves = []
     metadataMutationsMap.set(target.constructor, resolves)
   }
-  const guard = (options && options.guards || [])
-  const input = options && options.input
+  const guard = options.guards || []
+  const input = options.input
   resolves.push({
     target,
-    parent: options && options.parent,
+    parent: options.parent,
     property,
     guards: Array.isArray(guard) ? guard : [guard],
-    // parent: Mutation
     input: isInputObjectType(input) ? input.getFields() : input,
-    name: (options && options.name) || ((typeof property === "string") ? property : property.toString()),
-    returns: options && options.returns,
+    name: options.name || ((typeof property === "string") ? property : property.toString()),
+    returns: options.returns,
+    description: options.description,
   })
 }

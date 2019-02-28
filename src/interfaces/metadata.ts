@@ -21,11 +21,13 @@ export interface MetadataResolve {
   name: string
   input?: GraphQLFieldConfigArgumentMap
   returns?: GraphQLReturnFactory
+  description?: string
 }
 
 export interface MetadataEntity {
   target: any
   name: string
+  description?: string
 }
 
 export interface MetadataField {
@@ -34,4 +36,5 @@ export interface MetadataField {
   typeFactory: GraphQLFieldTypeFactory
   guards: GraphQLGuard[]
   name: string
+  description?: string
 }

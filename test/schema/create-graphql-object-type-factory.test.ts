@@ -25,11 +25,15 @@ describe("testsuite entity.create-graphql-object-type-factory", () => {
   it("test create type factory", async () => {
     const schema = createGraphQLObjectTypeFactory(Article).factory()
     const expector = expect(schema) as any
-    expector.toGraphQLType(`type Article {
-      id: ID!
-      title: String!
-      contents: String
-    }`)
+    expector.toGraphQLType(`
+      """article entity"""
+      type Article {
+        """article id"""
+        id: ID!
+        title: String!
+        contents: String
+      }
+    `)
   })
 
   it("test undefined entity type factory", async () => {

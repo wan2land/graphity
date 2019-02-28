@@ -37,7 +37,9 @@ describe("testsuite create-graphql-schema", () => {
     // schema.
     const expector = expect(schema) as any
     expector.toGraphQLSchema(`
+      """article entity"""
       type Article {
+        """article id"""
         id: ID!
         title: String!
         contents: String
@@ -49,12 +51,14 @@ describe("testsuite create-graphql-schema", () => {
       }
 
       type Mutation {
+        """this is createArticle"""
         createArticle(title: String!): Article
         updateArticle(id: ID!, title: String): Article
         deleteArticle(id: ID!): Article
       }
 
       type Query {
+        """this is article"""
         article(id: ID!): Article
         articles(first: Int, after: String, offset: Int): ListOfArticle
       }

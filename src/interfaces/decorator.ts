@@ -20,16 +20,19 @@ export interface ResolveDecoratorOption {
   input?: GraphQLInputObjectType | GraphQLFieldConfigArgumentMap,
   guards?: GraphQLGuard | GraphQLGuard[]
   returns?: GraphQLReturnFactory
+  description?: string
 }
 
 
 export interface EntityDecoratorOption {
   name?: string
+  description?: string
 }
 
 export interface FieldDecoratorOption {
   name?: string
   guards?: GraphQLGuard | GraphQLGuard[]
+  description?: string
 }
 
 

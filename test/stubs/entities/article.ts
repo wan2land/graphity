@@ -1,9 +1,13 @@
 import { GraphQLID, GraphQLString, GraphQLNonNull } from "graphql"
 import { GraphQLEntity, Field } from "../../../src"
 
-@GraphQLEntity()
+@GraphQLEntity({
+  description: "article entity"
+})
 export class Article {
-  @Field(type => GraphQLNonNull(GraphQLID))
+  @Field(type => GraphQLNonNull(GraphQLID), {
+    description: "article id",
+  })
   public id!: string
 
   @Field(type => GraphQLNonNull(GraphQLString))

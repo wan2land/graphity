@@ -9,6 +9,7 @@ export class ArticleResolver {
     input: {
       id: {type: GraphQLNonNull(GraphQLID)},
     },
+    description: "this is article"
   })
   public async article(parent: null, input: {id: string}) {
     return Object.assign(new Article(), {
@@ -36,6 +37,7 @@ export class ArticleResolver {
         type: GraphQLNonNull(GraphQLString),
       },
     },
+    description: "this is createArticle",
   })
   public async createArticle(parent: null, input: {title: string}) {
     return Object.assign(new Article(), {

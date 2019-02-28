@@ -13,7 +13,8 @@ export async function createGraphQLSchema(
   create: ResolverFactory = defaultCreate
 ): Promise<GraphQLSchema> {
 
-  const container = new ObjectTypeFactoryContainer()
+  const types = new ObjectTypeFactoryContainer()
+  const instances = new Map<any, any>()
   const queries = new GraphQLObjectTypeFactory("Query")
   const mutations = new GraphQLObjectTypeFactory("Mutation")
 
@@ -26,34 +27,36 @@ export async function createGraphQLSchema(
 
     const instance = await create(metadataResolver.target)
     for (const query of metadataQueriesMap.get(resolver) || []) {
-      const fields = query.parent ? container.get(query.parent(undefined)).fields : queries.fields
+      const fields = query.parent ? types.get(query.parent(undefined)).fields : queries.fields
       const resolve = createResolve(
         ([] as GraphQLGuard[]).concat(metadataResolver.guards, query.guards),
         instance,
         query.property
       )
       fields[query.name] = () => {
-        const type = isOutputType(ctorOrType) ? ctorOrType : container.get(ctorOrType).factory()
+        const type = isOutputType(ctorOrType) ? ctorOrType : types.get(ctorOrType).factory()
         return {
           type: query.returns ? query.returns(type) : type,
           args: query.input,
+          description: query.description,
           resolve,
         }
       }
     }
 
     for (const mutation of metadataMutationsMap.get(resolver) || []) {
-      const fields = mutation.parent ? container.get(mutation.parent(undefined)).fields : mutations.fields
+      const fields = mutation.parent ? types.get(mutation.parent(undefined)).fields : mutations.fields
       const resolve = createResolve(
         ([] as GraphQLGuard[]).concat(metadataResolver.guards, mutation.guards),
         instance,
         mutation.property
       )
       fields[mutation.name] = () => {
-        const type = isOutputType(ctorOrType) ? ctorOrType : container.get(ctorOrType).factory()
+        const type = isOutputType(ctorOrType) ? ctorOrType : types.get(ctorOrType).factory()
         return {
           type: mutation.returns ? mutation.returns(type) : type,
           args: mutation.input,
+          description: mutation.description,
           resolve,
         }
       }
