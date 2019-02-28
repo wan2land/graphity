@@ -4,3 +4,4 @@
 yarn-error.log
 
 /examples/**/node_modules
+/examples/**/.envrc

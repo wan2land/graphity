@@ -5,12 +5,15 @@
   },
   "dependencies": {
     "apollo-server": "^2.4.6",
-    "graphity": "file:../..",
-    "uuid": "^3.3.2"
+    "apollo-server-lambda": "^2.4.8",
+    "graphity": "0.0.2",
+    "graphql": "^14.1.1"
   },
   "devDependencies": {
-    "@types/uuid": "^3.4.4",
+    "@types/aws-lambda": "^8.10.19",
     "nodemon": "^1.18.10",
+    "serverless-offline": "^4.7.1",
+    "serverless-plugin-typescript": "^1.1.5",
     "ts-node": "^8.0.2",
     "typescript": "^3.3.3333"
   }

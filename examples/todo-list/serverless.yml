@@ -1,0 +1,33 @@
+service: graphity-todo-list
+
+plugins:
+  - serverless-plugin-typescript
+  - serverless-offline
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+
+package:
+  include:
+    - ./src/resolvers/**/*.ts
+    - ./src/resolvers/**/*.js
+    - ./src/entities/**/*.ts
+    - ./src/entities/**/*.js
+
+functions:
+  home:
+    handler: src/handler.home
+    events:
+      - http:
+          path: /
+          method: get
+          cors: true
+
+  graphql:
+    handler: src/handler.graphql
+    events:
+      - http:
+          path: graphql
+          method: any
+          cors: true
