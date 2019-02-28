@@ -1,0 +1,11 @@
+{
+  "private": true,
+  "scripts": {
+    "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/entry.ts"
+  },
+  "dependencies": {
+    "apollo-server": "^2.4.6",
+    "graphity": "file:../..",
+    "uuid": "^3.3.2"
+  }
+}
