@@ -8,13 +8,6 @@ provider:
   name: aws
   runtime: nodejs8.10
 
-package:
-  include:
-    - ./src/resolvers/**/*.ts
-    - ./src/resolvers/**/*.js
-    - ./src/entities/**/*.ts
-    - ./src/entities/**/*.js
-
 functions:
   home:
     handler: src/handler.home

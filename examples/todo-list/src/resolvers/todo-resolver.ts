@@ -19,7 +19,12 @@ export class TodoResolver {
     returns: todo => GraphQLListOf(todo),
   })
   public todos() {
-    return listOf([...this.repo.values()])
+    return listOf([...this.repo.values()].sort((a, b) => {
+      if (a.id === b.id) {
+        return 0
+      }
+      return +a.id < +b.id ? 1 : -1
+    }))
   }
 
   @Query({
@@ -38,7 +43,7 @@ export class TodoResolver {
       },
     },
   })
-  public async createTodo(parent: null, input: {contents?: string | null}) {
+  public createTodo(parent: null, input: {contents?: string | null}) {
     const id = increment++
     const todo = Object.assign(new Todo(), {
       id: `${id}`,
@@ -58,7 +63,7 @@ export class TodoResolver {
       },
     },
   })
-  public async updateTodo(parent: null, input: {id: string, contents?: string | null}) {
+  public updateTodo(parent: null, input: {id: string, contents?: string | null}) {
     const todo = this.repo.get(input.id)
     if (!todo) {
       return null
@@ -75,8 +80,42 @@ export class TodoResolver {
         type: GraphQLNonNull(GraphQLID),
       },
     },
+    description: "change 'isDone' to true",
   })
-  public async deleteTodo(parent: null, input: {id: string}) {
+  public doneTodo(parent: null, input: {id: string}) {
+    const todo = this.repo.get(input.id)
+    if (!todo) {
+      return null
+    }
+    todo.isDone = true
+    return todo
+  }
+
+  @Mutation({
+    input: {
+      id: {
+        type: GraphQLNonNull(GraphQLID),
+      },
+    },
+    description: "change 'isDone' to false",
+  })
+  public undoneTodo(parent: null, input: {id: string}) {
+    const todo = this.repo.get(input.id)
+    if (!todo) {
+      return null
+    }
+    todo.isDone = false
+    return todo
+  }
+
+  @Mutation({
+    input: {
+      id: {
+        type: GraphQLNonNull(GraphQLID),
+      },
+    },
+  })
+  public deleteTodo(parent: null, input: {id: string}) {
     const todo = this.repo.get(input.id)
     if (!todo) {
       return null
