@@ -37,6 +37,7 @@ set this option in `tsconfig.json` file of your project.
 
 ## Example
 
+[Show Serverless Full Source](./examples/todo-list)
 
 ## License
 

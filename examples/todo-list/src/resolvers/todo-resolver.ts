@@ -13,18 +13,13 @@ let increment = 1
 @GraphQLResolver(type => Todo)
 export class TodoResolver {
 
-  public repo = new Map<string, Todo>()
+  public repo: Todo[] = []
 
   @Query({
     returns: todo => GraphQLListOf(todo),
   })
   public todos() {
-    return listOf([...this.repo.values()].sort((a, b) => {
-      if (a.id === b.id) {
-        return 0
-      }
-      return +a.id < +b.id ? 1 : -1
-    }))
+    return listOf(this.repo)
   }
 
   @Query({
@@ -33,7 +28,7 @@ export class TodoResolver {
     },
   })
   public todo(parent: null, input: {id: string}) {
-    return this.repo.get(input.id)
+    return this.repo.find(({id}) => id === input.id)
   }
 
   @Mutation({
@@ -49,7 +44,7 @@ export class TodoResolver {
       id: `${id}`,
       contents: input.contents,
     })
-    this.repo.set(`${id}`, todo)
+    this.repo.push(todo)
     return todo
   }
 
@@ -64,7 +59,7 @@ export class TodoResolver {
     },
   })
   public updateTodo(parent: null, input: {id: string, contents?: string | null}) {
-    const todo = this.repo.get(input.id)
+    const todo = this.repo.find(({id}) => id === input.id)
     if (!todo) {
       return null
     }
@@ -83,7 +78,7 @@ export class TodoResolver {
     description: "change 'isDone' to true",
   })
   public doneTodo(parent: null, input: {id: string}) {
-    const todo = this.repo.get(input.id)
+    const todo = this.repo.find(({id}) => id === input.id)
     if (!todo) {
       return null
     }
@@ -100,7 +95,7 @@ export class TodoResolver {
     description: "change 'isDone' to false",
   })
   public undoneTodo(parent: null, input: {id: string}) {
-    const todo = this.repo.get(input.id)
+    const todo = this.repo.find(({id}) => id === input.id)
     if (!todo) {
       return null
     }
@@ -116,11 +111,11 @@ export class TodoResolver {
     },
   })
   public deleteTodo(parent: null, input: {id: string}) {
-    const todo = this.repo.get(input.id)
+    const todo = this.repo.find(({id}) => id === input.id)
     if (!todo) {
       return null
     }
-    this.repo.delete(input.id)
+    this.repo.splice(this.repo.indexOf(todo), 1)
     return todo
   }
 }
