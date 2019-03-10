@@ -37,6 +37,25 @@ set this option in `tsconfig.json` file of your project.
 
 ## Example
 
+create entity file:
+
+```ts
+import { Field, GraphQLEntity } from "graphity"
+import { GraphQLID, GraphQLString } from "graphql"
+
+
+@GraphQLEntity()
+export class Todo {
+  @Field(type => GraphQLID)
+  public id!: string
+
+  @Field(type => GraphQLString)
+  public contents!: string | null
+
+  @Field(type => GraphQLBoolean)
+  public isDone!: boolean
+}
+```
 
 ## License
 

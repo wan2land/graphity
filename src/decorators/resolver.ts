@@ -6,7 +6,7 @@ export const GraphQLResolver: ResolverDecoratorFactory = (typeFactory, options =
   const guard = options.guards || []
   metadataResolversMap.set(target, {
     target,
-    typeFactory,
+    typeFactory: typeFactory || undefined,
     guards: Array.isArray(guard) ? guard : [guard],
   })
 }

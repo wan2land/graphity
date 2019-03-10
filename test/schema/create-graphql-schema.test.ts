@@ -1,7 +1,8 @@
-import { printSchema, execute, parse } from "graphql"
+import { execute, parse, printSchema } from "graphql"
 import { createSchema } from "../../src/schema/create-schema"
 import { ArticleResolver } from "../stubs/resolvers/article-resolver"
-import { UserResolver } from "../stubs/resolvers/user-resolver";
+import { HomeResolver } from "../stubs/resolvers/home-resolver"
+import { UserResolver } from "../stubs/resolvers/user-resolver"
 
 
 expect.extend({
@@ -33,6 +34,7 @@ describe("testsuite create-graphql-schema", () => {
   it("test simple resolver", async () => {
     const schema = createSchema([
       ArticleResolver,
+      HomeResolver,
     ])
     // schema.
     const expector = expect(schema) as any
@@ -61,6 +63,8 @@ describe("testsuite create-graphql-schema", () => {
         """this is article"""
         article(id: ID!): Article
         articles(first: Int, after: String, offset: Int): ListOfArticle
+
+        version: String
       }
     `)
 

@@ -39,7 +39,7 @@ export interface FieldDecoratorOption {
 export type GraphQLResolverTypeFactory = (type: any) => GraphQLScalarType | ConstructType<any>
 export type GraphQLFieldTypeFactory = (type: any) => GraphQLOutputType
 
-export type ResolverDecoratorFactory = (typeFactory: GraphQLResolverTypeFactory, options?: ResolverDecoratorFactoryOption) => ClassDecorator
+export type ResolverDecoratorFactory = (typeFactory?: GraphQLResolverTypeFactory | null, options?: ResolverDecoratorFactoryOption) => ClassDecorator
 export type ResolveDecoratorFactory = (options?: ResolveDecoratorOption) => MethodDecorator
 
 export type EntityDecoratorFactory = (options?: EntityDecoratorOption) => ClassDecorator

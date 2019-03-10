@@ -9,7 +9,7 @@ import {
 
 export interface MetadataResolver {
   target: any
-  typeFactory: GraphQLResolverTypeFactory
+  typeFactory?: GraphQLResolverTypeFactory
   guards: GraphQLGuard[]
 }
 
