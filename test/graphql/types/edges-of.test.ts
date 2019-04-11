@@ -1,5 +1,6 @@
-import { printType, GraphQLString, GraphQLObjectType, GraphQLID, GraphQLNonNull } from "graphql"
-import { GraphQLEdgesOf } from "../../../src/graphql/types/edges-of"
+import { GraphQLID, GraphQLNonNull, GraphQLObjectType, GraphQLString, printType } from "graphql"
+
+import { GraphQLEdgesOf } from "../../../lib/graphql/types/edges-of"
 
 
 const GraphQLUser = new GraphQLObjectType({

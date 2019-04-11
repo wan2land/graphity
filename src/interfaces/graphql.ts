@@ -8,7 +8,7 @@ export interface ListOf<P> {
 export interface EdgesOf<P> {
   totalCount: number
   pageInfo: PageInfo
-  edges: Array<NodeOf<P>>
+  edges: NodeOf<P>[]
 }
 
 export interface NodeOf<P> {

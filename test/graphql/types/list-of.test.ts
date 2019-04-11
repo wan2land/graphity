@@ -1,5 +1,6 @@
-import { printType, GraphQLString, GraphQLObjectType, GraphQLID, GraphQLNonNull } from "graphql"
-import { GraphQLListOf } from "../../../src/graphql/types/list-of"
+import { GraphQLID, GraphQLNonNull, GraphQLObjectType, GraphQLString, printType } from "graphql"
+
+import { GraphQLListOf } from "../../../lib/graphql/types/list-of"
 
 
 const GraphQLUser = new GraphQLObjectType({

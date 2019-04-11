@@ -1,5 +1,6 @@
-import { GraphQLNonNull, GraphQLID, GraphQLString } from "graphql"
-import { GraphQLListOf, GraphQLResolver, Query, listOf, GraphQLInputPagination, Mutation } from "../../../src"
+import { GraphQLID, GraphQLNonNull, GraphQLString } from "graphql"
+
+import { GraphQLInputPagination, GraphQLListOf, GraphQLResolver, listOf, Mutation, Query } from "../../../lib"
 import { Article } from "../entities/article"
 
 @GraphQLResolver(returns => Article)

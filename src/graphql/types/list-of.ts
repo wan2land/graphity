@@ -1,10 +1,4 @@
-import {
-  GraphQLInt,
-  GraphQLList,
-  GraphQLNamedType,
-  GraphQLNonNull,
-  GraphQLObjectType
-  } from "graphql"
+import { GraphQLInt, GraphQLList, GraphQLNamedType, GraphQLNonNull, GraphQLObjectType } from "graphql"
 
 export const GraphQLListOf = <P extends GraphQLNamedType>(type: P, name?: string) => {
   return new GraphQLObjectType({

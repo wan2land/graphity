@@ -6,7 +6,7 @@ export class ObjectTypeFactory {
 
   public objectType?: GraphQLObjectType
 
-  constructor(
+  public constructor(
     public name: string,
     public description?: string,
     public fields: GraphQLFieldConfigFactoryMap = {}

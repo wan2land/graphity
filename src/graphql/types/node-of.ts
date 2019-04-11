@@ -1,9 +1,4 @@
-import {
-  GraphQLNamedType,
-  GraphQLNonNull,
-  GraphQLObjectType,
-  GraphQLString
-  } from "graphql"
+import { GraphQLNamedType, GraphQLNonNull, GraphQLObjectType, GraphQLString } from "graphql"
 
 export const GraphQLNodeOf = <P extends GraphQLNamedType>(type: P, name?: string) => {
   return new GraphQLObjectType({

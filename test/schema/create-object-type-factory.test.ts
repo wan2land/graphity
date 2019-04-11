@@ -1,5 +1,6 @@
 import { printType } from "graphql"
-import { createObjectTypeFactory } from "../../src/schema/create-object-type-factory"
+
+import { createObjectTypeFactory } from "../../lib/schema/create-object-type-factory"
 import { Article } from "../stubs/entities/article"
 
 

@@ -1,4 +1,4 @@
-import { GraphQLResolver, Query } from "../../../src"
+import { GraphQLResolver, Query } from "../../../lib"
 
 
 const pkg = require("../../../package.json")

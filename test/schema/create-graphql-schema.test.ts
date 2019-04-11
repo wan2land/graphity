@@ -1,5 +1,6 @@
 import { execute, parse, printSchema } from "graphql"
-import { createSchema } from "../../src/schema/create-schema"
+
+import { createSchema } from "../../lib/schema/create-schema"
 import { ArticleResolver } from "../stubs/resolvers/article-resolver"
 import { HomeResolver } from "../stubs/resolvers/home-resolver"
 import { UserResolver } from "../stubs/resolvers/user-resolver"

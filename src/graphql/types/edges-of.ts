@@ -1,10 +1,5 @@
-import {
-  GraphQLInt,
-  GraphQLList,
-  GraphQLNamedType,
-  GraphQLNonNull,
-  GraphQLObjectType
-  } from "graphql"
+import { GraphQLInt, GraphQLList, GraphQLNamedType, GraphQLNonNull, GraphQLObjectType } from "graphql"
+
 import { GraphQLNodeOf } from "./node-of"
 import { GraphQLPageInfo } from "./page-info"
 

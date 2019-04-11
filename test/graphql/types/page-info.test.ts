@@ -1,5 +1,6 @@
 import { printType } from "graphql"
-import { GraphQLPageInfo } from "../../../src/graphql/types/page-info"
+
+import { GraphQLPageInfo } from "../../../lib/graphql/types/page-info"
 
 
 describe("testsuite graphql.types.page-info", () => {

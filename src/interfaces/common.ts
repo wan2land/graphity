@@ -1,7 +1,7 @@
 import { GraphQLResolveInfo } from "graphql"
 
 
-export type ConstructType<P> = {new (...args: any[]): P} | Function // tslint:disable-line
+export type ConstructType<P> = (new (...args: any[]) => P) | Function // tslint:disable-line
 
 export type MaybeArray<P> = P | P[]
 

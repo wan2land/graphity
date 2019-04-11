@@ -9,7 +9,7 @@ import { ObjectTypeFactoryContainer } from "./object-type-factory-container"
 const defaultCreate: ResolverFactory = (ctor) => Promise.resolve(new ctor())
 
 export function createSchema(
-  resolvers: Array<ConstructType<any>> = [],
+  resolvers: ConstructType<any>[] = [],
   create: ResolverFactory = defaultCreate
 ): GraphQLSchema {
 
