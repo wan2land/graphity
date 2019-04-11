@@ -1,5 +1,5 @@
 import { Field, GraphQLEntity } from "graphity"
-import { GraphQLBoolean, GraphQLID, GraphQLString } from "graphql"
+import { GraphQLBoolean, GraphQLID, GraphQLNonNull, GraphQLString } from "graphql"
 
 
 @GraphQLEntity({
@@ -9,7 +9,7 @@ export class Todo {
   @Field(type => GraphQLID)
   public id!: string
 
-  @Field(type => GraphQLString, {
+  @Field(type => GraphQLNonNull(GraphQLString), {
     description: "do what you want to do",
   })
   public contents!: string | null

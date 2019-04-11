@@ -16,12 +16,16 @@
   <a href="https://www.npmjs.com/package/graphity"><img alt="NPM" src="https://nodei.co/npm/graphity.png" /></a>
 </p>
 
+**Graphity** is a library that makes typescript and GraphQL easy to use. As much as possible, the object of [GraphQL.js](https://github.com/graphql/graphql-js) can be used as it is.
+
 ## How to use
 
 ### Installation
 
+Currently, **Graphity** is only responsible for the Schema of GraphQL and can be run through [Apollo Server](https://github.com/apollographql/apollo-server).
+
 ```
-npm i graphql graphity
+npm i graphity apollo-server
 npm i @types/graphql -D
 ```
 
@@ -38,6 +42,72 @@ set this option in `tsconfig.json` file of your project.
 ## Example
 
 [Show Serverless Full Source](./examples/todo-list)
+
+## Documents
+
+Let's create a Todo list using Graphity. The minimum unit in Graphity is Entity.
+
+@code("examples/todo-list/src/entities/todo.ts")
+
+This entity is converted to a GraphQL Schema:
+
+```graphql
+"""todo entity"""
+type Todo {
+  id: ID
+
+  """do what you want to do"""
+  contents: String!
+  isDone: Boolean
+}
+```
+
+Now let's create a **Resolver** that returns **Todo Entity**. If you create an entire CRUD with an array without a DB:
+
+@code("examples/todo-list/src/resolvers/todo-resolver.ts")
+
+**Resolver** creates Query and Mutation.
+
+```graphql
+type Query {
+  todos: ListOfTodo
+  todo(id: ID): Todo
+}
+
+type Mutation {
+  createTodo(contents: String): Todo
+  updateTodo(id: ID!, contents: String): Todo
+
+  """change 'isDone' to true"""
+  doneTodo(id: ID!): Todo
+
+  """change 'isDone' to false"""
+  undoneTodo(id: ID!): Todo
+  deleteTodo(id: ID!): Todo
+}
+
+type ListOfTodo {
+  totalCount: Int!
+  nodes: [Todo!]!
+}
+```
+
+And on the server, you can do the following:
+
+```typescript
+
+import { ApolloServer } from "apollo-server"
+import { createSchema } from "graphity"
+import { TodoResolver } from "./resolvers/todo-resolver"
+
+const server = new ApolloServer({
+  schema: createSchema([
+    TodoResolver,
+  ]),
+})
+server.listen(8888)
+
+```
 
 ## License
 
