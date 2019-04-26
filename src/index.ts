@@ -15,6 +15,7 @@ export * from "./graphql/types/edges-of"
 export * from "./graphql/types/list-of"
 export * from "./graphql/types/page-info"
 export * from "./graphql/types/node-of"
+export * from "./graphql/types/jwt-token"
 
 export * from "./graphql/helpers/list-of"
 
