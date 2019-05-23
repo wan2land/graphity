@@ -5,7 +5,6 @@
     "moduleResolution": "node",
     "lib": [
       "es2017",
-      "dom",
       "esnext.asynciterable"
     ],
     "outDir": "lib",
@@ -13,6 +12,7 @@
     "pretty": true,
     "sourceMap": true,
     "strict": true,
+    "esModuleInterop": true,
     "noImplicitReturns": true,
     "experimentalDecorators": true
   },
