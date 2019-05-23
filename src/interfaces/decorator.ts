@@ -1,10 +1,4 @@
-import {
-  GraphQLFieldConfigArgumentMap,
-  GraphQLInputObjectType,
-  GraphQLObjectType,
-  GraphQLOutputType,
-  GraphQLScalarType,
-} from "graphql"
+import { GraphQLFieldConfigArgumentMap, GraphQLInputObjectType, GraphQLOutputType } from "graphql"
 
 import { ConstructType, GraphQLGuard } from "./common"
 
@@ -13,7 +7,7 @@ export interface ResolverDecoratorFactoryOption {
 }
 
 export type GraphQLParentTypeFactory = (type: any) => ConstructType<any>
-export type GraphQLReturnFactory = (type: GraphQLScalarType | GraphQLObjectType) => GraphQLOutputType
+export type GraphQLReturnFactory = (type: GraphQLOutputType) => GraphQLOutputType
 
 export interface ResolveDecoratorOption {
   name?: string
@@ -37,7 +31,7 @@ export interface FieldDecoratorOption {
 }
 
 
-export type GraphQLResolverTypeFactory = (type: any) => GraphQLScalarType | ConstructType<any>
+export type GraphQLResolverTypeFactory = (type: any) => GraphQLOutputType | ConstructType<any>
 export type GraphQLFieldTypeFactory = (type: any) => GraphQLOutputType
 
 export type ResolverDecoratorFactory = (typeFactory?: GraphQLResolverTypeFactory | null, options?: ResolverDecoratorFactoryOption) => ClassDecorator

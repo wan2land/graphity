@@ -1,4 +1,4 @@
-import { GraphQLID, GraphQLNonNull, GraphQLString } from "graphql"
+import { GraphQLID, GraphQLNonNull, GraphQLObjectType, GraphQLString } from "graphql"
 
 import { GraphQLInputPagination, GraphQLListOf, GraphQLResolver, listOf, Mutation, Query } from "../../../lib"
 import { Article } from "../entities/article"
@@ -20,7 +20,7 @@ export class ArticleResolver {
   }
 
   @Query({
-    returns: article => GraphQLListOf(article),
+    returns: article => GraphQLListOf(article as GraphQLObjectType),
     input: GraphQLInputPagination,
   })
   public async articles() {

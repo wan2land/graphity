@@ -1,4 +1,4 @@
-import { GraphQLID, GraphQLNonNull } from "graphql"
+import { GraphQLID, GraphQLNonNull, GraphQLObjectType } from "graphql"
 
 import { GraphQLListOf, GraphQLResolver, listOf, Query } from "../../../lib"
 import { User } from "../entities/user"
@@ -20,7 +20,7 @@ export class UserResolver {
 
   @Query({
     parent: type => User,
-    returns: user => GraphQLNonNull(GraphQLListOf(user)),
+    returns: user => GraphQLNonNull(GraphQLListOf(user as GraphQLObjectType)),
   })
   public async users(parent: User | null) {
     return listOf([
