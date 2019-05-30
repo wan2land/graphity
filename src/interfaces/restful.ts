@@ -1,25 +1,24 @@
+import { DocumentNode } from "graphql"
+import { IncomingMessage } from "http"
+
+import { MaybePromise } from "./utils"
 
 
-export type RequestParam = string | RequestParams | RequestParams[]
+export type HttpMethod = "GET" | "POST" | "PUT" | "DELETE"
 
-export interface RequestParams {
-  [name: string]: RequestParam
+export interface GraphQLQuery {
+  document: DocumentNode
+  values?: {[key: string]: any}
 }
 
-export interface RequestField {
-  name: string
-  fields: RequestField[]
-}
-
-export interface HandleRequest {
-  params: RequestParams
-  fields: RequestField[]
-}
-
-export type Handler<P> = (request: HandleRequest) => Promise<P | null>
-
-export interface Route {
-  method: "GET" | "POST"
+export interface HttpEndPoint<R = IncomingMessage> {
+  method: HttpMethod
   path: string
-  handler: Handler<any>
+  query(request: R): MaybePromise<GraphQLQuery>
+}
+
+export interface CreateOptions<R> {
+  endpoints: HttpEndPoint<R>[]
+  rootValue?: any
+  context?: (request: R) => any
 }

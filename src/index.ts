@@ -1,5 +1,7 @@
 
+export * from "./interfaces/utils"
 export * from "./interfaces/restful"
 
-export { createHttpHandler } from "./restful/create-handler"
-export { RouterBuilder } from "./restful/router-builder"
+export { GraphQLExecutor } from "./restful/graphql-executor"
+
+export { createExpressAdapter } from "./adapter/create-express-adapter"
