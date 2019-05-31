@@ -9,6 +9,7 @@ export type HttpMethod = "GET" | "POST" | "PUT" | "DELETE"
 export interface GraphQLQuery {
   document: DocumentNode
   values?: {[key: string]: any}
+  transform?: (data: any) => any
 }
 
 export interface HttpEndPoint<R = IncomingMessage> {
