@@ -1,0 +1,39 @@
+{
+  "name": "graphity",
+  "version": "0.3.0",
+  "description": "GraphQL Typescript Framework",
+  "keywords": [
+    "graphql",
+    "api",
+    "typescript"
+  ],
+  "author": "Cris <corgidisco@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/corgidisco/graphity.git"
+  },
+  "main": "index.js",
+  "types": "index.d.ts",
+  "scripts": {
+    "prepack": "npm run test && npm run build",
+    "build": "rimraf ./lib && tsc && babel ./src --out-dir ./lib --extensions \".ts\" --source-maps inline"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.ts$": "ts-jest"
+    },
+    "testRegex": "[^/]*\\.test.tsx?$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json"
+    ]
+  },
+  "dependencies": {
+    "core-js": "^3.1.2",
+    "graphql": "^14.0"
+  }
+}

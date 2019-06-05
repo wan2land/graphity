@@ -9,3 +9,6 @@ yarn-error.log
 
 /examples/**/node_modules
 /examples/**/.envrc
+
+/packages/*/**/*.d.ts
+/packages/*/**/*.js

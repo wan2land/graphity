@@ -1,39 +1,13 @@
 {
-  "name": "graphity",
-  "version": "0.3.0",
-  "description": "GraphQL Typescript Framework",
-  "keywords": [
-    "graphql",
-    "api",
-    "typescript"
-  ],
+  "name": "graphity.js",
+  "private": true,
   "author": "Cris <corgidisco@gmail.com>",
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/corgidisco/graphity.git"
-  },
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
   "scripts": {
-    "prepack": "npm run test && npm run build",
-    "build": "rimraf ./lib && tsc --emitDeclarationOnly && babel src --out-dir lib --extensions \".ts\" --source-maps inline",
+    "build": "lerna run build --parallel",
     "test": "npm run build && npm run test:lint && npm run test:unit",
-    "test:lint": "eslint src/**/**/*.ts",
-    "test:unit": "jest test"
-  },
-  "jest": {
-    "transform": {
-      "^.+\\.ts$": "ts-jest"
-    },
-    "testRegex": "[^/]*\\.test.tsx?$",
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js",
-      "jsx",
-      "json"
-    ]
+    "test:lint": "eslint packages/*/src/***/*.ts",
+    "test:unit": "jest packages"
   },
   "dependencies": {
     "core-js": "^3.1.2",
@@ -52,6 +26,7 @@
     "@typescript-eslint/eslint-plugin": "^1.9.0",
     "eslint": "^5.16.0",
     "jest": "^24.8.0",
+    "lerna": "^3.14.1",
     "rimraf": "^2.6.2",
     "ts-jest": "^24.0.2",
     "typescript": "^3.4.5"
