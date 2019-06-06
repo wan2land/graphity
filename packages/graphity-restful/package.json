@@ -1,6 +1,6 @@
 {
   "name": "@graphity/restful",
-  "version": "0.1.0",
+  "version": "0.4.0",
   "description": "GraphQL Schema to RestFUL API.",
   "keywords": [
     "transformer",
@@ -10,19 +10,16 @@
   ],
   "author": "Cris <corgidisco@gmail.com>",
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/corgidisco/graphity.git"
-  },
+  "repository": "https://github.com/corgidisco/graphity/tree/master/packages/graphity-restful",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
-    "prepack": "npm run test && npm run build",
     "build": "rimraf ./lib && tsc && babel ./src --out-dir ./lib --extensions \".ts\" --source-maps inline"
   },
   "dependencies": {
     "core-js": "^3.1.2",
     "express": "^4.17.1",
     "graphql": "^14.0.0"
-  }
+  },
+  "gitHead": "6acc8f19a417cda5ebfcd4f8a9eed133304eb411"
 }
