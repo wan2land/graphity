@@ -1,4 +1,7 @@
 module.exports = {
+  setupFilesAfterEnv: [
+    "./packages/graphity/test/setup-graphql.ts",
+  ],
   transform: {
     "^.+\\.ts$": "ts-jest",
   },

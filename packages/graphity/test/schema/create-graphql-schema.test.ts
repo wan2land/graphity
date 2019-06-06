@@ -1,4 +1,4 @@
-import { execute, parse, printSchema } from "graphql"
+import { execute, parse } from "graphql"
 
 import { createSchema } from "../../lib/schema/create-schema"
 import { ArticleResolver } from "../stubs/resolvers/article-resolver"
@@ -6,29 +6,11 @@ import { HomeResolver } from "../stubs/resolvers/home-resolver"
 import { UserResolver } from "../stubs/resolvers/user-resolver"
 
 
-expect.extend({
-  toGraphQLSchema(received, expected: string) {
-    const type = printSchema(received).replace(/\s+/g, " ").trim()
-    if (type === expected.replace(/\s+/g, " ").trim()) {
-      return {
-        message: () => "success",
-        pass: true,
-      }
-    }
-
-    return {
-      message: () => `expected ${type} to be ${expected.replace(/\s+/g, " ").trim()}`,
-      pass: false,
-    }
-  },
-})
-
 describe("testsuite create-graphql-schema", () => {
   it("test default schema", async () => {
     const schema = createSchema()
-    const expector = expect(schema) as any
-    expector.toGraphQLSchema(`
-      type Query { }
+    expect(schema).toGraphQLSchema(`
+      type Query
     `)
   })
 
@@ -38,8 +20,7 @@ describe("testsuite create-graphql-schema", () => {
       HomeResolver,
     ])
     // schema.
-    const expector = expect(schema) as any
-    expector.toGraphQLSchema(`
+    expect(schema).toGraphQLSchema(`
       """article entity"""
       type Article {
         """article id"""
@@ -107,8 +88,7 @@ describe("testsuite create-graphql-schema", () => {
     const schema = await createSchema([
       UserResolver,
     ])
-    const expector = expect(schema) as any
-    expector.toGraphQLSchema(`
+    expect(schema).toGraphQLSchema(`
       type ListOfUser {
         totalCount: Int!
         nodes: [User!]!

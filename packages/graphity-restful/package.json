@@ -1,10 +1,11 @@
 {
-  "name": "graphity",
-  "version": "0.3.0",
-  "description": "GraphQL Typescript Framework",
+  "name": "@graphity/restful",
+  "version": "0.1.0",
+  "description": "GraphQL Schema to RestFUL API.",
   "keywords": [
+    "transformer",
     "graphql",
-    "api",
+    "restful",
     "typescript"
   ],
   "author": "Cris <corgidisco@gmail.com>",
@@ -21,6 +22,7 @@
   },
   "dependencies": {
     "core-js": "^3.1.2",
-    "graphql": "^14.0"
+    "express": "^4.17.1",
+    "graphql": "^14.0.0"
   }
 }

@@ -1,8 +1,0 @@
-/node_modules
-/lib
-
-.vscode
-.idea
-
-npm-debug.log*
-yarn-error.log

@@ -1,5 +1,4 @@
 /node_modules
-/lib
 
 .vscode
 .idea
@@ -7,8 +6,8 @@
 npm-debug.log*
 yarn-error.log
 
-/examples/**/node_modules
-/examples/**/.envrc
+/examples/*/node_modules
+/examples/*/.envrc
 
-/packages/*/**/*.d.ts
-/packages/*/**/*.js
+/packages/*/node_modules
+/packages/*/lib
