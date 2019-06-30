@@ -1,13 +1,13 @@
 import { isInputObjectType } from "graphql"
 import { ResolveDecoratorFactory } from "../interfaces/decorator"
-import { metadataMutationsMap } from "../metadata"
+import { MetadataMutationsMap } from "../metadata"
 
 
 export const Mutation: ResolveDecoratorFactory = (options = {}) => (target, property) => {
-  let resolves = metadataMutationsMap.get(target.constructor)
+  let resolves = MetadataMutationsMap.get(target.constructor)
   if (!resolves) {
     resolves = []
-    metadataMutationsMap.set(target.constructor, resolves)
+    MetadataMutationsMap.set(target.constructor, resolves)
   }
   const guard = options.guards || []
   const input = options.input
