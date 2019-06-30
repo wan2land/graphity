@@ -1,13 +1,13 @@
 import { isInputObjectType } from "graphql"
 import { ResolveDecoratorFactory } from "../interfaces/decorator"
-import { MetadataQueriesMap } from "../metadata"
+import { MetadataQueries } from "../metadata"
 
 
 export const Query: ResolveDecoratorFactory = (options = {}) => (target, property) => {
-  let resolves = MetadataQueriesMap.get(target.constructor)
+  let resolves = MetadataQueries.get(target.constructor)
   if (!resolves) {
     resolves = []
-    MetadataQueriesMap.set(target.constructor, resolves)
+    MetadataQueries.set(target.constructor, resolves)
   }
   const guard = options.guards || []
   const input = options.input

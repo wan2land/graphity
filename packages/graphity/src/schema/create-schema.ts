@@ -1,7 +1,7 @@
 import { GraphQLSchema, GraphQLString, isOutputType } from "graphql"
 
 import { ConstructType, GraphQLGuard, ResolverFactory } from "../interfaces/common"
-import { MetadataMutationsMap, MetadataQueriesMap, MetadataResolversMap } from "../metadata"
+import { MetadataMutations, MetadataQueries, MetadataResolvers } from "../metadata"
 import { createResolve } from "./create-resolve"
 import { ObjectTypeFactory } from "./object-type-factory"
 import { ObjectTypeFactoryContainer } from "./object-type-factory-container"
@@ -20,13 +20,13 @@ export function createSchema(
   const mutations = new ObjectTypeFactory("Mutation")
 
   for (const resolver of resolvers) {
-    const metadataResolver = MetadataResolversMap.get(resolver)
+    const metadataResolver = MetadataResolvers.get(resolver)
     if (!metadataResolver) {
       continue
     }
     const ctorOrType = metadataResolver.typeFactory ? metadataResolver.typeFactory(undefined) : GraphQLString
 
-    for (const query of MetadataQueriesMap.get(resolver) || []) {
+    for (const query of MetadataQueries.get(resolver) || []) {
       const fields = query.parent ? types.get(query.parent(undefined)).fields : queries.fields
       fields[query.name] = () => {
         const type = isOutputType(ctorOrType) ? ctorOrType : types.get(ctorOrType).factory()

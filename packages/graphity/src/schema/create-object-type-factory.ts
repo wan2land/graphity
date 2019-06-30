@@ -1,17 +1,18 @@
 import { ConstructType } from "../interfaces/common"
 import { GraphQLFieldConfigFactoryMap } from "../interfaces/graphql"
-import { MetadataEntitiesMap, MetadataFieldsMap } from "../metadata"
+import { MetadataEntities, MetadataFields } from "../metadata"
 import { ObjectTypeFactory } from "./object-type-factory"
 
 
 export function createObjectTypeFactory(entity: ConstructType<any>): ObjectTypeFactory {
-  const metadataEntity = MetadataEntitiesMap.get(entity)
-  const metadataFields = MetadataFieldsMap.get(entity) || []
+  const metadataEntity = MetadataEntities.get(entity)
+  const fields = MetadataFields.get(entity) || []
 
   return new ObjectTypeFactory(
     metadataEntity ? metadataEntity.name : entity.name,
     metadataEntity ? metadataEntity.description : undefined,
-    metadataFields.reduce((carry, field) => {
+    fields.reduce((carry, field) => {
+      // const resolver = field.guards.length ? createResolve(field.guards, ) : undefined
       const type = field.typeFactory(undefined)
       return Object.assign<GraphQLFieldConfigFactoryMap, GraphQLFieldConfigFactoryMap>(carry, {
         [field.name]: () => ({

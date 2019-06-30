@@ -1,8 +1,8 @@
 import { MetadataEntity, MetadataField, MetadataResolve, MetadataResolver } from "./interfaces/metadata"
 
-export const MetadataResolversMap = new Map<any, MetadataResolver>()
-export const MetadataQueriesMap = new Map<any, MetadataResolve[]>()
-export const MetadataMutationsMap = new Map<any, MetadataResolve[]>()
+export const MetadataResolvers = new Map<any, MetadataResolver>()
+export const MetadataQueries = new Map<any, MetadataResolve[]>()
+export const MetadataMutations = new Map<any, MetadataResolve[]>()
 
-export const MetadataEntitiesMap = new Map<any, MetadataEntity>()
-export const MetadataFieldsMap = new Map<any, MetadataField[]>()
+export const MetadataEntities = new Map<any, MetadataEntity>()
+export const MetadataFields = new Map<any, MetadataField[]>()

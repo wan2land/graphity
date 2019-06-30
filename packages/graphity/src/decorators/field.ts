@@ -1,12 +1,12 @@
 import { FieldDecoratorFactory } from "../interfaces/decorator"
-import { MetadataFieldsMap } from "../metadata"
+import { MetadataFields } from "../metadata"
 
 
 export const Field: FieldDecoratorFactory = (typeFactory, options = {}) => (target, property) => {
-  let fields = MetadataFieldsMap.get(target.constructor)
+  let fields = MetadataFields.get(target.constructor)
   if (!fields) {
     fields = []
-    MetadataFieldsMap.set(target.constructor, fields)
+    MetadataFields.set(target.constructor, fields)
   }
   const guard = options.guards || []
   fields.push({
