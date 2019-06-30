@@ -8,7 +8,7 @@ export class ObjectTypeFactory {
 
   public constructor(
     public name: string,
-    public description?: string,
+    public description?: string | null,
     public fields: GraphQLFieldConfigFactoryMap = {}
   ) {}
 

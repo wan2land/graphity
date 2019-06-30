@@ -9,10 +9,17 @@ import { ObjectTypeFactoryContainer } from "./object-type-factory-container"
 
 const defaultCreate: ResolverFactory = (ctor) => Promise.resolve(new ctor())
 
-export function createSchema(
-  resolvers: ConstructType<any>[] = [],
-  create: ResolverFactory = defaultCreate
-): GraphQLSchema {
+export interface CreateSchemaOptions {
+  resolvers: ConstructType<any>[]
+  guards: GraphQLGuard<any, any>[]
+  create: ResolverFactory
+}
+
+export function createSchema({
+  resolvers = [],
+  guards = [],
+  create = defaultCreate,
+}: Partial<CreateSchemaOptions>): GraphQLSchema {
 
   const types = new ObjectTypeFactoryContainer()
   const instances = new Map<any, any>()
@@ -32,10 +39,10 @@ export function createSchema(
         const type = isOutputType(ctorOrType) ? ctorOrType : types.get(ctorOrType).factory()
         return {
           type: query.returns ? query.returns(type) : type,
-          args: query.input,
+          args: query.input || undefined,
           description: query.description,
           resolve: createResolve(
-            ([] as GraphQLGuard[]).concat(metadataResolver.guards, query.guards),
+            ([] as GraphQLGuard<any, any>[]).concat(guards, metadataResolver.guards, query.guards),
             metadataResolver.target,
             query.target,
             instances,
@@ -45,16 +52,16 @@ export function createSchema(
       }
     }
 
-    for (const mutation of MetadataMutationsMap.get(resolver) || []) {
+    for (const mutation of MetadataMutations.get(resolver) || []) {
       const fields = mutation.parent ? types.get(mutation.parent(undefined)).fields : mutations.fields
       fields[mutation.name] = () => {
         const type = isOutputType(ctorOrType) ? ctorOrType : types.get(ctorOrType).factory()
         return {
           type: mutation.returns ? mutation.returns(type) : type,
-          args: mutation.input,
+          args: mutation.input || undefined,
           description: mutation.description,
           resolve: createResolve(
-            ([] as GraphQLGuard[]).concat(metadataResolver.guards, mutation.guards),
+            ([] as GraphQLGuard<any, any>[]).concat(guards, metadataResolver.guards, mutation.guards),
             metadataResolver.target,
             mutation.target,
             instances,

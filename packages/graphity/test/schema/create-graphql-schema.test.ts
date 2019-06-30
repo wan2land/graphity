@@ -1,5 +1,6 @@
 import { execute, parse, printSchema } from "graphql"
 
+import { GraphQLGuard } from "../../lib/interfaces/common"
 import { createSchema } from "../../lib/schema/create-schema"
 import { ArticleResolver } from "../stubs/resolvers/article-resolver"
 import { HomeResolver } from "../stubs/resolvers/home-resolver"
@@ -8,16 +9,18 @@ import { UserResolver } from "../stubs/resolvers/user-resolver"
 
 describe("testsuite of schema/create-graphql-schema", () => {
   it("test default schema", async () => {
-    const schema = createSchema()
+    const schema = createSchema({})
     expect(printSchema(schema)).toEqual(`type Query
 `)
   })
 
   it("test simple resolver", async () => {
-    const schema = createSchema([
-      ArticleResolver,
-      HomeResolver,
-    ])
+    const schema = createSchema({
+      resolvers: [
+        ArticleResolver,
+        HomeResolver,
+      ],
+    })
     // schema.
     expect(printSchema(schema)).toEqual(`"""article entity"""
 type Article {
@@ -82,9 +85,11 @@ type Query {
   })
 
   it("test recursive resolver", async () => {
-    const schema = await createSchema([
-      UserResolver,
-    ])
+    const schema = await createSchema({
+      resolvers: [
+        UserResolver,
+      ],
+    })
     expect(printSchema(schema)).toEqual(`type ListOfUser {
   count: Int!
   nodes: [User!]!
@@ -123,6 +128,7 @@ type User {
           }
         }
       }`),
+      contextValue: {},
     })).toEqual({
       data: {
         user: {
@@ -169,6 +175,117 @@ type User {
           },
         },
       }
+    })
+  })
+
+  it("test root guards", async () => {
+    let countOfGuardCall = 0
+    const contextStack: any[] = []
+    const testGuard: GraphQLGuard<{}, {request: string}> = (parent, args, ctx, info, next) => {
+      ;(ctx as any)[`g${countOfGuardCall}`] = true
+      contextStack.push(JSON.parse(JSON.stringify({
+        parent: parent || null,
+        ctx,
+      })))
+      countOfGuardCall++
+      return next(parent, args, ctx, info)
+    }
+    const schema = createSchema({
+      guards: [testGuard],
+      resolvers: [
+        UserResolver,
+      ],
+    })
+
+    const ctx = {$: true}
+    await execute({
+      schema,
+      document: parse(`query {
+        user(id: "1") {
+          id
+          users {
+            nodes {
+              id
+              users {
+                count
+                nodes {
+                  id
+                  name
+                }
+              }  
+            }
+          }
+        }
+      }`),
+      contextValue: ctx,
+    })
+
+    expect(contextStack).toEqual([
+      {
+        parent: null,
+        ctx: {$: true, g0: true},
+      },
+      {
+        parent: {id: "1", name: "name is 1"},
+        ctx: {$: true, g0: true, g1: true, stack: [
+          "user resolver 1",
+          "user resolver 2",
+          "user resolver - user",
+        ]},
+      },
+      {
+        parent: {id: "1_1", name: "name is 1_1"},
+        ctx: {$: true, g0: true, g1: true, g2: true, stack: [
+          "user resolver 1",
+          "user resolver 2",
+          "user resolver - user",
+          "user resolver 1",
+          "user resolver 2",
+          "user resolver - users 1",
+          "user resolver - users 2",
+        ]},
+      },
+      {
+        parent: {id: "1_2", name: "name is 1_2"},
+        ctx: {$: true, g0: true, g1: true, g2: true, g3: true, stack: [
+          "user resolver 1",
+          "user resolver 2",
+          "user resolver - user",
+          "user resolver 1",
+          "user resolver 2",
+          "user resolver - users 1",
+          "user resolver - users 2",
+          "user resolver 1",
+          "user resolver 2",
+          "user resolver - users 1",
+          "user resolver - users 2",
+        ]},
+      },
+    ])
+
+    expect(ctx).toEqual({
+      $: true,
+      g0: true,
+      stack: [
+        "user resolver 1",
+        "user resolver 2",
+        "user resolver - user",
+        "user resolver 1",
+        "user resolver 2",
+        "user resolver - users 1",
+        "user resolver - users 2",
+        "user resolver 1",
+        "user resolver 2",
+        "user resolver - users 1",
+        "user resolver - users 2",
+        "user resolver 1",
+        "user resolver 2",
+        "user resolver - users 1",
+        "user resolver - users 2"
+      ],
+      g1: true,
+      g2: true,
+      g3: true
     })
   })
 })

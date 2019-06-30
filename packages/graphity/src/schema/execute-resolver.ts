@@ -3,8 +3,8 @@ import { GraphQLGuard, GraphQLNext } from "../interfaces/common"
 
 
 export function executeResolver(
-  guards: GraphQLGuard[],
-  resolver: GraphQLNext,
+  guards: GraphQLGuard<any, any>[],
+  resolver: GraphQLNext<any, any>,
   parent: any,
   args: any,
   ctx: any,
@@ -14,8 +14,8 @@ export function executeResolver(
 }
 
 function execute<TArgs, TContext>(
-  guards: GraphQLGuard[],
-  resolver: GraphQLNext,
+  guards: GraphQLGuard<any, any>[],
+  resolver: GraphQLNext<any, any>,
   parent: any,
   args: TArgs,
   ctx: TContext,

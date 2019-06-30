@@ -4,7 +4,7 @@ import { executeResolver } from "./execute-resolver"
 
 
 export function createResolve(
-  guards: GraphQLGuard[],
+  guards: GraphQLGuard<any, any>[],
   ctor: any,
   method: (...args: any[]) => any,
   instances: Map<any, any>,

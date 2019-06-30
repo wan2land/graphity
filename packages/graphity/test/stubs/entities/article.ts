@@ -3,7 +3,7 @@ import { GraphQLID, GraphQLNonNull, GraphQLString } from "graphql"
 import { Field, GraphQLEntity } from "../../../lib"
 
 @GraphQLEntity({
-  description: "article entity"
+  description: "article entity",
 })
 export class Article {
   @Field(type => GraphQLNonNull(GraphQLID), {

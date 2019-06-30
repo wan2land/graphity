@@ -10,31 +10,31 @@ import {
 
 export interface MetadataResolver {
   target: any
-  typeFactory?: GraphQLResolverTypeFactory
-  guards: GraphQLGuard[]
+  typeFactory?: GraphQLResolverTypeFactory | null
+  guards: GraphQLGuard<any, any>[]
 }
 
 export interface MetadataResolve {
   target: (...args: any[]) => any
-  parent?: GraphQLParentTypeFactory
-  guards: GraphQLGuard[]
+  parent?: GraphQLParentTypeFactory | null
+  guards: GraphQLGuard<any, any>[]
   name: string
-  input?: GraphQLFieldConfigArgumentMap
-  returns?: GraphQLReturnFactory
-  description?: string
+  input?: GraphQLFieldConfigArgumentMap | null
+  returns?: GraphQLReturnFactory | null
+  description?: string | null
 }
 
 export interface MetadataEntity {
   target: any
   name: string
-  description?: string
+  description?: string | null
 }
 
 export interface MetadataField {
   target: any
   property: string | symbol
   typeFactory: GraphQLFieldTypeFactory
-  guards: GraphQLGuard[]
+  guards: GraphQLGuard<any, any>[]
   name: string
-  description?: string
+  description?: string | null
 }
