@@ -1,6 +1,6 @@
 import { GraphQLID, GraphQLNonNull, GraphQLObjectType, GraphQLString, printType } from "graphql"
 
-import { GraphQLListOf } from "../../../lib/graphql/types/list-of"
+import { GraphQLListOf } from "../../lib/types/graphql-list-of"
 
 
 const GraphQLUser = new GraphQLObjectType({
@@ -12,25 +12,25 @@ const GraphQLUser = new GraphQLObjectType({
   },
 })
 
-describe("testsuite graphql.types.list-of", () => {
+describe("testsuite of types/graphql-list-of", () => {
   it("test print type", () => {
     expect(printType(GraphQLListOf(GraphQLString))).toEqual(`type ListOfString {
-  totalCount: Int!
+  count: Int!
   nodes: [String!]!
 }`)
 
     expect(printType(GraphQLListOf(GraphQLString, "StringList"))).toEqual(`type StringList {
-  totalCount: Int!
+  count: Int!
   nodes: [String!]!
 }`)
 
     expect(printType(GraphQLListOf(GraphQLUser))).toEqual(`type ListOfUser {
-  totalCount: Int!
+  count: Int!
   nodes: [User!]!
 }`)
 
     expect(printType(GraphQLListOf(GraphQLUser, "UserList"))).toEqual(`type UserList {
-  totalCount: Int!
+  count: Int!
   nodes: [User!]!
 }`)
   })
