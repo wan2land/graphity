@@ -1,6 +1,7 @@
-import { GraphQLInt, GraphQLList, GraphQLNamedType, GraphQLNonNull, GraphQLObjectType } from "graphql"
+import { GraphQLInt, GraphQLNamedType, GraphQLNonNull, GraphQLObjectType } from "graphql"
 
 import { GraphQLNodeOf } from "./node-of"
+import { GraphQLNonNullList } from "./non-null-list"
 import { GraphQLPageInfo } from "./page-info"
 
 export const GraphQLEdgesOf = <P extends GraphQLNamedType>(type: P, name?: string) => {
@@ -14,7 +15,7 @@ export const GraphQLEdgesOf = <P extends GraphQLNamedType>(type: P, name?: strin
         type: GraphQLNonNull(GraphQLPageInfo),
       },
       edges: {
-        type: GraphQLNonNull(GraphQLList(GraphQLNonNull(GraphQLNodeOf(type)))),
+        type: GraphQLNonNullList(GraphQLNodeOf(type)),
       },
     },
   })
