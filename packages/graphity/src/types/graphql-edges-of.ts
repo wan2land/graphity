@@ -1,21 +1,20 @@
 import { GraphQLInt, GraphQLNamedType, GraphQLNonNull, GraphQLObjectType } from "graphql"
 
-import { GraphQLNodeOf } from "./node-of"
-import { GraphQLNonNullList } from "./non-null-list"
-import { GraphQLPageInfo } from "./page-info"
+import { GraphQLNonNullList } from "./graphql-non-null-list"
+import { GraphQLPageInfo } from "./graphql-page-info"
 
-export const GraphQLEdgesOf = <P extends GraphQLNamedType>(type: P, name?: string) => {
+export function GraphQLEdgesOf(type: GraphQLNamedType, name?: string) {
   return new GraphQLObjectType({
     name: name ? name : `EdgesOf${type.name}`,
     fields: {
-      totalCount: {
+      count: {
         type: GraphQLNonNull(GraphQLInt),
       },
       pageInfo: {
         type: GraphQLNonNull(GraphQLPageInfo),
       },
       edges: {
-        type: GraphQLNonNullList(GraphQLNodeOf(type)),
+        type: GraphQLNonNullList(type),
       },
     },
   })

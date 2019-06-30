@@ -3,7 +3,7 @@ import { GraphQLInputObjectType, GraphQLInt, GraphQLString } from "graphql"
 export const GraphQLInputPagination = new GraphQLInputObjectType({
   name: "InputPagination",
   fields: {
-    first: {
+    take: {
       type: GraphQLInt,
     },
     after: {

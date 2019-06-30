@@ -10,12 +10,12 @@ export * from "./interfaces/decorator"
 export * from "./interfaces/graphql"
 export * from "./interfaces/metadata"
 
-export * from "./graphql/types/input-pagination"
-export * from "./graphql/types/edges-of"
-export * from "./graphql/types/list-of"
-export * from "./graphql/types/page-info"
-export * from "./graphql/types/node-of"
-export * from "./graphql/types/jwt-token"
+export * from "./types/graphql-non-null-list"
+export * from "./types/graphql-input-pagination"
+export * from "./types/graphql-edges-of"
+export * from "./types/graphql-list-of"
+export * from "./types/graphql-page-info"
+export * from "./types/graphql-jwt-token"
 
 export * from "./graphql/helpers/list-of"
 
