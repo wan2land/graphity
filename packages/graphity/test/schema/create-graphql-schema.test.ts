@@ -1,6 +1,5 @@
 import { execute, parse, printSchema } from "graphql"
 
-import { GraphQLGuard } from "../../lib/interfaces/common"
 import { createSchema } from "../../lib/schema/create-schema"
 import { ArticleResolver } from "../stubs/resolvers/article-resolver"
 import { HomeResolver } from "../stubs/resolvers/home-resolver"
@@ -179,19 +178,16 @@ type User {
   })
 
   it("test root guards", async () => {
-    let countOfGuardCall = 0
-    const contextStack: any[] = []
-    const testGuard: GraphQLGuard<{}, {request: string}> = (parent, args, ctx, info, next) => {
-      ;(ctx as any)[`g${countOfGuardCall}`] = true
-      contextStack.push(JSON.parse(JSON.stringify({
-        parent: parent || null,
-        ctx,
-      })))
-      countOfGuardCall++
-      return next(parent, args, ctx, info)
-    }
     const schema = createSchema({
-      guards: [testGuard],
+      rootGuards: [
+        async (parent, args, ctx, info, next) => {
+          ctx.stack = ctx.stack || []
+          ctx.stack.push(`before root`)
+          const result = await next(parent, args, ctx, info)
+          ctx.stack.push(`after root (${JSON.stringify(result)})`)
+          return result
+        },
+      ],
       resolvers: [
         UserResolver,
       ],
@@ -220,72 +216,100 @@ type User {
       contextValue: ctx,
     })
 
-    expect(contextStack).toEqual([
-      {
-        parent: null,
-        ctx: {$: true, g0: true},
-      },
-      {
-        parent: {id: "1", name: "name is 1"},
-        ctx: {$: true, g0: true, g1: true, stack: [
-          "user resolver 1",
-          "user resolver 2",
-          "user resolver - user",
-        ]},
-      },
-      {
-        parent: {id: "1_1", name: "name is 1_1"},
-        ctx: {$: true, g0: true, g1: true, g2: true, stack: [
-          "user resolver 1",
-          "user resolver 2",
-          "user resolver - user",
-          "user resolver 1",
-          "user resolver 2",
-          "user resolver - users 1",
-          "user resolver - users 2",
-        ]},
-      },
-      {
-        parent: {id: "1_2", name: "name is 1_2"},
-        ctx: {$: true, g0: true, g1: true, g2: true, g3: true, stack: [
-          "user resolver 1",
-          "user resolver 2",
-          "user resolver - user",
-          "user resolver 1",
-          "user resolver 2",
-          "user resolver - users 1",
-          "user resolver - users 2",
-          "user resolver 1",
-          "user resolver 2",
-          "user resolver - users 1",
-          "user resolver - users 2",
-        ]},
-      },
-    ])
+    const user1 = JSON.stringify({id: "1", name: "name is 1"})
+    const user1users = JSON.stringify({count: 2, nodes: [
+      {id: "1_1", name: "name is 1_1"},
+      {id: "1_2", name: "name is 1_2"},
+    ]})
+    const user11users = JSON.stringify({count: 2, nodes: [
+      {id: "1_1_1", name: "name is 1_1_1"},
+      {id: "1_1_2", name: "name is 1_1_2"},
+    ]})
+    const user12users = JSON.stringify({count: 2, nodes: [
+      {id: "1_2_1", name: "name is 1_2_1"},
+      {id: "1_2_2", name: "name is 1_2_2"},
+    ]})
 
     expect(ctx).toEqual({
       $: true,
-      g0: true,
       stack: [
-        "user resolver 1",
-        "user resolver 2",
-        "user resolver - user",
-        "user resolver 1",
-        "user resolver 2",
-        "user resolver - users 1",
-        "user resolver - users 2",
-        "user resolver 1",
-        "user resolver 2",
-        "user resolver - users 1",
-        "user resolver - users 2",
-        "user resolver 1",
-        "user resolver 2",
-        "user resolver - users 1",
-        "user resolver - users 2"
+        `before root`,
+        `before user resolver1`,
+        `before user resolver2`,
+        `before user resolver - user`,
+        `after user resolver - user (${user1})`,
+        `after user resolver2 (${user1})`,
+        `after user resolver1 (${user1})`,
+        `after root (${user1})`,
+
+        `before user field - id`,
+        `after user field - id ("1")`,
+
+        `before user resolver1`,
+        `before user resolver2`,
+        `before user resolver - users1`,
+        `before user resolver - users2`,
+
+        `after user resolver - users2 (${user1users})`,
+        `after user resolver - users1 (${user1users})`,
+        `after user resolver2 (${user1users})`,
+        `after user resolver1 (${user1users})`,
+
+        `before user field - id`,
+        `after user field - id ("1_1")`,
+
+        `before user resolver1`,
+        `before user resolver2`,
+        `before user resolver - users1`,
+        `before user resolver - users2`,
+
+        `before user field - id`,
+        `after user field - id ("1_2")`,
+
+        `before user resolver1`,
+        `before user resolver2`,
+        `before user resolver - users1`,
+        `before user resolver - users2`,
+
+        `after user resolver - users2 (${user11users})`,
+        `after user resolver - users2 (${user12users})`,
+        `after user resolver - users1 (${user11users})`,
+        `after user resolver - users1 (${user12users})`,
+        `after user resolver2 (${user11users})`,
+        `after user resolver2 (${user12users})`,
+        `after user resolver1 (${user11users})`,
+        `after user resolver1 (${user12users})`,
+
+        `before user field - id`,
+        `after user field - id ("1_1_1")`,
+        `before user field - name1`,
+        `before user field - name2`,
+        `after user field - name2 ("name is 1_1_1")`,
+        `after user field - name1 ("name is 1_1_1")`,
+
+        `before user field - id`,
+        `after user field - id ("1_1_2")`,
+        `before user field - name1`,
+        `before user field - name2`,
+        `after user field - name2 ("name is 1_1_2")`,
+        `after user field - name1 ("name is 1_1_2")`,
+
+        `before user field - id`,
+        `after user field - id ("1_2_1")`,
+
+        `before user field - name1`,
+        `before user field - name2`,
+        `after user field - name2 ("name is 1_2_1")`,
+        `after user field - name1 ("name is 1_2_1")`,
+
+        `before user field - id`,
+        `after user field - id ("1_2_2")`,
+
+        `before user field - name1`,
+        `before user field - name2`,
+        `after user field - name2 ("name is 1_2_2")`,
+        `after user field - name1 ("name is 1_2_2")`,
       ],
-      g1: true,
-      g2: true,
-      g3: true
     })
   })
 })

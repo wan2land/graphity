@@ -5,15 +5,19 @@ import { User } from "../entities/user"
 
 @GraphQLResolver(returns => User, {
   guards: [
-    (parent, args, ctx, info, next) => {
+    async (parent, args, ctx, info, next) => {
       ctx.stack = ctx.stack || []
-      ctx.stack.push("user resolver 1")
-      return next(parent, args, ctx, info)
+      ctx.stack.push(`before user resolver1`)
+      const result = await next(parent, args, ctx, info)
+      ctx.stack.push(`after user resolver1 (${JSON.stringify(result)})`)
+      return result
     },
-    (parent, args, ctx, info, next) => {
+    async (parent, args, ctx, info, next) => {
       ctx.stack = ctx.stack || []
-      ctx.stack.push("user resolver 2")
-      return next(parent, args, ctx, info)
+      ctx.stack.push(`before user resolver2`)
+      const result = await next(parent, args, ctx, info)
+      ctx.stack.push(`after user resolver2 (${JSON.stringify(result)})`)
+      return result
     },
   ]
 })
@@ -23,10 +27,12 @@ export class UserResolver {
     input: {
       id: {type: GraphQLNonNull(GraphQLID)},
     },
-    guards: (parent, args, ctx, info, next) => {
+    guards: async (parent, args, ctx, info, next) => {
       ctx.stack = ctx.stack || []
-      ctx.stack.push("user resolver - user")
-      return next(parent, args, ctx, info)
+      ctx.stack.push(`before user resolver - user`)
+      const result = await next(parent, args, ctx, info)
+      ctx.stack.push(`after user resolver - user (${JSON.stringify(result)})`)
+      return result
     },
   })
   public async user(parent: null, input: {id: string}) {
@@ -39,15 +45,19 @@ export class UserResolver {
   @Query({
     parent: type => User,
     guards: [
-      (parent, args, ctx, info, next) => {
+      async (parent, args, ctx, info, next) => {
         ctx.stack = ctx.stack || []
-        ctx.stack.push("user resolver - users 1")
-        return next(parent, args, ctx, info)
+        ctx.stack.push(`before user resolver - users1`)
+        const result = await next(parent, args, ctx, info)
+        ctx.stack.push(`after user resolver - users1 (${JSON.stringify(result)})`)
+        return result
       },
-      (parent, args, ctx, info, next) => {
+      async (parent, args, ctx, info, next) => {
         ctx.stack = ctx.stack || []
-        ctx.stack.push("user resolver - users 2")
-        return next(parent, args, ctx, info)
+        ctx.stack.push(`before user resolver - users2`)
+        const result = await next(parent, args, ctx, info)
+        ctx.stack.push(`after user resolver - users2 (${JSON.stringify(result)})`)
+        return result
       },
     ],
     returns: user => GraphQLNonNull(GraphQLListOf(user as GraphQLObjectType)),

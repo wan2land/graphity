@@ -11,13 +11,17 @@ const defaultCreate: ResolverFactory = (ctor) => Promise.resolve(new ctor())
 
 export interface CreateSchemaOptions {
   resolvers: ConstructType<any>[]
-  guards: GraphQLGuard<any, any>[]
+  rootGuards: GraphQLGuard<any, any>[]
+  queryGuards: GraphQLGuard<any, any>[]
+  mutationGuards: GraphQLGuard<any, any>[]
   create: ResolverFactory
 }
 
 export function createSchema({
   resolvers = [],
-  guards = [],
+  rootGuards = [],
+  queryGuards = [],
+  mutationGuards = [],
   create = defaultCreate,
 }: Partial<CreateSchemaOptions>): GraphQLSchema {
 
@@ -34,15 +38,18 @@ export function createSchema({
     const ctorOrType = metadataResolver.typeFactory ? metadataResolver.typeFactory(undefined) : GraphQLString
 
     for (const query of MetadataQueries.get(resolver) || []) {
-      const fields = query.parent ? types.get(query.parent(undefined)).fields : queries.fields
-      fields[query.name] = () => {
+      const parent = query.parent ? types.get(query.parent(undefined)) : queries
+      const guards = parent === queries
+        ? ([] as GraphQLGuard<any, any>[]).concat(rootGuards, queryGuards, metadataResolver.guards, query.guards)
+        : ([] as GraphQLGuard<any, any>[]).concat(metadataResolver.guards, query.guards)
+      parent.fields[query.name] = () => {
         const type = isOutputType(ctorOrType) ? ctorOrType : types.get(ctorOrType).factory()
         return {
           type: query.returns ? query.returns(type) : type,
           args: query.input || undefined,
           description: query.description,
           resolve: createResolve(
-            ([] as GraphQLGuard<any, any>[]).concat(guards, metadataResolver.guards, query.guards),
+            guards,
             metadataResolver.target,
             query.target,
             instances,
@@ -53,15 +60,18 @@ export function createSchema({
     }
 
     for (const mutation of MetadataMutations.get(resolver) || []) {
-      const fields = mutation.parent ? types.get(mutation.parent(undefined)).fields : mutations.fields
-      fields[mutation.name] = () => {
+      const parent = mutation.parent ? types.get(mutation.parent(undefined)) : mutations
+      const guards = parent === mutations
+        ? ([] as GraphQLGuard<any, any>[]).concat(rootGuards, mutationGuards, metadataResolver.guards, mutation.guards)
+        : ([] as GraphQLGuard<any, any>[]).concat(metadataResolver.guards, mutation.guards)
+      parent.fields[mutation.name] = () => {
         const type = isOutputType(ctorOrType) ? ctorOrType : types.get(ctorOrType).factory()
         return {
           type: mutation.returns ? mutation.returns(type) : type,
           args: mutation.input || undefined,
           description: mutation.description,
           resolve: createResolve(
-            ([] as GraphQLGuard<any, any>[]).concat(guards, metadataResolver.guards, mutation.guards),
+            guards,
             metadataResolver.target,
             mutation.target,
             instances,
