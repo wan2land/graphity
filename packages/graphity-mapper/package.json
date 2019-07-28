@@ -1,0 +1,24 @@
+{
+  "name": "@graphity/mapper",
+  "version": "0.0.1",
+  "description": "Decorator-based transformer of plain object to class constructors for Javascript(& Typescript).",
+  "keywords": [
+    "serialization",
+    "serialize",
+    "object-to-class",
+    "datamapper",
+    "data mapper",
+    "typescript"
+  ],
+  "author": "Cris <corgidisco@gmail.com>",
+  "license": "MIT",
+  "repository": "https://github.com/corgidisco/graphity/tree/master/packages/graphity-mapper",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "build": "rimraf ./lib && tsc && babel ./src --out-dir ./lib --extensions \".ts\" --source-maps inline"
+  },
+  "dependencies": {
+    "core-js": "^3.1.4"
+  }
+}
