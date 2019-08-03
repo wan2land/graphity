@@ -27,14 +27,16 @@ export function createRepositoryOptions<TEntity>(ctor: ConstructType<TEntity>): 
     throw new Error(`this is not entity ${ctor.name}`)
   }
   const id = MetadataIds.get(ctor)
-  const columns = MetadataColumns.get(ctor)
+  const columns = (MetadataColumns.get(ctor) || []) as MetadataColumn<TEntity>[]
   const idColumn = columns && columns.find(column => column.property === (id && id.property))
-
   return {
     ctor,
     table: entity.name,
-    id: idColumn && idColumn.name,
-    columns: ((MetadataColumns.get(ctor) || []) as MetadataColumn<TEntity>[]).map(({ property, type, name, nullable, default: def, transformers }) => ({
+    id: idColumn && {
+      property: idColumn.property,
+      sourceKey: idColumn.name,
+    },
+    columns: columns.map(({ property, type, name, nullable, default: def, transformers }) => ({
       property,
       sourceKey: name,
       nullable,

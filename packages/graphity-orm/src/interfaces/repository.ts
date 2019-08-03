@@ -2,7 +2,10 @@ import { MapperOptions } from '@graphity/mapper'
 
 export interface RepositoryOptions<TEntity> extends MapperOptions<TEntity> {
   table: string
-  id?: string
+  id?: {
+    property: keyof TEntity
+    sourceKey: string
+  }
 }
 
 export interface Repository<TEntity> {
@@ -10,7 +13,7 @@ export interface Repository<TEntity> {
   hydrate<P extends {}>(rows: P[]): TEntity[]
   hydrate<P extends {}>(rows: P): TEntity
 
-  findById(id: (string | number | symbol)): Promise<TEntity>
+  findById(id: (string | number | symbol)): Promise<TEntity | null>
   findByIds(ids: (string | number | symbol)[]): Promise<TEntity[]>
 
   // find

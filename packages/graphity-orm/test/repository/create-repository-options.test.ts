@@ -5,8 +5,8 @@ import { Entity, Column, Id } from '../../lib'
 
 @Entity({ name: 'articles' })
 class Article {
-  @Id() @Column({ type: 'int' })
-  public id!: number
+  @Id() @Column({ name: 'id', type: 'int' })
+  public identifier!: number
 
   @Column({ type: 'string' })
   public title!: string
@@ -22,11 +22,14 @@ describe('testsuite of repository/create-repository-options', () => {
   it('test stubs/article', () => {
     expect(createRepositoryOptions(Article)).toEqual({
       ctor: Article,
-      id: 'id',
+      id: {
+        property: 'identifier',
+        sourceKey: 'id',
+      },
       table: 'articles',
       columns: [
         {
-          property: 'id',
+          property: 'identifier',
           sourceKey: 'id',
           nullable: false,
           transformers: [Transformer.INT],

@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@graphity/mapper": "0.0.2",
-    "@stdjs/database": "^2.0.0-alpha.0",
+    "@stdjs/database": "^2.0.0-alpha.1",
     "core-js": "^3.1.2",
     "dataloader": "^1.4.0"
   },
