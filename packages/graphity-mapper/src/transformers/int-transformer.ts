@@ -1,4 +1,4 @@
-import { ValueTransformer } from '../interfaces/relater'
+import { ValueTransformer } from '../interfaces/mapper'
 
 export const intTransformer: ValueTransformer<any, number> = {
   to(source: any): number {

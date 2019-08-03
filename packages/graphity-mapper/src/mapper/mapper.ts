@@ -1,4 +1,4 @@
-import { RelaterOptions, ValueTransformer } from '../interfaces/relater'
+import { MapperOptions, ValueTransformer } from '../interfaces/mapper'
 import { MaybeArray } from '../interfaces/utils'
 
 function applyTransformTo(value: any, transformers: ValueTransformer<any>[]) {
@@ -27,7 +27,7 @@ function applyTransformFrom(value: any, transformers: ValueTransformer<any>[]) {
 
 export class Mapper<TEntity, TSource = any> {
 
-  public constructor(public readonly options: RelaterOptions<TEntity>) {
+  public constructor(public readonly options: MapperOptions<TEntity>) {
   }
 
   public toEntity(rows: TSource[]): TEntity[]

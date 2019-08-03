@@ -1,6 +1,6 @@
 import { ConstructType, MaybeFactory } from './utils'
 
-export interface RelaterOptions<T> {
+export interface MapperOptions<T> {
   ctor: ConstructType<T>
   columns: {
     property: keyof T
