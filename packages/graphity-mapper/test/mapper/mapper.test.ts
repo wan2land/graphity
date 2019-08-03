@@ -1,13 +1,43 @@
-import { createOptions } from '../../lib/mapper/create-options'
+import { isPlainObject } from 'lodash'
+
 import { Mapper } from '../../lib/mapper/mapper'
+import { intTransformer } from '../../lib/transformers/int-transformer'
+import { stringTransformer } from '../../lib/transformers/string-transformer'
 import { Article } from '../stubs/article'
 import { Something } from '../stubs/something'
-import { isPlainObject } from 'lodash'
 
 
 describe('testsuite of mapper/mapper', () => {
 
-  const mapper = new Mapper(createOptions(Article))
+  const mapper = new Mapper({
+    ctor: Article,
+    columns: [
+      {
+        property: 'id',
+        sourceKey: 'id',
+        nullable: false,
+        transformers: [intTransformer],
+      },
+      {
+        property: 'title',
+        sourceKey: 'title',
+        nullable: false,
+        transformers: [stringTransformer],
+      },
+      {
+        property: 'contents',
+        sourceKey: 'contents',
+        nullable: true,
+        transformers: [stringTransformer],
+      },
+      {
+        property: 'createdAt',
+        sourceKey: 'created_at',
+        nullable: false,
+        transformers: [stringTransformer],
+      },
+    ],
+  })
 
   it('test toEntity one', () => {
 

@@ -1,6 +1,6 @@
 {
   "name": "@graphity/mapper",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Decorator-based transformer of plain object to class constructors for Javascript(& Typescript).",
   "keywords": [
     "serialization",
