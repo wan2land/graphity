@@ -1,4 +1,4 @@
-import { ValueTransformer } from '../interfaces/mapper'
+import { ValueTransformer } from '../../interfaces/mapper'
 
 export const arrayTransformer: ValueTransformer<any, any[]> = {
   to(source: any): any[] {

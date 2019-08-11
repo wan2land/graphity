@@ -1,9 +1,11 @@
-import { ConstructType, Mapper } from '@graphity/mapper'
 import { Connection as OriginConnection, QueryResult, Row, TransactionHandler } from '@stdjs/database'
 
 import { MysqlRepository } from '../dialects/mysql/repository'
 import { Repository } from '../interfaces/repository'
+import { ConstructType } from '../interfaces/utils'
+import { Mapper } from '../mapper/mapper'
 import { createRepositoryOptions } from '../repository/create-repository-options'
+
 
 export interface ConnectionOptions {
   dialect: string
@@ -43,9 +45,9 @@ export class Connection implements OriginConnection {
       return repository
     }
     const options = createRepositoryOptions(entity)
-    const mapper = new Mapper(options)
+    const mapper = new Mapper<TEntity>(options)
     if (this.options.dialect === 'mysql') {
-      return new MysqlRepository(this, mapper, options)
+      return new MysqlRepository<TEntity>(this, mapper, options)
     }
     throw new Error(`unknown dialect(${this.options.dialect})`)
   }

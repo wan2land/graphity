@@ -1,4 +1,5 @@
-import { MaybeFactory, ValueTransformer } from '@graphity/mapper'
+import { ValueTransformer } from './mapper'
+import { MaybeFactory } from './utils'
 
 export type ColumnType = 'any'
 | 'array'
@@ -8,6 +9,10 @@ export type ColumnType = 'any'
 | 'boolean'
 | 'object'
 
+export interface EntityDecoratorOptions {
+  name?: string
+}
+
 export interface ColumnDecoratorOptions {
   name?: string
   type?: ColumnType
@@ -16,12 +21,8 @@ export interface ColumnDecoratorOptions {
   transformer?: ValueTransformer | ValueTransformer[]
 }
 
+export type EntityDecoratorFactory = (options?: EntityDecoratorOptions) => ClassDecorator
+
 export type ColumnDecoratorFactory = (options?: ColumnDecoratorOptions) => PropertyDecorator
 
-export interface EntityDecoratorOptions {
-  name?: string
-}
-
 export type IdDecoratorFactory = () => PropertyDecorator
-
-export type EntityDecoratorFactory = (options?: EntityDecoratorOptions) => ClassDecorator

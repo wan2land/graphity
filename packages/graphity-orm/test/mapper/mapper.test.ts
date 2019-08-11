@@ -1,8 +1,8 @@
 import { isPlainObject } from 'lodash'
 
 import { Mapper } from '../../lib/mapper/mapper'
-import { intTransformer } from '../../lib/transformers/int-transformer'
-import { stringTransformer } from '../../lib/transformers/string-transformer'
+import { intTransformer } from '../../lib/mapper/transformers/int-transformer'
+import { stringTransformer } from '../../lib/mapper/transformers/string-transformer'
 import { Article } from '../stubs/article'
 import { Something } from '../stubs/something'
 

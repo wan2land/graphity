@@ -1,6 +1,6 @@
-import { MaybeFactory, ValueTransformer } from '@graphity/mapper'
-
 import { ColumnType } from './decorator'
+import { ValueTransformer } from './mapper'
+import { MaybeFactory } from './utils'
 
 
 export interface MetadataColumn<T> {

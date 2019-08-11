@@ -1,4 +1,4 @@
-import { ValueTransformer } from '../interfaces/mapper'
+import { ValueTransformer } from '../../interfaces/mapper'
 
 export const stringTransformer: ValueTransformer<any, string> = {
   to(source: any): string {

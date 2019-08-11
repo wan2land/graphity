@@ -1,4 +1,6 @@
-import { MapperOptions } from '@graphity/mapper'
+import { MapperOptions } from './mapper'
+
+export type FindCondition<TEntity> = {[name in keyof TEntity]: any}
 
 export interface RepositoryOptions<TEntity> extends MapperOptions<TEntity> {
   table: string

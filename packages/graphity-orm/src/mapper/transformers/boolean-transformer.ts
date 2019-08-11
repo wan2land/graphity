@@ -1,4 +1,4 @@
-import { ValueTransformer } from '../interfaces/mapper'
+import { ValueTransformer } from '../../interfaces/mapper'
 
 export const booleanTransformer: ValueTransformer<any, boolean> = {
   to(source: any): boolean {
