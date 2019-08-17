@@ -11,9 +11,12 @@
     "ninject",
     "typescript"
   ],
-  "author": "Cris <corgidisco@gmail.com>",
+  "author": "Changwan Jun <wan2land@gmail.com>",
   "license": "MIT",
-  "repository": "https://github.com/corgidisco/stdjs/tree/master/packages/di",
+  "repository": "https://github.com/wan2land/graphity/tree/master/packages/graphity-container",
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
@@ -21,5 +24,6 @@
   },
   "dependencies": {
     "core-js": "^3.2.1"
-  }
+  },
+  "gitHead": "bf2cafb0a9e5336c91a0d49656a4f1412927f0de"
 }

@@ -7,9 +7,9 @@
     "api",
     "typescript"
   ],
-  "author": "Cris <corgidisco@gmail.com>",
+  "author": "Changwan Jun <wan2land@gmail.com>",
   "license": "MIT",
-  "repository": "https://github.com/corgidisco/graphity/tree/master/packages/graphity",
+  "repository": "https://github.com/wan2land/graphity/tree/master/packages/graphity",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
@@ -19,5 +19,5 @@
     "core-js": "^3.2.1",
     "graphql": "^14.4.2"
   },
-  "gitHead": "6acc8f19a417cda5ebfcd4f8a9eed133304eb411"
+  "gitHead": "bf2cafb0a9e5336c91a0d49656a4f1412927f0de"
 }

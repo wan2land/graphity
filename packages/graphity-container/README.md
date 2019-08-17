@@ -1,32 +1,28 @@
-# STDJS - DI
+# Graphity - Container
 
-[![Build](https://img.shields.io/travis/corgidisco/stdjs-di.svg)](https://travis-ci.org/corgidisco/stdjs-di)
-[![Downloads](https://img.shields.io/npm/dt/@stdjs/di.svg)](https://npmcharts.com/compare/@stdjs/di?minimal=true)
-[![Version](https://img.shields.io/npm/v/@stdjs/di.svg)](https://www.npmjs.com/package/@stdjs/di)
-[![License](https://img.shields.io/npm/l/@stdjs/di.svg)](https://www.npmjs.com/package/@stdjs/di)
+[![Downloads](https://img.shields.io/npm/dt/@graphity/container.svg)](https://npmcharts.com/compare/@graphity/container?minimal=true)
+[![Version](https://img.shields.io/npm/v/@graphity/container.svg)](https://www.npmjs.com/package/@graphity/container)
+[![License](https://img.shields.io/npm/l/@graphity/container.svg)](https://www.npmjs.com/package/@graphity/container)
 
-[![dependencies Status](https://img.shields.io/david/corgidisco/stdjs-di.svg)](https://david-dm.org/corgidisco/stdjs-di)
-[![devDependencies Status](https://img.shields.io/david/dev/corgidisco/stdjs-di.svg)](https://david-dm.org/corgidisco/stdjs-di?type=dev)
-
-[![NPM](https://nodei.co/npm/@stdjs/di.png)](https://www.npmjs.com/package/@stdjs/di)
+[![NPM](https://nodei.co/npm/@graphity/container.png)](https://www.npmjs.com/package/@graphity/container)
 
 Super slim DI(Depdency Injection) container with Async/Promise for Javascript(& Typescript).
 
 ## Installation
 
 ```bash
-npm install @stdjs/di --save
+npm install @graphity/container --save
 ```
 
 ## Usage
 
 ```javascript
-const di = require("@stdjs/di")
-// or import * as di from "@stdjs/di"
+const { Container } = require("@graphity/container")
+// or import { Container } from "@graphity/container"
 
-const container = di.create()
-// or const container = new di.Container()
+const container = new Container()
 ```
+
 
 ### Bind simple value
 
@@ -61,39 +57,42 @@ console.log(await container.get("promise1") === await container.get("promise1"))
 console.log(await container.get("promise2") === await container.get("promise2")) // true
 ```
 
-### Bind factory
+### Bind resolver
 
 ```ts
-container.factory("factory1", () => ({message: "this is factory"}))
-container.factory("factory2", () => {
+container.resolver("resolver1", () => ({message: "this is resolver"}))
+container.resolver("resolver2", () => {
   return new Promise(resolve => {
-    resolve({message: "this is promise factory"})
+    resolve({message: "this is promise resolver"})
   })
 })
-container.factory("factory3", async () => {
+container.resolver("resolver3", async () => {
   sleep(500)
-  return {message: "this is async factory"}
+  return {message: "this is async resolver"}
 })
 
-console.log(await container.get("factory1")) // {message: "this is factory"}
-console.log(await container.get("factory2")) // {message: "this is promise factory"}
-console.log(await container.get("factory3")) // {message: "this is async factory"}
+console.log(await container.get("resolver1")) // {message: "this is resolver"}
+console.log(await container.get("resolver2")) // {message: "this is promise resolver"}
+console.log(await container.get("resolver3")) // {message: "this is async resolver"}
 ```
 
 ### Bind class
 
 ```ts
+import { Container, Inject } from "@graphity/container"
+
 class Driver {
 }
 
 class Connection {
-  public constructor(@di.Inject("driver") public driver: Driver) {
+  public constructor(@Inject("driver") public driver: Driver) {
   }
 }
 container.bind("driver", Driver)
 container.bind("connection", Connection)
 
 const connection = await container.get<Connection>("connection")
+
 console.log(connection) // Connection { driver: Driver {} }
 console.log(connection.driver) // Driver {}
 ```
@@ -103,44 +102,31 @@ console.log(connection.driver) // Driver {}
 Descriptor is very useful if you using factory or bind. this is example of singleton.
 
 ```ts
-container.factory("factory.normal", () => ({message: "this is factory"}))
-container.factory("factory.singleton", () => ({message: "this is factory with singleton"})).singleton()
+container.resolver("resolver.normal", () => ({message: "this is resolver"}))
+container.resolver("resolver.factory", () => ({message: "this is resolver with factory"})).factory()
 
 container.bind("class.normal", Foo)
-container.bind("class.singleton", Foo).singleton()
-
-// not same
-console.log(await container.get("factory.normal") === await container.get("factory.normal")) // false
-console.log(await container.get("class.normal") === await container.get("class.normal")) // false
+container.bind("class.factory", Foo).factory()
 
 // always same
-console.log(await container.get("factory.singleton") === await container.get("factory.singleton")) // true
-console.log(await container.get("class.singleton") === await container.get("class.singleton")) // true
-```
+console.log(await container.get("resolver.normal") === await container.get("resolver.normal")) // true
+console.log(await container.get("class.normal") === await container.get("class.normal")) // true
 
-### After descriptor
-
-```ts
-
-container
-  .factory("foo", () => ({message: "this is origin maessage."}))
-  .after(async (context) => {
-    await sleep(300)
-    context.message = context.message + " and something appended."
-    return context
-  })
-
-console.log(await container.get("foo")) // {message: "this is origin maessage. and something appended."}
+// not same
+console.log(await container.get("resolver.factory") === await container.get("resolver.factory")) // false
+console.log(await container.get("class.factory") === await container.get("class.factory")) // false
 ```
 
 ### create
 
 ```ts
+import { Container, Inject } from "@graphity/container"
+
 class Connection {
 }
 
 class Controller {
-  public constructor(@di.Inject("connection") public connection: Connection) {
+  public constructor(@Inject("connection") public connection: Connection) {
   }
 }
 
@@ -154,11 +140,13 @@ console.log(controller) // Controller { connection: Connection {} }
 ### invoke
 
 ```ts
+import { Container, Inject } from "@graphity/container"
+
 class Connection {
 }
 
 class Controller {
-  public retrieve(@di.Inject("connection") connection: Connection) {
+  public retrieve(@Inject("connection") connection: Connection) {
     return connection
   }
 }
