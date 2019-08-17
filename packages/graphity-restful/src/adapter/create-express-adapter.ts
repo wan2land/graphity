@@ -1,8 +1,8 @@
-import { Request, RequestHandler, Router } from "express"
-import { GraphQLSchema } from "graphql"
+import { Request, RequestHandler, Router } from 'express'
+import { GraphQLSchema } from 'graphql'
 
-import { CreateOptions } from "../interfaces/restful"
-import { GraphQLExecutor } from "../restful/graphql-executor"
+import { CreateOptions } from '../interfaces/restful'
+import { GraphQLExecutor } from '../restful/graphql-executor'
 
 const defaultTransform = (data: any) => data
 
@@ -11,19 +11,19 @@ export function createExpressAdapter(schema: GraphQLSchema, options: CreateOptio
     schema,
     rootValue: options.rootValue,
   })
-  const context = options.context || ((request) => ({request}))
+  const context = options.context || ((request) => ({ request }))
   const router = Router()
   for (const endpoint of options.endpoints || []) {
-    const method = endpoint.method.toLowerCase() as "get" | "post" | "delete" | "put"
-    const path = endpoint.path[0] === "/" ? endpoint.path : `/${endpoint.path}`
+    const method = endpoint.method.toLowerCase() as 'get' | 'post' | 'delete' | 'put'
+    const path = endpoint.path[0] === '/' ? endpoint.path : `/${endpoint.path}`
     router[method](path, async (req, res) => {
       try {
-        const {document, values, transform} = await endpoint.query(req)
+        const { document, values, transform } = await endpoint.query(req)
         const result = await executor.execute(document, values, context(req))
         res.json({
           data: (transform || defaultTransform)(result),
         })
-      } catch(error) {
+      } catch (error) {
         res.status(500).json({
           message: error.message,
           error,

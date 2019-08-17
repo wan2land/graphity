@@ -1,4 +1,4 @@
-import { MetadataEntity, MetadataField, MetadataResolve, MetadataResolver } from "./interfaces/metadata"
+import { MetadataEntity, MetadataField, MetadataResolve, MetadataResolver } from './interfaces/metadata'
 
 export const MetadataResolvers = new Map<any, MetadataResolver>()
 export const MetadataQueries = new Map<any, MetadataResolve[]>()

@@ -1,6 +1,6 @@
-import { ListOf } from "../../interfaces/graphql"
+import { ListOf } from '../../interfaces/graphql'
 
-export function listOf<P>(nodes: P[]): ListOf<P> {
+export function listOf<T>(nodes: T[]): ListOf<T> {
   return {
     count: nodes.length,
     nodes,

@@ -1,9 +1,9 @@
-import { GraphQLResolveInfo } from "graphql"
+import { GraphQLResolveInfo } from 'graphql'
 
 
-export type ConstructType<P> = (new (...args: any[]) => P) | Function
+export type ConstructType<T> = (new (...args: any[]) => T) | Function
 
-export type MaybeArray<P> = P | P[]
+export type MaybeArray<T> = T | T[]
 
 export type ResolverFactory = (ctor: new (...args: any[]) => any) => Promise<any>
 

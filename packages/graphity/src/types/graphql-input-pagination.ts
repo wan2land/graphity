@@ -1,7 +1,7 @@
-import { GraphQLInputObjectType, GraphQLInt, GraphQLString } from "graphql"
+import { GraphQLInputObjectType, GraphQLInt, GraphQLString } from 'graphql'
 
 export const GraphQLInputPagination = new GraphQLInputObjectType({
-  name: "InputPagination",
+  name: 'InputPagination',
   fields: {
     take: {
       type: GraphQLInt,

@@ -1,9 +1,9 @@
-import { GraphQLNonNull, GraphQLObjectType, GraphQLString } from "graphql"
+import { GraphQLNonNull, GraphQLObjectType, GraphQLString } from 'graphql'
 
 export const GraphQLJwtToken = new GraphQLObjectType({
-  name: "JwtToken",
+  name: 'JwtToken',
   fields: {
-    token: {type: GraphQLNonNull(GraphQLString)},
-    refreshToken: {type: GraphQLString}, // optional
+    token: { type: GraphQLNonNull(GraphQLString) },
+    refreshToken: { type: GraphQLString }, // optional
   },
 })

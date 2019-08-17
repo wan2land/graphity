@@ -1,7 +1,7 @@
-import { GraphQLInt, GraphQLNamedType, GraphQLNonNull, GraphQLObjectType } from "graphql"
+import { GraphQLInt, GraphQLNamedType, GraphQLNonNull, GraphQLObjectType } from 'graphql'
 
-import { GraphQLNonNullList } from "./graphql-non-null-list"
-import { GraphQLPageInfo } from "./graphql-page-info"
+import { GraphQLNonNullList } from './graphql-non-null-list'
+import { GraphQLPageInfo } from './graphql-page-info'
 
 export function GraphQLEdgesOf(type: GraphQLNamedType, name?: string) {
   return new GraphQLObjectType({

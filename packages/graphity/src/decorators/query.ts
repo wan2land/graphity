@@ -1,6 +1,6 @@
-import { isInputObjectType } from "graphql"
-import { ResolveDecoratorFactory } from "../interfaces/decorator"
-import { MetadataQueries } from "../metadata"
+import { isInputObjectType } from 'graphql'
+import { ResolveDecoratorFactory } from '../interfaces/decorator'
+import { MetadataQueries } from '../metadata'
 
 
 export const Query: ResolveDecoratorFactory = (options = {}) => (target, property) => {
@@ -16,7 +16,7 @@ export const Query: ResolveDecoratorFactory = (options = {}) => (target, propert
     parent: options.parent,
     guards: Array.isArray(guard) ? guard : [guard],
     input: isInputObjectType(input) ? input.getFields() : input,
-    name: options.name || ((typeof property === "string") ? property : property.toString()),
+    name: options.name || (typeof property === 'string' ? property : property.toString()),
     returns: options.returns,
     description: options.description,
   })

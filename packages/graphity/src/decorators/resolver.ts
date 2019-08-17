@@ -1,5 +1,5 @@
-import { ResolverDecoratorFactory } from "../interfaces/decorator"
-import { MetadataResolvers } from "../metadata"
+import { ResolverDecoratorFactory } from '../interfaces/decorator'
+import { MetadataResolvers } from '../metadata'
 
 
 export const GraphQLResolver: ResolverDecoratorFactory = (typeFactory, options = {}) => (target) => {

@@ -1,4 +1,4 @@
-import { DocumentNode, execute, GraphQLSchema } from "graphql"
+import { DocumentNode, execute, GraphQLSchema } from 'graphql'
 
 
 export interface GraphQLExecutorOptions {
@@ -6,7 +6,7 @@ export interface GraphQLExecutorOptions {
   rootValue?: any
 }
 
-export class GraphQLExecutor<R> {
+export class GraphQLExecutor {
 
   public constructor(public options: GraphQLExecutorOptions) {
   }
@@ -20,7 +20,7 @@ export class GraphQLExecutor<R> {
       values
     )
     if (result.errors) {
-      throw Object.assign(new Error("error occured"), {errors: result.errors})
+      throw Object.assign(new Error('error occured'), { errors: result.errors })
     }
     return result.data || null
   }

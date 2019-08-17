@@ -1,7 +1,7 @@
-import { GraphQLFieldResolver } from "graphql"
+import { GraphQLFieldResolver } from 'graphql'
 
-import { GraphQLGuard } from "../interfaces/common"
-import { executeResolver } from "./execute-resolver"
+import { GraphQLGuard } from '../interfaces/common'
+import { executeResolver } from './execute-resolver'
 
 
 export function createFieldResolve(property: string, guards: GraphQLGuard<any, any>[]): GraphQLFieldResolver<any, any> {

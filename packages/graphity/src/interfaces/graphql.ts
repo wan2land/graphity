@@ -1,14 +1,14 @@
-import { GraphQLFieldConfig } from "graphql"
+import { GraphQLFieldConfig } from 'graphql'
 
-export interface ListOf<P> {
+export interface ListOf<T> {
   count: number
-  nodes: P[]
+  nodes: T[]
 }
 
-export interface EdgesOf<P> {
+export interface EdgesOf<T> {
   count: number
   pageInfo: PageInfo
-  edges: P[]
+  edges: T[]
 }
 
 export interface PageInfo {

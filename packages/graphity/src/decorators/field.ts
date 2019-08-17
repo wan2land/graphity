@@ -1,5 +1,5 @@
-import { FieldDecoratorFactory } from "../interfaces/decorator"
-import { MetadataFields } from "../metadata"
+import { FieldDecoratorFactory } from '../interfaces/decorator'
+import { MetadataFields } from '../metadata'
 
 
 export const Field: FieldDecoratorFactory = (typeFactory, options = {}) => (target, property) => {
@@ -14,7 +14,7 @@ export const Field: FieldDecoratorFactory = (typeFactory, options = {}) => (targ
     property,
     typeFactory,
     guards: Array.isArray(guard) ? guard : [guard],
-    name: options.name || ((typeof property === "string") ? property : property.toString()),
+    name: options.name || (typeof property === 'string' ? property : property.toString()),
     description: options.description,
   })
 }

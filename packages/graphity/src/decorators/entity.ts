@@ -1,5 +1,5 @@
-import { EntityDecoratorFactory } from "../interfaces/decorator"
-import { MetadataEntities } from "../metadata"
+import { EntityDecoratorFactory } from '../interfaces/decorator'
+import { MetadataEntities } from '../metadata'
 
 
 export const GraphQLEntity: EntityDecoratorFactory = (options = {}) => (target) => {

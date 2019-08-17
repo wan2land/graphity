@@ -1,10 +1,10 @@
-import { GraphQLSchema, GraphQLString, isOutputType } from "graphql"
+import { GraphQLSchema, GraphQLString, isOutputType } from 'graphql'
 
-import { ConstructType, GraphQLGuard, ResolverFactory } from "../interfaces/common"
-import { MetadataMutations, MetadataQueries, MetadataResolvers } from "../metadata"
-import { createResolve } from "./create-resolve"
-import { ObjectTypeFactory } from "./object-type-factory"
-import { ObjectTypeFactoryContainer } from "./object-type-factory-container"
+import { ConstructType, GraphQLGuard, ResolverFactory } from '../interfaces/common'
+import { MetadataMutations, MetadataQueries, MetadataResolvers } from '../metadata'
+import { createResolve } from './create-resolve'
+import { ObjectTypeFactory } from './object-type-factory'
+import { ObjectTypeFactoryContainer } from './object-type-factory-container'
 
 
 const defaultCreate: ResolverFactory = (ctor) => Promise.resolve(new ctor())
@@ -27,8 +27,8 @@ export function createSchema({
 
   const types = new ObjectTypeFactoryContainer()
   const instances = new Map<any, any>()
-  const queries = new ObjectTypeFactory("Query")
-  const mutations = new ObjectTypeFactory("Mutation")
+  const queries = new ObjectTypeFactory('Query')
+  const mutations = new ObjectTypeFactory('Mutation')
 
   for (const resolver of resolvers) {
     const metadataResolver = MetadataResolvers.get(resolver)
@@ -84,8 +84,8 @@ export function createSchema({
 
   return new GraphQLSchema({
     query: queries.factory(),
-    mutation: Object.keys(mutations.fields).length ?
-      mutations.factory() :
-      undefined,
+    mutation: Object.keys(mutations.fields).length > 0
+      ? mutations.factory()
+      : undefined,
   })
 }

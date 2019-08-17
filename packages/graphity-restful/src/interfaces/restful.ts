@@ -1,10 +1,10 @@
-import { DocumentNode } from "graphql"
-import { IncomingMessage } from "http"
+import { DocumentNode } from 'graphql'
+import { IncomingMessage } from 'http'
 
-import { MaybePromise } from "./utils"
+import { MaybePromise } from './utils'
 
 
-export type HttpMethod = "GET" | "POST" | "PUT" | "DELETE"
+export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE'
 
 export interface GraphQLQuery {
   document: DocumentNode
@@ -12,14 +12,14 @@ export interface GraphQLQuery {
   transform?: (data: any) => any
 }
 
-export interface HttpEndPoint<R = IncomingMessage> {
+export interface HttpEndPoint<TRequest = IncomingMessage> {
   method: HttpMethod
   path: string
-  query(request: R): MaybePromise<GraphQLQuery>
+  query(request: TRequest): MaybePromise<GraphQLQuery>
 }
 
-export interface CreateOptions<R> {
-  endpoints: HttpEndPoint<R>[]
+export interface CreateOptions<TRequest> {
+  endpoints: HttpEndPoint<TRequest>[]
   rootValue?: any
-  context?: (request: R) => any
+  context?: (request: TRequest) => any
 }

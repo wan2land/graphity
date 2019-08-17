@@ -1,6 +1,6 @@
-import { GraphQLFieldConfigArgumentMap, GraphQLInputObjectType, GraphQLOutputType } from "graphql"
+import { GraphQLFieldConfigArgumentMap, GraphQLInputObjectType, GraphQLOutputType } from 'graphql'
 
-import { ConstructType, GraphQLGuard, MaybeArray } from "./common"
+import { ConstructType, GraphQLGuard, MaybeArray } from './common'
 
 export interface ResolverDecoratorFactoryOption {
   guards?: MaybeArray<GraphQLGuard<{}, any>> | null

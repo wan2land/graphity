@@ -1,5 +1,5 @@
-import { GraphQLFieldConfigMap, GraphQLObjectType } from "graphql"
-import { GraphQLFieldConfigFactoryMap } from "../interfaces/graphql"
+import { GraphQLFieldConfigMap, GraphQLObjectType } from 'graphql'
+import { GraphQLFieldConfigFactoryMap } from '../interfaces/graphql'
 
 
 export class ObjectTypeFactory {
@@ -14,7 +14,7 @@ export class ObjectTypeFactory {
 
   public factory() {
     if (!this.objectType) {
-      return this.objectType = new GraphQLObjectType({
+      return (this.objectType = new GraphQLObjectType({
         name: this.name,
         description: this.description,
         fields: () => Object.keys(this.fields).reduce((carry, field) => {
@@ -22,7 +22,7 @@ export class ObjectTypeFactory {
             [field]: this.fields[field](),
           })
         }, {}),
-      })
+      }))
     }
     return this.objectType
   }

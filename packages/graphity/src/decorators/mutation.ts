@@ -1,6 +1,6 @@
-import { isInputObjectType } from "graphql"
-import { ResolveDecoratorFactory } from "../interfaces/decorator"
-import { MetadataMutations } from "../metadata"
+import { isInputObjectType } from 'graphql'
+import { ResolveDecoratorFactory } from '../interfaces/decorator'
+import { MetadataMutations } from '../metadata'
 
 
 export const Mutation: ResolveDecoratorFactory = (options = {}) => (target, property) => {
@@ -16,7 +16,7 @@ export const Mutation: ResolveDecoratorFactory = (options = {}) => (target, prop
     parent: options.parent,
     guards: Array.isArray(guard) ? guard : [guard],
     input: isInputObjectType(input) ? input.getFields() : input,
-    name: options.name || ((typeof property === "string") ? property : property.toString()),
+    name: options.name || (typeof property === 'string' ? property : property.toString()),
     returns: options.returns,
     description: options.description,
   })

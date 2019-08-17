@@ -1,12 +1,12 @@
-import { GraphQLFieldConfigArgumentMap } from "graphql"
+import { GraphQLFieldConfigArgumentMap } from 'graphql'
 
-import { GraphQLGuard } from "./common"
+import { GraphQLGuard } from './common'
 import {
   GraphQLFieldTypeFactory,
   GraphQLParentTypeFactory,
   GraphQLResolverTypeFactory,
   GraphQLReturnFactory,
-} from "./decorator"
+} from './decorator'
 
 export interface MetadataResolver {
   target: any
