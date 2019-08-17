@@ -2,7 +2,7 @@ import { ConstructType, MaybePromise, Name } from './common'
 
 export interface Containable {
   instance<T>(name: Name<T>, instance: MaybePromise<T>): void
-  factory<T>(name: Name<T>, factory: () => MaybePromise<T>): ContainerFluent<T>
+  resolver<T>(name: Name<T>, resolver: () => MaybePromise<T>): ContainerFluent<T>
   bind<T>(name: Name<T>, constructor: ConstructType<T>): ContainerFluent<T>
   get<T>(name: Name<T>): Promise<T>
   register(provider: Provider): void
@@ -12,7 +12,7 @@ export interface Containable {
 
 export interface ContainerFluent<T> {
   freeze(): ContainerFluent<T>
-  singleton(): ContainerFluent<T>
+  factory(): ContainerFluent<T>
 }
 
 export interface Provider {

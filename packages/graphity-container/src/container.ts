@@ -9,7 +9,7 @@ export class Container implements Containable {
 
   public descriptors: Map<any, Descriptor<any>>
   public instances: Map<any, any>
-  public factories: Map<any, () => any>
+  public resolvers: Map<any, () => any>
   public binds: Map<any, ConstructType<any>>
   public providers: Provider[]
   public isBooted = false
@@ -17,7 +17,7 @@ export class Container implements Containable {
   public constructor() {
     this.instances = new Map<any, any>()
     this.descriptors = new Map<any, Descriptor<any>>()
-    this.factories = new Map<any, () => any>()
+    this.resolvers = new Map<any, () => any>()
     this.binds = new Map<any, ConstructType<any>>()
     this.providers = []
   }
@@ -30,9 +30,9 @@ export class Container implements Containable {
     this.instances.set(name, value)
   }
 
-  public factory<T>(name: Name<T>, factory: () => T | Promise<T>): ContainerFluent<T> {
+  public resolver<T>(name: Name<T>, resolver: () => T | Promise<T>): ContainerFluent<T> {
     this.delete(name)
-    this.factories.set(name, factory)
+    this.resolvers.set(name, resolver)
     const descriptor = new Descriptor<T>()
     this.descriptors.set(name, descriptor)
     return descriptor
@@ -73,12 +73,12 @@ export class Container implements Containable {
     if (!descriptor) {
       throw new Error(`"${typeof name === 'symbol' ? name.toString() : name}" is not defined!`)
     }
-
     descriptor.freeze()
 
+
     let instance: T
-    if (this.factories.has(name)) {
-      const factory = this.factories.get(name)!
+    if (this.resolvers.has(name)) {
+      const factory = this.resolvers.get(name)!
       instance = await factory()
     } else if (this.binds.has(name)) {
       instance = await this.create(this.binds.get(name)!)
@@ -86,7 +86,7 @@ export class Container implements Containable {
       throw new Error(`"${typeof name === 'symbol' ? name.toString() : name}" is not defined!`)
     }
 
-    if (descriptor.isSingleton) {
+    if (!descriptor.isFactory) {
       this.instances.set(name, instance) // caching
     }
 
@@ -103,7 +103,7 @@ export class Container implements Containable {
         this.descriptors.delete(name)
       }
       this.instances.delete(name)
-      this.factories.delete(name)
+      this.resolvers.delete(name)
     }
   }
 
