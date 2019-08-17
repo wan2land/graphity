@@ -13,7 +13,6 @@ export interface Containable {
 export interface ContainerFluent<T> {
   freeze(): ContainerFluent<T>
   singleton(): ContainerFluent<T>
-  after(handler: (context: T) => MaybePromise<T>): ContainerFluent<T>
 }
 
 export interface Provider {

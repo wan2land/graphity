@@ -149,30 +149,6 @@ describe('testsuite for README', () => {
     ])
   })
 
-  it('test after descriptor', async () => {
-    const container = di.create()
-
-    startConsoleCapture()
-
-    // section:after-descriptor
-
-    container
-      .factory('foo', () => ({ message: 'this is origin maessage.' }))
-      .after(async (context) => {
-        await sleep(300)
-        context.message = `${context.message} and something appended.`
-        return context
-      })
-
-    console.log(await container.get('foo')) // { message: 'this is origin maessage. and something appended.' }
-
-    // endsection
-
-    expect(endConsoleCapture()).toEqual([
-      { message: 'this is origin maessage. and something appended.' },
-    ])
-  })
-
   it('test create method', async () => {
     const container = di.create()
 

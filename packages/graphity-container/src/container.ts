@@ -7,22 +7,18 @@ export class Container implements Containable {
 
   public static instance = new Container()
 
-  public stack: any[]
   public descriptors: Map<any, Descriptor<any>>
   public instances: Map<any, any>
   public factories: Map<any, () => any>
   public binds: Map<any, ConstructType<any>>
-  public aliases: Map<any, string>
   public providers: Provider[]
   public isBooted = false
 
   public constructor() {
-    this.stack = []
     this.instances = new Map<any, any>()
     this.descriptors = new Map<any, Descriptor<any>>()
     this.factories = new Map<any, () => any>()
     this.binds = new Map<any, ConstructType<any>>()
-    this.aliases = new Map<any, string>()
     this.providers = []
   }
 
@@ -69,50 +65,31 @@ export class Container implements Containable {
   }
 
   public async get<T>(name: Name<T>): Promise<T> {
-    if (this.descriptors.has(name)) {
-      (this.descriptors.get(name) as Descriptor<T>).freeze()
-    }
-    while (this.aliases.has(name)) {
-      name = this.aliases.get(name) as string
-    }
     if (this.instances.has(name)) {
       return this.instances.get(name) as T
     }
 
-    if (!this.descriptors.has(name)) {
+    const descriptor = this.descriptors.get(name)
+    if (!descriptor) {
       throw new Error(`"${typeof name === 'symbol' ? name.toString() : name}" is not defined!`)
     }
 
-    if (this.stack.includes(name)) {
-      const stack = [...this.stack]
-      this.stack = [] // clear stack
-      throw Object.assign(new Error('circular reference found!'), {
-        code: 'CIRCULAR_REFERENCE',
-        stack,
-      })
-    }
-    this.stack.push(name)
+    descriptor.freeze()
 
-    const descriptor = this.descriptors.get(name)!
     let instance: T
-
     if (this.factories.has(name)) {
       const factory = this.factories.get(name)!
       instance = await factory()
     } else if (this.binds.has(name)) {
       instance = await this.create(this.binds.get(name)!)
     } else {
-      this.stack.pop()
       throw new Error(`"${typeof name === 'symbol' ? name.toString() : name}" is not defined!`)
     }
 
-    for (const afterHandler of descriptor.afterHandlers) {
-      instance = await afterHandler(instance)
-    }
     if (descriptor.isSingleton) {
       this.instances.set(name, instance) // caching
     }
-    this.stack.pop()
+
     return instance
   }
 
@@ -127,7 +104,6 @@ export class Container implements Containable {
       }
       this.instances.delete(name)
       this.factories.delete(name)
-      this.aliases.delete(name)
     }
   }
 
