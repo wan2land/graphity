@@ -17,9 +17,9 @@
     "build": "rimraf ./lib && tsc && babel ./src --out-dir ./lib --extensions \".ts\" --source-maps inline"
   },
   "dependencies": {
-    "core-js": "^3.1.2",
+    "core-js": "^3.2.1",
     "express": "^4.17.1",
-    "graphql": "^14.0.0"
+    "graphql": "^14.4.2"
   },
   "gitHead": "6acc8f19a417cda5ebfcd4f8a9eed133304eb411"
 }

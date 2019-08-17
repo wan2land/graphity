@@ -1,5 +1,5 @@
 {
-	"name": "@graphity/container",
+  "name": "@graphity/container",
   "version": "0.0.1",
   "description": "Super slim depdency injection container with Async/Promise for Javascript(& Typescript).",
   "keywords": [
@@ -20,6 +20,6 @@
     "build": "rimraf ./lib && tsc && babel ./src --out-dir ./lib --extensions \".ts\" --source-maps inline"
   },
   "dependencies": {
-    "core-js": "^3.1.4"
+    "core-js": "^3.2.1"
   }
 }
