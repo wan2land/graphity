@@ -1,0 +1,25 @@
+{
+	"name": "@graphity/container",
+  "version": "0.0.1",
+  "description": "Super slim depdency injection container with Async/Promise for Javascript(& Typescript).",
+  "keywords": [
+    "di",
+    "ioc",
+    "dependency injection",
+    "inversion of control",
+    "inversify",
+    "ninject",
+    "typescript"
+  ],
+  "author": "Cris <corgidisco@gmail.com>",
+  "license": "MIT",
+  "repository": "https://github.com/corgidisco/stdjs/tree/master/packages/di",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "build": "rimraf ./lib && tsc && babel ./src --out-dir ./lib --extensions \".ts\" --source-maps inline"
+  },
+  "dependencies": {
+    "core-js": "^3.1.4"
+  }
+}
