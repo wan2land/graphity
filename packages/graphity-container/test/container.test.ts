@@ -139,4 +139,43 @@ describe('testsuite of container', () => {
 
     expect(container).not.toBe(originContainer)
   })
+
+  it('test get singleton instance in same time', async () => {
+    const container = new Container()
+
+    container.resolver('instance', async () => {
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      return { name: 'instance' }
+    })
+
+    await container.boot()
+
+    const [inst1, inst2] = await Promise.all([
+      container.get('instance'),
+      container.get('instance'),
+    ])
+
+    expect(inst1).toBe(inst2)
+  })
+
+  it('test get singleton instance in similar time', async () => {
+    const container = new Container()
+
+    container.resolver('instance', async () => {
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      return { name: 'instance' }
+    })
+
+    await container.boot()
+
+    const [inst1, inst2] = await Promise.all([
+      container.get('instance'),
+      (async () => {
+        await new Promise(resolve => setTimeout(resolve, 100))
+        return container.get('instance')
+      })(),
+    ])
+
+    expect(inst1).toBe(inst2)
+  })
 })

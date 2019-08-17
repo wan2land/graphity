@@ -11,13 +11,16 @@ export class Container implements Containable {
   public instances: Map<any, any>
   public resolvers: Map<any, () => any>
   public binds: Map<any, ConstructType<any>>
+  public locks: Map<any, Promise<any>>
   public providers: Provider[]
+
   public isBooted = false
 
   public constructor() {
     this.instances = new Map<any, any>()
     this.descriptors = new Map<any, Descriptor<any>>()
     this.resolvers = new Map<any, () => any>()
+    this.locks = new Map<any, Promise<any>>()
     this.binds = new Map<any, ConstructType<any>>()
     this.providers = []
   }
@@ -64,9 +67,9 @@ export class Container implements Containable {
     return (instance as any)[method](...params)
   }
 
-  public async get<T>(name: Name<T>): Promise<T> {
+  public get<T>(name: Name<T>): Promise<T> {
     if (this.instances.has(name)) {
-      return this.instances.get(name) as T
+      return Promise.resolve(this.instances.get(name) as T)
     }
 
     const descriptor = this.descriptors.get(name)
@@ -75,22 +78,38 @@ export class Container implements Containable {
     }
     descriptor.freeze()
 
-
-    let instance: T
-    if (this.resolvers.has(name)) {
-      const factory = this.resolvers.get(name)!
-      instance = await factory()
-    } else if (this.binds.has(name)) {
-      instance = await this.create(this.binds.get(name)!)
-    } else {
-      throw new Error(`"${typeof name === 'symbol' ? name.toString() : name}" is not defined!`)
+    if (!descriptor.isFactory) {
+      const lock = this.locks.get(name)
+      if (lock) {
+        return lock.then((instance) => {
+          this.locks.delete(name)
+          return Promise.resolve(instance)
+        })
+      }
     }
+
+    const promise = new Promise<T>((resolve, reject) => {
+      const resolver = this.resolvers.get(name)
+      if (resolver) {
+        return resolve(resolver())
+      }
+      const bind = this.binds.get(name)
+      if (bind) {
+        return resolve(this.create(bind))
+      }
+      reject(new Error(`"${typeof name === 'symbol' ? name.toString() : name}" is not defined!`))
+    }).then((instance) => {
+      if (!descriptor.isFactory) {
+        this.instances.set(name, instance) // caching
+      }
+      return Promise.resolve(instance)
+    })
 
     if (!descriptor.isFactory) {
-      this.instances.set(name, instance) // caching
+      this.locks.set(name, promise)
     }
 
-    return instance
+    return promise
   }
 
   public delete(...names: Name<any>[]): void {
