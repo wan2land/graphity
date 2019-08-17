@@ -27,7 +27,7 @@ describe('testsuite of dialects/mysql/repository', () => {
     expect(repository).toBeInstanceOf(MysqlRepository)
   })
 
-  it('test findById', async () => {
+  it('test get', async () => {
     const mock = {} as any
     const mockFirstMethod = mock.first = jest.fn()
 
@@ -36,8 +36,8 @@ describe('testsuite of dialects/mysql/repository', () => {
     })
     const repository = connection.getRepository(Article)
 
-    await repository.findById(1)
-    await repository.findById(2)
+    await repository.get(1)
+    await repository.get(2)
 
     expect(mockFirstMethod.mock.calls).toEqual([
       ['SELECT * FROM `articles` WHERE `id` = ? LIMIT 1', [1]],
@@ -45,7 +45,7 @@ describe('testsuite of dialects/mysql/repository', () => {
     ])
   })
 
-  it('test findById parallels', async () => {
+  it('test get parallels', async () => {
     const mock = {} as any
     const mockSelectMethod = mock.select = jest.fn(() => [])
 
@@ -55,13 +55,28 @@ describe('testsuite of dialects/mysql/repository', () => {
     const repository = connection.getRepository(Article)
 
     await Promise.all([
-      repository.findById(1),
-      repository.findById(2),
-      repository.findById(3),
+      repository.get(1),
+      repository.get(2),
+      repository.get(3),
     ])
 
     expect(mockSelectMethod.mock.calls).toEqual([
       ['SELECT * FROM `articles` WHERE `id` IN (?, ?, ?)', [1, 2, 3]],
     ])
   })
+
+  // it('test retrieve', async () => {
+  //   const mock = {} as any
+  //   const mockSelectMethod = mock.select = jest.fn(() => [])
+
+  //   const connection = new Connection(mock, {
+  //     dialect: 'mysql',
+  //   })
+  //   const repository = connection.getRepository(Article)
+  //   const nodes = await repository.retrieve(qb => qb
+  //       .where('id', )
+  //       .whereRaw(sql` id = ${blabla}`)
+  //       .where('id', '')
+  //   )
+  // })
 })

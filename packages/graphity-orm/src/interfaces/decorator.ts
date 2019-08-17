@@ -1,13 +1,6 @@
-import { ValueTransformer } from './mapper'
+import { ValueTransformer, ColumnType } from './mapper'
 import { MaybeFactory } from './utils'
 
-export type ColumnType = 'any'
-| 'array'
-| 'string'
-| 'int'
-| 'float'
-| 'boolean'
-| 'object'
 
 export interface EntityDecoratorOptions {
   name?: string

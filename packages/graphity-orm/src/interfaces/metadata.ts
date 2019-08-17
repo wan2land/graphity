@@ -1,5 +1,4 @@
-import { ColumnType } from './decorator'
-import { ValueTransformer } from './mapper'
+import { ColumnType, ValueTransformer } from './mapper'
 import { MaybeFactory } from './utils'
 
 

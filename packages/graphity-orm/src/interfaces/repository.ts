@@ -10,19 +10,38 @@ export interface RepositoryOptions<TEntity> extends MapperOptions<TEntity> {
   }
 }
 
+// export interface QueryFluent<TEntity> {
+//   where(name: keyof TEntity, value: any): this
+//   whereRaw(raw: QueryFragment): this
+//   orWhere(name: keyof TEntity, value: any): this
+//   orWhereRaw(raw: QueryFragment): this
+//   // @TODO
+//   // whereIn(name: keyof TEntity, values: any[]): this
+//   // whereNotIn(name: keyof TEntity, values: any[]): this
+//   // whereNull(name: keyof TEntity): this
+//   // whereNotNull(name: keyof TEntity): this
+// }
+
+// export type QueryOptions<TEntity> = QueryFluent<TEntity> | ((query: QueryFluent<TEntity>) => QueryFluent<TEntity>) // @TODO QueryStatement
+
 export interface Repository<TEntity> {
+
+  // createFinder(): QueryFluent<TEntity>
 
   hydrate<P extends {}>(rows: P[]): TEntity[]
   hydrate<P extends {}>(rows: P): TEntity
 
-  findById(id: (string | number | symbol)): Promise<TEntity | null>
-  findByIds(ids: (string | number | symbol)[]): Promise<TEntity[]>
+  get(id: (string | number)): Promise<TEntity | null>
+  getMany(ids: (string | number)[]): Promise<TEntity[]>
 
-  // find
-  // retrieve(options: HasWhereStmt = {}): Promise<Entity[]>
+  find(condition?: FindCondition<TEntity>): Promise<TEntity | null>
+  findMany(condition?: FindCondition<TEntity>): Promise<TEntity[]>
+
+  // first(query?: QueryOptions<TEntity>): Promise<TEntity | null>
+  // retrieve(query?: QueryOptions<TEntity>): Promise<TEntity[]>
 
   // exists(id: string): Promise<boolean>
-  // count(options?: FindManyOptions<Entity>): Promise<number>
+  // count(query?: QueryOptions<TEntity>): Promise<number>
 
   // create(entityLike: DeepPartial<Entity>): Entity;
 

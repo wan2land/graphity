@@ -1,8 +1,18 @@
 import { ConstructType, MaybeFactory } from './utils'
 
+
+export type ColumnType = 'any'
+| 'array'
+| 'string'
+| 'int'
+| 'float'
+| 'boolean'
+| 'object'
+
 export interface MapperOptions<T> {
   ctor: ConstructType<T>
   columns: {
+    type: ColumnType
     property: keyof T
     sourceKey: string
     nullable?: boolean

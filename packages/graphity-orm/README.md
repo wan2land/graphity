@@ -16,6 +16,10 @@ npm install @graphity/orm --save
 import {  } from "@graphity/orm"
 ```
 
+## Inspired by
+
+- [sql-template-strings](https://github.com/felixfbecker/node-sql-template-strings)
+
 ## Licesnse
 
 MIT
