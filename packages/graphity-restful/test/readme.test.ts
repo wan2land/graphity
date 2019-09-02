@@ -1,8 +1,8 @@
-import "jest"
+import 'jest'
 
 
-describe("usage", () => {
-  it("usage default", () => {
+describe('usage', () => {
+  it('usage default', () => {
 
   })
 })

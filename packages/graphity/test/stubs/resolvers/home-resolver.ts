@@ -1,7 +1,7 @@
-import { GraphQLResolver, Query } from "../../../lib"
+import { GraphQLResolver, Query } from '../../../lib'
 
 
-const pkg = require("../../../package.json")
+const pkg = require('../../../package.json') // eslint-disable-line @typescript-eslint/no-require-imports
 
 @GraphQLResolver()
 export class HomeResolver {

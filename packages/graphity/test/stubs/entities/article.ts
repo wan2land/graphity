@@ -1,13 +1,13 @@
-import { GraphQLID, GraphQLNonNull, GraphQLString } from "graphql"
+import { GraphQLID, GraphQLNonNull, GraphQLString } from 'graphql'
 
-import { Field, GraphQLEntity } from "../../../lib"
+import { Field, GraphQLEntity } from '../../../lib'
 
 @GraphQLEntity({
-  description: "article entity",
+  description: 'article entity',
 })
 export class Article {
   @Field(type => GraphQLNonNull(GraphQLID), {
-    description: "article id",
+    description: 'article id',
   })
   public id!: string
 

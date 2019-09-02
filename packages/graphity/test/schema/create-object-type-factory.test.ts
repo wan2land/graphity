@@ -1,13 +1,13 @@
-import { printType } from "graphql"
+import { printType } from 'graphql'
 
-import { createObjectTypeFactory } from "../../lib/schema/create-object-type-factory"
-import { Article } from "../stubs/entities/article"
+import { createObjectTypeFactory } from '../../lib/schema/create-object-type-factory'
+import { Article } from '../stubs/entities/article'
 
 
-class UndefinedEntity {}
+class UndefinedEntity {} // eslint-disable-line @typescript-eslint/no-extraneous-class
 
-describe("testsuite of schema/create-object-type-factory", () => {
-  it("test create type factory", async () => {
+describe('testsuite of schema/create-object-type-factory', () => {
+  it('test create type factory', async () => {
     const schema = createObjectTypeFactory(Article).factory()
     expect(printType(schema)).toEqual(`"""article entity"""
 type Article {
@@ -18,8 +18,8 @@ type Article {
 }`)
   })
 
-  it("test undefined entity type factory", async () => {
+  it('test undefined entity type factory', async () => {
     const schema = createObjectTypeFactory(UndefinedEntity).factory()
-    expect(printType(schema)).toEqual(`type UndefinedEntity`)
+    expect(printType(schema)).toEqual('type UndefinedEntity')
   })
 })
