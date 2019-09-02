@@ -6,7 +6,7 @@
   "scripts": {
     "build": "lerna run build --parallel",
     "test": "npm run build && npm run test:lint && npm run test:unit",
-    "test:lint": "eslint packages/*/src/** --ext ts",
+    "test:lint": "eslint 'packages/graphi*/{src,test}/**/*.ts' --ignore-pattern node_modules",
     "test:unit": "jest packages"
   },
   "devDependencies": {

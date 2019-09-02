@@ -1,16 +1,16 @@
-import { GraphQLID, GraphQLNonNull, GraphQLObjectType, GraphQLString } from "graphql"
+import { GraphQLID, GraphQLNonNull, GraphQLObjectType, GraphQLString } from 'graphql'
 
-import { GraphQLInputPagination, GraphQLListOf, GraphQLResolver, listOf, Mutation, Query } from "../../../lib"
-import { Article } from "../entities/article"
+import { GraphQLInputPagination, GraphQLListOf, GraphQLResolver, listOf, Mutation, Query } from '../../../lib'
+import { Article } from '../entities/article'
 
 @GraphQLResolver(returns => Article)
 export class ArticleResolver {
 
   @Query({
     input: {
-      id: {type: GraphQLNonNull(GraphQLID)},
+      id: { type: GraphQLNonNull(GraphQLID) },
     },
-    description: "this is article"
+    description: 'this is article',
   })
   public async article(parent: null, input: {id: string}) {
     return Object.assign(new Article(), {
@@ -26,9 +26,9 @@ export class ArticleResolver {
   public async articles() {
     return listOf([
       Object.assign(new Article(), {
-        id: "1",
-        title: "this is 1",
-      })
+        id: '1',
+        title: 'this is 1',
+      }),
     ])
   }
 
@@ -38,11 +38,11 @@ export class ArticleResolver {
         type: GraphQLNonNull(GraphQLString),
       },
     },
-    description: "this is createArticle",
+    description: 'this is createArticle',
   })
   public async createArticle(parent: null, input: {title: string}) {
     return Object.assign(new Article(), {
-      id: `2`,
+      id: '2',
       title: input.title,
     })
   }
@@ -60,7 +60,7 @@ export class ArticleResolver {
   public async updateArticle(parent: null, input: {id: string, title?: string | null}) {
     return Object.assign(new Article(), {
       id: input.id,
-      title: typeof input.title === "undefined" ? `this is ${input.id}` : input.title,
+      title: typeof input.title === 'undefined' ? `this is ${input.id}` : input.title,
     })
   }
 
