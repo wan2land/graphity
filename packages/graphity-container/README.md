@@ -3,8 +3,7 @@
 [![Downloads](https://img.shields.io/npm/dt/@graphity/container.svg)](https://npmcharts.com/compare/@graphity/container?minimal=true)
 [![Version](https://img.shields.io/npm/v/@graphity/container.svg)](https://www.npmjs.com/package/@graphity/container)
 [![License](https://img.shields.io/npm/l/@graphity/container.svg)](https://www.npmjs.com/package/@graphity/container)
-
-[![NPM](https://nodei.co/npm/@graphity/container.png)](https://www.npmjs.com/package/@graphity/container)
+![Typescript](https://img.shields.io/badge/language-Typescript-007acc.svg?style=flat-square)
 
 Super slim DI(Depdency Injection) container with Async/Promise for Javascript(& Typescript).
 

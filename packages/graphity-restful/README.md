@@ -3,8 +3,7 @@
 [![Downloads](https://img.shields.io/npm/dt/@graphity/restful.svg)](https://npmcharts.com/compare/@graphity/restful?minimal=true)
 [![Version](https://img.shields.io/npm/v/@graphity/restful.svg)](https://www.npmjs.com/package/@graphity/restful)
 [![License](https://img.shields.io/npm/l/@graphity/restful.svg)](https://www.npmjs.com/package/@graphity/restful)
-
-[![NPM](https://nodei.co/npm/@graphity/restful.png)](https://www.npmjs.com/package/@graphity/restful)
+![Typescript](https://img.shields.io/badge/language-Typescript-007acc.svg?style=flat-square)
 
 ## How to use
 
