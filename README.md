@@ -5,24 +5,19 @@
 <p align="center">GraphQL Typescript Framework</p>
 
 <p align="center">
-  <a href="https://travis-ci.org/wan2land/graphity"><img alt="Build" src="https://img.shields.io/travis/wan2land/graphity.svg" /></a>
-  <a href="https://npmcharts.com/compare/graphity?minimal=true"><img alt="Downloads" src="https://img.shields.io/npm/dt/graphity.svg" /></a>
-  <a href="https://www.npmjs.com/package/graphity"><img alt="Version" src="https://img.shields.io/npm/v/graphity.svg" /></a>
-  <a href="https://www.npmjs.com/package/graphity"><img alt="License" src="https://img.shields.io/npm/l/graphity.svg" /></a>
+  <a href="https://travis-ci.org/wan2land/graphity"><img alt="Build" src="https://img.shields.io/travis/wan2land/graphity.svg?style=flat-square" /></a>
+  <a href="https://david-dm.org/wan2land/graphity"><img alt="dependencies Status" src="https://img.shields.io/david/wan2land/graphity.svg?style=flat-square" /></a>
+  <a href="https://david-dm.org/wan2land/graphity?type=dev"><img alt="devDependencies Status" src="https://img.shields.io/david/dev/wan2land/graphity.svg?style=flat-square" /></a>
   <br />
-  <a href="https://david-dm.org/wan2land/graphity"><img alt="dependencies Status" src="https://david-dm.org/wan2land/graphity/status.svg" /></a>
-  <a href="https://david-dm.org/wan2land/graphity?type=dev"><img alt="devDependencies Status" src="https://david-dm.org/wan2land/graphity/dev-status.svg" /></a>
-  <br />
-  <a href="https://www.npmjs.com/package/graphity"><img alt="NPM" src="https://nodei.co/npm/graphity.png" /></a>
+  <img alt="Version" src="https://img.shields.io/badge/dynamic/json??style=flat-square&color=fe7d37&label=version&query=%24.version&url=https%3A%2F%2Fraw.githubusercontent.com%2Fwan2land%2Fgraphity%2Fmaster%2Flerna.json" />
+  <img alt="License MIT" src="https://img.shields.io/badge/license-MIT-97ca00.svg?style=flat-square" />
+  <img alt="Language Typescript" src="https://img.shields.io/badge/language-Typescript-007acc.svg?style=flat-square" />
 </p>
 
 **Graphity** is a library that makes typescript and GraphQL easy to use. As much as possible, the object of [GraphQL.js](https://github.com/graphql/graphql-js) can be used as it is.
 
-## Repos
+## Projects
 
 - [graphity](./packages/graphity)
 - [@graphity/restful](./packages/graphity-restful)
-
-## License
-
-MIT
+- [@graphity/container](./packages/graphity-container)
