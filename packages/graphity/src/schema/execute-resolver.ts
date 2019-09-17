@@ -1,10 +1,11 @@
-import { GraphQLResolveInfo } from 'graphql'
-import { GraphQLGuard, GraphQLNext } from '../interfaces/common'
+import { GraphQLFieldResolver, GraphQLResolveInfo } from 'graphql'
+
+import { GraphQLGuard } from '../interfaces/common'
 
 
 function execute<TArgs, TContext>(
   guards: GraphQLGuard<any, any>[],
-  resolver: GraphQLNext<any, any>,
+  resolver: GraphQLFieldResolver<any, any>,
   parent: any,
   args: TArgs,
   ctx: TContext,
@@ -29,7 +30,7 @@ function execute<TArgs, TContext>(
 
 export function executeResolver(
   guards: GraphQLGuard<any, any>[],
-  resolver: GraphQLNext<any, any>,
+  resolver: GraphQLFieldResolver<any, any>,
   parent: any,
   args: any,
   ctx: any,

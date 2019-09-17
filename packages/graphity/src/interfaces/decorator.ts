@@ -1,9 +1,9 @@
-import { GraphQLFieldConfigArgumentMap, GraphQLInputObjectType, GraphQLOutputType } from 'graphql'
+import { GraphQLFieldConfigArgumentMap, GraphQLFieldResolver, GraphQLInputObjectType, GraphQLOutputType } from 'graphql'
 
 import { ConstructType, GraphQLGuard, MaybeArray } from './common'
 
 export interface ResolverDecoratorFactoryOption {
-  guards?: MaybeArray<GraphQLGuard<{}, any>> | null
+  guards?: MaybeArray<GraphQLGuard<any, any>> | null
 }
 
 export type GraphQLParentTypeFactory = (type: any) => ConstructType<any>
@@ -13,7 +13,7 @@ export interface ResolveDecoratorOption {
   name?: string | null
   parent?: GraphQLParentTypeFactory | null
   input?: GraphQLInputObjectType | GraphQLFieldConfigArgumentMap | null
-  guards?: MaybeArray<GraphQLGuard<{}, any>> | null
+  guards?: MaybeArray<GraphQLGuard<any, any>> | null
   returns?: GraphQLReturnFactory | null
   description?: string | null
 }
@@ -26,8 +26,9 @@ export interface EntityDecoratorOption {
 
 export interface FieldDecoratorOption {
   name?: string | null
-  guards?: MaybeArray<GraphQLGuard<{}, any>> | null
+  guards?: MaybeArray<GraphQLGuard<any, any>> | null
   description?: string | null
+  resolve?: GraphQLFieldResolver<any, any>
 }
 
 
