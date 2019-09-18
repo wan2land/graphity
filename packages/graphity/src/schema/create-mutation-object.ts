@@ -67,6 +67,8 @@ export function createMutationObject({
         }) || [],
         description: mutation.description,
         resolve: createResolver(guards, create(metadataResolver.target, mutation.target)),
+        isDeprecated: typeof mutation.deprecated === 'string',
+        deprecationReason: typeof mutation.deprecated === 'string' ? mutation.deprecated : undefined,
       }
     }
   }

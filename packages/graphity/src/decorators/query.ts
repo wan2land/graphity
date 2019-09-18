@@ -13,11 +13,11 @@ export const Query: ResolveDecoratorFactory = (options = {}) => (target, propert
   const input = options.input
   resolves.push({
     target: (target as any)[property],
-    parent: options.parent,
+    parent: options.parent || undefined,
     guards: Array.isArray(guard) ? guard : [guard],
-    input: isInputObjectType(input) ? input.getFields() : input,
+    input: (isInputObjectType(input) ? input.getFields() : input) || undefined,
     name: options.name || (typeof property === 'string' ? property : property.toString()),
-    returns: options.returns,
-    description: options.description,
+    returns: options.returns || undefined,
+    description: options.description || undefined,
   })
 }

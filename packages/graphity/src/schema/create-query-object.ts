@@ -68,6 +68,8 @@ export function createQueryObject({
         }) || [],
         description: query.description,
         resolve: createResolver(guards, create(metadataResolver.target, query.target)),
+        isDeprecated: typeof query.deprecated === 'string',
+        deprecationReason: typeof query.deprecated === 'string' ? query.deprecated : undefined,
       }
     }
   }

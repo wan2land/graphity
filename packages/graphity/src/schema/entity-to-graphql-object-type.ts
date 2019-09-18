@@ -17,6 +17,7 @@ export function entityToGraphQLObjectType(entity: ConstructType<any>): GraphQLOb
           type,
           description: field.description,
           resolve: createResolver(field.guards, field.resolve ? field.resolve : (parent) => parent[field.name]),
+          deprecationReason: typeof field.deprecated === 'string' ? field.deprecated : undefined,
         },
       })
     }, {}),
