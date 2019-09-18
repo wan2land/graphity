@@ -6,6 +6,6 @@ export const GraphQLEntity: EntityDecoratorFactory = (options = {}) => (target) 
   MetadataEntities.set(target, {
     target,
     name: options.name || target.name,
-    description: options.description,
+    description: options.description || undefined,
   })
 }

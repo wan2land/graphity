@@ -16,6 +16,7 @@ export interface ResolveDecoratorOption {
   guards?: MaybeArray<GraphQLGuard<any, any>> | null
   returns?: GraphQLReturnFactory | null
   description?: string | null
+  deprecated?: string | null
 }
 
 
@@ -26,9 +27,10 @@ export interface EntityDecoratorOption {
 
 export interface FieldDecoratorOption {
   name?: string | null
+  resolve?: GraphQLFieldResolver<any, any> | null
   guards?: MaybeArray<GraphQLGuard<any, any>> | null
   description?: string | null
-  resolve?: GraphQLFieldResolver<any, any> | null
+  deprecated?: string | null
 }
 
 
