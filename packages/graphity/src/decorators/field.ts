@@ -13,8 +13,9 @@ export const Field: FieldDecoratorFactory = (typeFactory, options = {}) => (targ
     target,
     property,
     typeFactory,
+    resolve: options.resolve || undefined,
     guards: Array.isArray(guard) ? guard : [guard],
     name: options.name || (typeof property === 'string' ? property : property.toString()),
-    description: options.description,
+    description: options.description || undefined,
   })
 }

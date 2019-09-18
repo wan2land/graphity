@@ -28,7 +28,7 @@ export interface FieldDecoratorOption {
   name?: string | null
   guards?: MaybeArray<GraphQLGuard<any, any>> | null
   description?: string | null
-  resolve?: GraphQLFieldResolver<any, any>
+  resolve?: GraphQLFieldResolver<any, any> | null
 }
 
 
