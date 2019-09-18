@@ -1,4 +1,4 @@
-import { GraphQLFieldConfigArgumentMap } from 'graphql'
+import { GraphQLFieldConfigArgumentMap, GraphQLFieldResolver } from 'graphql'
 
 import { GraphQLGuard } from './common'
 import {
@@ -36,5 +36,6 @@ export interface MetadataField {
   typeFactory: GraphQLFieldTypeFactory
   guards: GraphQLGuard<any, any>[]
   name: string
-  description?: string | null
+  resolve?: GraphQLFieldResolver<any, any>
+  description?: string
 }
