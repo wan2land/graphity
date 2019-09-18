@@ -3,6 +3,7 @@ import { GraphQLObjectType, GraphQLString, isOutputType } from 'graphql'
 import { ConstructType, CreateResolveHandler, GraphQLGuard } from '../interfaces/common'
 import { MetadataMutations, MetadataResolvers } from '../metadata'
 import { entityToGraphQLObjectType } from './entity-to-graphql-object-type'
+import { createResolver } from './create-resolver'
 
 function getObjectType(container: Map<ConstructType<any>, GraphQLObjectType>, entity: ConstructType<any>): GraphQLObjectType {
   let type = container.get(entity)
@@ -14,11 +15,11 @@ function getObjectType(container: Map<ConstructType<any>, GraphQLObjectType>, en
 }
 
 export interface CreateMutationObjectOptions {
-  name: string
-  container: Map<ConstructType<any>, GraphQLObjectType>
-  resolvers: ConstructType<any>[]
-  rootGuards: GraphQLGuard<any, any>[]
-  mutationGuards: GraphQLGuard<any, any>[]
+  name?: string
+  container?: Map<ConstructType<any>, GraphQLObjectType>
+  resolvers?: ConstructType<any>[]
+  rootGuards?: GraphQLGuard<any, any>[]
+  mutationGuards?: GraphQLGuard<any, any>[]
   create: CreateResolveHandler
 }
 
@@ -29,7 +30,7 @@ export function createMutationObject({
   rootGuards = [],
   mutationGuards = [],
   create,
-}: Partial<CreateMutationObjectOptions>): GraphQLObjectType {
+}: CreateMutationObjectOptions): GraphQLObjectType {
 
   const mutationObjectType = new GraphQLObjectType({
     name,
@@ -65,7 +66,7 @@ export function createMutationObject({
           }
         }) || [],
         description: mutation.description,
-        resolve: create && create(metadataResolver.target, mutation.target, guards) || undefined,
+        resolve: createResolver(guards, create(metadataResolver.target, mutation.target)),
       }
     }
   }

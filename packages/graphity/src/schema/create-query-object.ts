@@ -3,6 +3,7 @@ import { GraphQLObjectType, GraphQLString, isOutputType } from 'graphql'
 import { ConstructType, CreateResolveHandler, GraphQLGuard } from '../interfaces/common'
 import { MetadataQueries, MetadataResolvers } from '../metadata'
 import { entityToGraphQLObjectType } from './entity-to-graphql-object-type'
+import { createResolver } from './create-resolver'
 
 function getObjectType(container: Map<ConstructType<any>, GraphQLObjectType>, entity: ConstructType<any>): GraphQLObjectType {
   let type = container.get(entity)
@@ -14,11 +15,11 @@ function getObjectType(container: Map<ConstructType<any>, GraphQLObjectType>, en
 }
 
 export interface CreateQueryObjectOptions {
-  name: string
-  container: Map<ConstructType<any>, GraphQLObjectType>
-  resolvers: ConstructType<any>[]
-  rootGuards: GraphQLGuard<any, any>[]
-  queryGuards: GraphQLGuard<any, any>[]
+  name?: string
+  container?: Map<ConstructType<any>, GraphQLObjectType>
+  resolvers?: ConstructType<any>[]
+  rootGuards?: GraphQLGuard<any, any>[]
+  queryGuards?: GraphQLGuard<any, any>[]
   create: CreateResolveHandler
 }
 
@@ -29,7 +30,7 @@ export function createQueryObject({
   rootGuards = [],
   queryGuards = [],
   create,
-}: Partial<CreateQueryObjectOptions>): GraphQLObjectType {
+}: CreateQueryObjectOptions): GraphQLObjectType {
 
   const queryObjectType = new GraphQLObjectType({
     name,
@@ -66,7 +67,7 @@ export function createQueryObject({
           }
         }) || [],
         description: query.description,
-        resolve: create && create(metadataResolver.target, query.target, guards) || undefined,
+        resolve: createResolver(guards, create(metadataResolver.target, query.target)),
       }
     }
   }

@@ -3,25 +3,8 @@ import { GraphQLObjectType, GraphQLSchema } from 'graphql'
 import { ConstructType, CreateResolveHandler, GraphQLGuard, ResolverFactory } from '../interfaces/common'
 import { createMutationObject } from './create-mutation-object'
 import { createQueryObject } from './create-query-object'
-import { executeResolver } from './execute-resolver'
 
 const defaultCreate: ResolverFactory = (ctor) => Promise.resolve(new ctor())
-
-const createResolve: (resolvers: Map<any, any>, create: ResolverFactory) => CreateResolveHandler = (resolvers, create) => (ctor, handler, guards) => async (parent, args, ctx, info) => {
-  let instance = resolvers.get(ctor)
-  if (!instance) {
-    instance = await create(ctor as any)
-    resolvers.set(ctor, instance)
-  }
-  return executeResolver(
-    guards,
-    handler.bind(instance),
-    parent,
-    args,
-    ctx,
-    info
-  )
-}
 
 export interface CreateSchemaOptions {
   resolvers: ConstructType<any>[]
@@ -42,13 +25,24 @@ export function createSchema({
   const types = new Map<ConstructType<any>, GraphQLObjectType>()
   const instances = new Map<ConstructType<any>, any>()
 
+  const createResolver: CreateResolveHandler = (ctor, handler) => {
+    return async (parent, args, ctx, info) => {
+      let instance = instances.get(ctor)
+      if (!instance) {
+        instance = await create(ctor as any)
+        instances.set(ctor, instance)
+      }
+      return handler.call(instance, parent, args, ctx, info)
+    }
+  }
+
   const queryObject = createQueryObject({
     // name: string
     container: types,
     resolvers,
     rootGuards,
     queryGuards,
-    create: createResolve(instances, create),
+    create: createResolver,
   })
   const mutationObject = createMutationObject({
     // name: string
@@ -56,7 +50,7 @@ export function createSchema({
     resolvers,
     rootGuards,
     mutationGuards,
-    create: createResolve(instances, create),
+    create: createResolver,
   })
   return new GraphQLSchema({
     query: queryObject,

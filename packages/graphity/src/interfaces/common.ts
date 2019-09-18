@@ -7,7 +7,7 @@ export type MaybeArray<T> = T | T[]
 
 export type ResolverFactory = (ctor: new (...args: any[]) => any) => Promise<any>
 
-export type CreateResolveHandler = (ctor: ConstructType<any>, handler: (...args: any) => any, guards: GraphQLGuard<any, any>[]) => GraphQLFieldResolver<any, any>
+export type CreateResolveHandler = (ctor: ConstructType<any>, handler: (...args: any) => any) => GraphQLFieldResolver<any, any>
 
 export type GraphQLGuard<TSource, TContext, TArgs = { [argName: string]: any }> = (
   parent: TSource,
