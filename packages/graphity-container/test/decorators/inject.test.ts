@@ -1,10 +1,26 @@
+/* eslint-disable max-classes-per-file */
 import { create, Inject } from '../../lib'
 
-class TestController {
+class Mysql {
+  public name = 'mysql'
+}
+
+class Postgres {
+  public name = 'postgres'
+}
+
+class Mailer {
+  public name = 'mailer'
+}
+
+
+class TestInjectController {
   public constructor(
-    @Inject('mysql') @Inject('postgres') public connection: any,
+    @Inject(Mysql) @Inject(Postgres) public connection: any,
     public queue: any,
-    @Inject('mailer') public mailer: any
+    @Inject(Mailer) public mailer: any,
+    @Inject(Mysql, (mysql) => mysql.name) public mysqlName: any,
+    @Inject(Postgres, (postgres) => Promise.resolve(postgres.name)) public postgresName: any,
   ) {
   }
 
@@ -18,14 +34,20 @@ describe('testsuite of decorators/inject', () => {
   it('test inject', async () => {
     const container = create()
 
-    container.instance('mysql', { _mock: 'mysql' })
-    container.instance('postgres', { _mock: 'postgres' })
-    container.instance('mailer', { _mock: 'mailer' })
+    const mysql = new Mysql()
+    const postgres = new Postgres()
+    const mailer = new Mailer()
 
-    const result = await container.create(TestController)
+    container.instance(Mysql, mysql)
+    container.instance(Postgres, postgres)
+    container.instance(Mailer, mailer)
 
-    expect(result.connection).toEqual({ _mock: 'mysql' })
-    expect(result.queue).toBeUndefined()
-    expect(result.mailer).toEqual({ _mock: 'mailer' })
+    const result = await container.create(TestInjectController)
+
+    expect(result.connection).toBe(mysql) // assign first only
+    expect(result.queue).toBeUndefined() // undefined..!
+    expect(result.mailer).toBe(mailer)
+    expect(result.mysqlName).toBe('mysql')
+    expect(result.postgresName).toBe('postgres')
   })
 })

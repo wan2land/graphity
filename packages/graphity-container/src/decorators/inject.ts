@@ -1,7 +1,7 @@
 import { InjectDecoratorFactory } from '../interfaces/decorator'
 import { MetadataInject } from '../metadata'
 
-export const Inject: InjectDecoratorFactory = (name) => (target, propertyKey, index) => {
+export const Inject: InjectDecoratorFactory = (name, resolver) => (target, propertyKey, index) => {
   target = propertyKey ? target.constructor : target
   let params = MetadataInject.get(target)
   if (!params) {
@@ -12,5 +12,6 @@ export const Inject: InjectDecoratorFactory = (name) => (target, propertyKey, in
     propertyKey,
     index,
     name,
+    resolver,
   })
 }

@@ -96,9 +96,9 @@ console.log(connection) // Connection { driver: Driver {} }
 console.log(connection.driver) // Driver {}
 ```
 
-### Singleton descriptor
+### Factory descriptor
 
-Descriptor is very useful if you using factory or bind. this is example of singleton.
+Descriptor is very useful if you using factory or bind. this is example of factory.
 
 ```ts
 container.resolver("resolver.normal", () => ({message: "this is resolver"}))
@@ -155,6 +155,77 @@ container.bind("connection", Connection)
 const controller = new Controller()
 
 console.log(await container.invoke(controller, "retrieve")) // Connection { }
+```
+
+### Service Provider
+
+`providers/typeorm.ts`
+
+```ts
+import { Provider } from '@graphity/container'
+import { Connection, createConnection } from 'typeorm'
+
+export const typeorm: Provider = {
+  register(app) {
+    const DB_HOST = process.env.DB_HOST || 'localhost'
+    const DB_DATABASE = process.env.DB_DATABASE || 'test'
+    const DB_USERNAME = process.env.DB_USERNAME || 'root'
+    const DB_PASSWORD = process.env.DB_PASSWORD || 'root'
+    app.resolver(Connection, () => {
+      return createConnection({
+        type: 'mysql',
+        host: DB_HOST,
+        database: DB_DATABASE,
+        username: DB_USERNAME,
+        password: DB_PASSWORD,
+        /* ... */
+      })
+    })
+  },
+  async close(app) {
+    const connection = await app.get(Connection)
+    await connection.close()
+  },
+}
+```
+
+`controllers/user-controller.ts`
+
+```ts
+import { Container, Inject } from "@graphity/container"
+import { Connection, Repository } from 'typeorm'
+import { User } from '../entities/user.ts'
+
+export class UserController {
+  public constructor(
+    @Inject(Connection) public connection: Connection,
+    @Inject(Connection, conn => conn.getRepository(User)) public repoUsers: Repository<User>,
+  ) {
+  }
+
+  public users() {
+    return this.repoUsers.find()
+  }
+
+  /* ... */
+}
+```
+
+`entry.ts`
+
+```ts
+import { Container } from "@graphity/container"
+import { typeorm } from './providers/typeorm'
+import { UserController } from './controllers/user-controller'
+
+const app = new Container()
+app.register(typeorm)
+
+await app.boot()
+
+const userController = await app.create(UserController)
+await userController.users() // call controller!
+
 ```
 
 ## License
