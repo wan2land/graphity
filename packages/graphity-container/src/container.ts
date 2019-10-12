@@ -14,7 +14,7 @@ export class Container implements Containable {
   public locks: Map<any, Promise<any>>
   public providers: Provider[]
 
-  public isBooted = false
+  public booted: Promise<any> | undefined
 
   public constructor() {
     this.instances = new Map<any, any>()
@@ -127,26 +127,29 @@ export class Container implements Containable {
   }
 
   public register(provider: Provider): void {
+    if (this.booted) {
+      throw new Error('cannot register a provider with a container that is already booted.')
+    }
     this.providers.push(provider)
   }
 
-  public async boot(forced = false): Promise<void> {
-    if (!this.isBooted || forced) {
-      await Promise.all(this.providers.map(p => p.register(this)))
-      await Promise.all(this.providers.filter(p => p.boot).map(p => p.boot!(this)))
-      this.isBooted = true
+  public boot(forced = false): Promise<void> {
+    if (this.booted && !forced) {
+      return this.booted
     }
+    this.booted = Promise.all(this.providers.map(p => p.register(this)))
+      .then(() => Promise.all(this.providers.filter(p => p.boot).map(p => p.boot!(this))))
+      .then(() => Promise.resolve())
+
+    return this.booted
   }
 
-  public async close(): Promise<void> {
-    if (this.isBooted) {
-      for (const provider of this.providers) {
-        if (!provider.close) {
-          continue
-        }
-        await provider.close(this)
-      }
-      this.isBooted = false
+  public close(): Promise<void> {
+    if (this.booted) {
+      return this.booted
+        .then(() => Promise.all(this.providers.filter(p => p.close).map(p => p.close!(this))))
+        .then(() => Promise.resolve())
     }
+    return Promise.resolve()
   }
 }

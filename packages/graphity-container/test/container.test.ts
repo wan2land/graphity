@@ -140,6 +140,68 @@ describe('testsuite of container', () => {
     expect(container).not.toBe(originContainer)
   })
 
+  it('test boot lock', async () => {
+    const container = new Container()
+
+    let countOfCallRegister = 0
+    let countOfCallBoot = 0
+
+    container.register({
+      async register() {
+        countOfCallRegister++
+        await new Promise(resolve => setTimeout(resolve, 500))
+      },
+      async boot() {
+        countOfCallBoot++
+        await new Promise(resolve => setTimeout(resolve, 500))
+      },
+    })
+
+    await Promise.all([
+      container.boot(),
+      container.boot(),
+      container.boot(),
+    ])
+
+    await container.boot()
+    await container.boot()
+
+    expect(countOfCallRegister).toBe(1)
+    expect(countOfCallBoot).toBe(1)
+  })
+
+  it('test boot force', async () => {
+    const container = new Container()
+
+    let countOfCallRegister = 0
+    let countOfCallBoot = 0
+
+    container.register({
+      async register() {
+        countOfCallRegister++
+        await new Promise(resolve => setTimeout(resolve, 500))
+      },
+      async boot() {
+        countOfCallBoot++
+        await new Promise(resolve => setTimeout(resolve, 500))
+      },
+    })
+
+    await Promise.all([
+      container.boot(),
+      container.boot(),
+      container.boot(),
+    ])
+
+    expect(countOfCallRegister).toBe(1)
+    expect(countOfCallBoot).toBe(1)
+
+    await container.boot(true)
+
+    expect(countOfCallRegister).toBe(2)
+    expect(countOfCallBoot).toBe(2)
+  })
+
   it('test get singleton instance in same time', async () => {
     const container = new Container()
 
