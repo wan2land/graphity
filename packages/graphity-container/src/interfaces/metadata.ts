@@ -4,4 +4,5 @@ export interface MetadataInjectOption {
   propertyKey?: PropertyKey
   index: number
   name: Name<any>
+  resolver?: (instance: any) => any
 }

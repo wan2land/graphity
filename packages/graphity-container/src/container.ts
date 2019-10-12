@@ -52,8 +52,9 @@ export class Container implements Containable {
   public async create<T>(ctor: ConstructType<T>): Promise<T> {
     const params = []
     const options = (MetadataInject.get(ctor) || []).filter(({ propertyKey }) => !propertyKey)
-    for (const { index, name } of options) {
-      params[index] = await this.get(name)
+    for (const { index, name, resolver } of options) {
+      const instance = await this.get(name)
+      params[index] = resolver ? await resolver(instance) : instance
     }
     return new (ctor as any)(...params)
   }
@@ -61,8 +62,9 @@ export class Container implements Containable {
   public async invoke<TIns, TRet = any>(instance: TIns, method: keyof TIns): Promise<TRet> {
     const params = []
     const options = (MetadataInject.get((instance as any).constructor) || []).filter(({ propertyKey }) => propertyKey === method)
-    for (const { index, name } of options) {
-      params[index] = await this.get(name)
+    for (const { index, name, resolver } of options) {
+      const instance = await this.get(name)
+      params[index] = resolver ? await resolver(instance) : instance
     }
     return (instance as any)[method](...params)
   }
