@@ -63,12 +63,16 @@ export function createMutationObject({
             type: arg.type,
             defaultValue: arg.defaultValue,
             description: arg.description,
+            extensions: null,
+            astNode: null,
           }
         }) || [],
         description: mutation.description,
         resolve: createResolver(guards, create(metadataResolver.target, mutation.target)),
         isDeprecated: typeof mutation.deprecated === 'string',
         deprecationReason: typeof mutation.deprecated === 'string' ? mutation.deprecated : undefined,
+        extensions: null,
+        astNode: null,
       }
     }
   }
