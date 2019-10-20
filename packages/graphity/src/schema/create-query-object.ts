@@ -1,4 +1,4 @@
-import { GraphQLObjectType, GraphQLString, isOutputType } from 'graphql'
+import { GraphQLObjectType, GraphQLString, isOutputType, GraphQLArgument } from 'graphql'
 
 import { ConstructType, CreateResolveHandler, GraphQLGuard } from '../interfaces/common'
 import { MetadataQueries, MetadataResolvers } from '../metadata'
@@ -64,12 +64,16 @@ export function createQueryObject({
             type: arg.type,
             defaultValue: arg.defaultValue,
             description: arg.description,
+            extensions: null,
+            astNode: null,
           }
         }) || [],
         description: query.description,
         resolve: createResolver(guards, create(metadataResolver.target, query.target)),
         isDeprecated: typeof query.deprecated === 'string',
         deprecationReason: typeof query.deprecated === 'string' ? query.deprecated : undefined,
+        extensions: null,
+        astNode: null,
       }
     }
   }
