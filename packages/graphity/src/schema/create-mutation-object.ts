@@ -1,35 +1,35 @@
+import { Container } from '@graphity/container'
 import { GraphQLObjectType, GraphQLString, isOutputType } from 'graphql'
 
-import { ConstructType, CreateResolveHandler, GraphQLGuard } from '../interfaces/common'
+import { ConstructType } from '../interfaces/common'
+import { Middleware } from '../interfaces/graphity'
 import { MetadataMutations, MetadataResolvers } from '../metadata'
-import { entityToGraphQLObjectType } from './entity-to-graphql-object-type'
 import { createResolver } from './create-resolver'
+import { entityToGraphQLObjectType } from './entity-to-graphql-object-type'
 
-function getObjectType(container: Map<ConstructType<any>, GraphQLObjectType>, entity: ConstructType<any>): GraphQLObjectType {
-  let type = container.get(entity)
+function getObjectType(container: Container, types: Map<ConstructType<any>, GraphQLObjectType>, entity: ConstructType<any>): GraphQLObjectType {
+  let type = types.get(entity)
   if (!type) {
-    type = entityToGraphQLObjectType(entity)
-    container.set(entity, type)
+    type = entityToGraphQLObjectType(container, entity)
+    types.set(entity, type)
   }
   return type
 }
 
 export interface CreateMutationObjectOptions {
   name?: string
-  container?: Map<ConstructType<any>, GraphQLObjectType>
+  types?: Map<ConstructType<any>, GraphQLObjectType>
   resolvers?: ConstructType<any>[]
-  rootGuards?: GraphQLGuard<any, any>[]
-  mutationGuards?: GraphQLGuard<any, any>[]
-  create: CreateResolveHandler
+  rootMiddlewares?: ConstructType<Middleware<any, any>>[]
+  rootMutationMiddlewares?: ConstructType<Middleware<any, any>>[]
 }
 
-export function createMutationObject({
+export function createMutationObject(container: Container, {
   name = 'Mutation',
-  container = new Map(),
+  types = new Map(),
   resolvers = [],
-  rootGuards = [],
-  mutationGuards = [],
-  create,
+  rootMiddlewares = [],
+  rootMutationMiddlewares = [],
 }: CreateMutationObjectOptions): GraphQLObjectType {
 
   const mutationObjectType = new GraphQLObjectType({
@@ -44,16 +44,16 @@ export function createMutationObject({
     }
 
     const ctorOrType = metadataResolver.typeFactory ? metadataResolver.typeFactory(undefined) : GraphQLString
-    const resolverObjectType = isOutputType(ctorOrType) ? ctorOrType : getObjectType(container, ctorOrType)
+    const resolverObjectType = isOutputType(ctorOrType) ? ctorOrType : getObjectType(container, types, ctorOrType)
 
     for (const mutation of MetadataMutations.get(resolver) || []) {
-      const parentObjectType = typeof mutation.parent === 'function' ? getObjectType(container, mutation.parent(undefined)) : mutationObjectType
+      const parentObjectType = typeof mutation.parent === 'function' ? getObjectType(container, types, mutation.parent(undefined)) : mutationObjectType
       const fields = parentObjectType.getFields()
 
-      // TODO rootable
-      const guards = parentObjectType === mutationObjectType
-        ? ([] as GraphQLGuard<any, any>[]).concat(rootGuards, mutationGuards, metadataResolver.guards, mutation.guards)
-        : ([] as GraphQLGuard<any, any>[]).concat(metadataResolver.guards, mutation.guards)
+      const middlewares = parentObjectType === mutationObjectType
+        ? ([] as ConstructType<Middleware<any, any>>[]).concat(rootMiddlewares, rootMutationMiddlewares, metadataResolver.middlewares, mutation.middlewares)
+        : ([] as ConstructType<Middleware<any, any>>[]).concat(metadataResolver.middlewares, mutation.middlewares)
+
       fields[mutation.name] = {
         name: mutation.name,
         type: mutation.returns ? mutation.returns(resolverObjectType) : resolverObjectType,
@@ -68,7 +68,7 @@ export function createMutationObject({
           }
         }) || [],
         description: mutation.description,
-        resolve: createResolver(guards, create(metadataResolver.target, mutation.target)),
+        resolve: createResolver(container, middlewares, metadataResolver.target, mutation.target),
         isDeprecated: typeof mutation.deprecated === 'string',
         deprecationReason: typeof mutation.deprecated === 'string' ? mutation.deprecated : undefined,
         extensions: null,

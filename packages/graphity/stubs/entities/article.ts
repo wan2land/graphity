@@ -1,6 +1,6 @@
 import { GraphQLID, GraphQLNonNull, GraphQLString } from 'graphql'
 
-import { Field, GraphQLEntity } from '../../../lib'
+import { Field, GraphQLEntity } from '../../src'
 
 @GraphQLEntity({
   description: 'article entity',

@@ -1,35 +1,35 @@
-import { GraphQLObjectType, GraphQLString, isOutputType, GraphQLArgument } from 'graphql'
+import { Container } from '@graphity/container'
+import { GraphQLObjectType, GraphQLString, isOutputType } from 'graphql'
 
-import { ConstructType, CreateResolveHandler, GraphQLGuard } from '../interfaces/common'
+import { ConstructType } from '../interfaces/common'
+import { Middleware } from '../interfaces/graphity'
 import { MetadataQueries, MetadataResolvers } from '../metadata'
-import { entityToGraphQLObjectType } from './entity-to-graphql-object-type'
 import { createResolver } from './create-resolver'
+import { entityToGraphQLObjectType } from './entity-to-graphql-object-type'
 
-function getObjectType(container: Map<ConstructType<any>, GraphQLObjectType>, entity: ConstructType<any>): GraphQLObjectType {
-  let type = container.get(entity)
+function getObjectType(container: Container, types: Map<ConstructType<any>, GraphQLObjectType>, entity: ConstructType<any>): GraphQLObjectType {
+  let type = types.get(entity)
   if (!type) {
-    type = entityToGraphQLObjectType(entity)
-    container.set(entity, type)
+    type = entityToGraphQLObjectType(container, entity)
+    types.set(entity, type)
   }
   return type
 }
 
 export interface CreateQueryObjectOptions {
   name?: string
-  container?: Map<ConstructType<any>, GraphQLObjectType>
+  types?: Map<ConstructType<any>, GraphQLObjectType>
   resolvers?: ConstructType<any>[]
-  rootGuards?: GraphQLGuard<any, any>[]
-  queryGuards?: GraphQLGuard<any, any>[]
-  create: CreateResolveHandler
+  rootMiddlewares?: ConstructType<Middleware<any, any>>[]
+  rootQueryMiddlewares?: ConstructType<Middleware<any, any>>[]
 }
 
-export function createQueryObject({
+export function createQueryObject(container: Container, {
   name = 'Query',
-  container = new Map(),
+  types = new Map(),
   resolvers = [],
-  rootGuards = [],
-  queryGuards = [],
-  create,
+  rootMiddlewares = [],
+  rootQueryMiddlewares = [],
 }: CreateQueryObjectOptions): GraphQLObjectType {
 
   const queryObjectType = new GraphQLObjectType({
@@ -44,16 +44,15 @@ export function createQueryObject({
     }
 
     const ctorOrType = metadataResolver.typeFactory ? metadataResolver.typeFactory(undefined) : GraphQLString
-    const resolverObjectType = isOutputType(ctorOrType) ? ctorOrType : getObjectType(container, ctorOrType)
+    const resolverObjectType = isOutputType(ctorOrType) ? ctorOrType : getObjectType(container, types, ctorOrType)
 
     for (const query of MetadataQueries.get(resolver) || []) {
-      const parentObjectType = typeof query.parent === 'function' ? getObjectType(container, query.parent(undefined)) : queryObjectType
+      const parentObjectType = typeof query.parent === 'function' ? getObjectType(container, types, query.parent(undefined)) : queryObjectType
       const fields = parentObjectType.getFields()
 
-      // TODO rootable
-      const guards = parentObjectType === queryObjectType
-        ? ([] as GraphQLGuard<any, any>[]).concat(rootGuards, queryGuards, metadataResolver.guards, query.guards)
-        : ([] as GraphQLGuard<any, any>[]).concat(metadataResolver.guards, query.guards)
+      const middlewares = parentObjectType === queryObjectType
+        ? ([] as ConstructType<Middleware<any, any>>[]).concat(rootMiddlewares, rootQueryMiddlewares, metadataResolver.middlewares, query.middlewares)
+        : ([] as ConstructType<Middleware<any, any>>[]).concat(metadataResolver.middlewares, query.middlewares)
 
       fields[query.name] = {
         name: query.name,
@@ -69,7 +68,7 @@ export function createQueryObject({
           }
         }) || [],
         description: query.description,
-        resolve: createResolver(guards, create(metadataResolver.target, query.target)),
+        resolve: createResolver(container, middlewares, metadataResolver.target, query.target),
         isDeprecated: typeof query.deprecated === 'string',
         deprecationReason: typeof query.deprecated === 'string' ? query.deprecated : undefined,
         extensions: null,
