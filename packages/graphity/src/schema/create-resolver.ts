@@ -1,47 +1,68 @@
+import { Container } from '@graphity/container'
 import { GraphQLFieldResolver, GraphQLResolveInfo } from 'graphql'
 
-import { GraphQLGuard } from '../interfaces/common'
+import { Callable, ConstructType } from '../interfaces/common'
+import { Middleware } from '../interfaces/graphity'
 
 function executeResolver<TSource, TContext, TArgs = { [argName: string]: any }>(
-  parent: TSource,
-  args: TArgs,
-  ctx: TContext,
-  info: GraphQLResolveInfo,
-  guards: GraphQLGuard<TSource, TContext, TArgs>[],
-  resolve: GraphQLFieldResolver<TSource, TContext, TArgs>,
-): any {
-  if (guards.length > 0) {
-    const firstGuard = guards[0]
-    const nextGuards = guards.slice(1)
-    return firstGuard(parent, args, ctx, info, (nextParent, nextArgs, nextCtx, nextInfo) => {
+  originParent: TSource,
+  originArgs: TArgs,
+  originContext: TContext,
+  originInfo: GraphQLResolveInfo,
+  container: Container,
+  middlewares: ConstructType<Middleware<any, any>>[],
+  resolver: ConstructType<any> | null,
+  handler: Callable
+): Promise<any> {
+  if (middlewares.length > 0) {
+    const firstMiddleware = container.instances.get(middlewares[0]) as Middleware
+    const nextMiddlewares = middlewares.slice(1)
+    return firstMiddleware.handle({
+      parent: originParent,
+      args: originArgs,
+      context: originContext,
+      info: originInfo,
+    }, ({ parent, args, context, info } = {}) => {
       return executeResolver(
-        typeof nextParent === 'undefined' ? parent : nextParent,
-        typeof nextArgs === 'undefined' ? args : nextArgs,
-        typeof nextCtx === 'undefined' ? ctx : nextCtx,
-        typeof nextInfo === 'undefined' ? info : nextInfo,
-        nextGuards,
-        resolve,
+        typeof parent === 'undefined' ? originParent : parent,
+        typeof args === 'undefined' ? originArgs : args,
+        typeof context === 'undefined' ? originContext : context,
+        typeof info === 'undefined' ? originInfo : info,
+        container,
+        nextMiddlewares,
+        resolver,
+        handler
       )
     })
   }
-  return resolve ? resolve(parent, args, ctx, info) : parent
+  const resolveInstance = resolver && container.instances.get(resolver) || null
+  return resolveInstance
+    ? handler.call(resolveInstance, originParent, originArgs, originContext, originInfo)
+    : handler(originParent, originArgs, originContext, originInfo)
 }
 
-export function createResolver<TSource, TContext, TArgs = { [argName: string]: any }>(
-  guards: GraphQLGuard<TSource, TContext, TArgs>[],
-  resolve: GraphQLFieldResolver<TSource, TContext, TArgs>
+export function createResolver<TSource, TContext, TArgs = Record<string, any>>(
+  container: Container,
+  middlewares: ConstructType<Middleware<any, any>>[],
+  resolver: ConstructType<any> | null,
+  handler: Callable
 ): GraphQLFieldResolver<TSource, TContext, TArgs> {
-  if (guards.length === 0) {
-    return resolve
+  if (middlewares.length === 0) {
+    const resolveInstance = resolver && container.instances.get(resolver) || null
+    return (parent, args, context, info) => resolveInstance
+      ? handler.call(resolveInstance, parent, args, context, info)
+      : handler(parent, args, context, info)
   }
-  return (parent, args, ctx, info) => {
-    return executeResolver(
+  return (parent, args, context, info) => {
+    return executeResolver<TSource, TContext, TArgs>(
       parent,
       args,
-      ctx,
+      context,
       info,
-      guards,
-      resolve,
+      container,
+      middlewares,
+      resolver,
+      handler
     )
   }
 }
