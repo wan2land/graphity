@@ -11,3 +11,6 @@ yarn-error.log
 
 /packages/*/node_modules
 /packages/*/lib
+
+/extensions/*/node_modules
+/extensions/*/lib

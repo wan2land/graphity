@@ -1,7 +1,13 @@
 import { GraphQLResolveInfo } from 'graphql'
+import { IncomingHttpHeaders } from 'http'
 
 import { ConstructType, MaybePromise } from './common'
 
+export interface HttpRequest {
+  method: string
+  url?: string
+  headers: IncomingHttpHeaders
+}
 
 export interface GraphityOptions {
   entries: ConstructType<any>[]
