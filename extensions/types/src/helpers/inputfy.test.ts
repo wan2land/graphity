@@ -1,6 +1,6 @@
-import { GraphQLBoolean, GraphQLObjectType, GraphQLString, GraphQLID, GraphQLNonNull, printType } from 'graphql'
+import { GraphQLID, GraphQLNonNull, GraphQLObjectType, GraphQLString, printType } from 'graphql'
 
-import { inputfy } from '../../lib/helpers/inputfy'
+import { inputfy } from './inputfy'
 
 describe('testsuite of helpers/inputfy', () => {
   it('test simple', () => {
