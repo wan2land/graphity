@@ -20,8 +20,8 @@ export interface CreateMutationObjectOptions {
   name?: string
   types?: Map<ConstructType<any>, GraphQLObjectType>
   resolvers?: ConstructType<any>[]
-  rootMiddlewares?: ConstructType<Middleware<any, any>>[]
-  rootMutationMiddlewares?: ConstructType<Middleware<any, any>>[]
+  rootMiddlewares?: ConstructType<Middleware>[]
+  rootMutationMiddlewares?: ConstructType<Middleware>[]
 }
 
 export function createMutationObject(container: Container, {
@@ -51,8 +51,8 @@ export function createMutationObject(container: Container, {
       const fields = parentObjectType.getFields()
 
       const middlewares = parentObjectType === mutationObjectType
-        ? ([] as ConstructType<Middleware<any, any>>[]).concat(rootMiddlewares, rootMutationMiddlewares, metadataResolver.middlewares, mutation.middlewares)
-        : ([] as ConstructType<Middleware<any, any>>[]).concat(metadataResolver.middlewares, mutation.middlewares)
+        ? ([] as ConstructType<Middleware>[]).concat(rootMiddlewares, rootMutationMiddlewares, metadataResolver.middlewares, mutation.middlewares)
+        : ([] as ConstructType<Middleware>[]).concat(metadataResolver.middlewares, mutation.middlewares)
 
       fields[mutation.name] = {
         name: mutation.name,

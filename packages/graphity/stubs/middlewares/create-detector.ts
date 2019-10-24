@@ -1,6 +1,6 @@
 import { ConstructType, Middleware, MiddlewareCarry, MiddlewareNext } from '../../src'
 
-export function createDetector(name: string): ConstructType<Middleware<any, any>> {
+export function createDetector(name: string): ConstructType<Middleware> {
   return class {
     public async handle({ parent, args, context, info }: MiddlewareCarry<any, any>, next: MiddlewareNext<any, any>) {
       await new Promise((resolve) => setTimeout(resolve, 50)) // async

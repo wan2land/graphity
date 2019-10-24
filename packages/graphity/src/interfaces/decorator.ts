@@ -4,7 +4,7 @@ import { ConstructType, MaybeArray } from './common'
 import { Middleware } from './graphity'
 
 export interface ResolverDecoratorFactoryOption {
-  middlewares?: MaybeArray<ConstructType<Middleware<any, any>>> | null
+  middlewares?: MaybeArray<ConstructType<Middleware>> | null
 }
 
 export type GraphQLParentTypeFactory = (type: any) => ConstructType<any>
@@ -14,7 +14,7 @@ export interface ResolveDecoratorOption {
   name?: string | null
   parent?: GraphQLParentTypeFactory | null
   input?: GraphQLInputObjectType | GraphQLFieldConfigArgumentMap | null
-  middlewares?: MaybeArray<ConstructType<Middleware<any, any>>> | null
+  middlewares?: MaybeArray<ConstructType<Middleware>> | null
   returns?: GraphQLReturnFactory | null
   description?: string | null
   deprecated?: string | null
@@ -29,7 +29,7 @@ export interface EntityDecoratorOption {
 export interface FieldDecoratorOption {
   name?: string | null
   resolve?: GraphQLFieldResolver<any, any> | null
-  middlewares?: MaybeArray<ConstructType<Middleware<any, any>>> | null
+  middlewares?: MaybeArray<ConstructType<Middleware>> | null
   description?: string | null
   deprecated?: string | null
 }

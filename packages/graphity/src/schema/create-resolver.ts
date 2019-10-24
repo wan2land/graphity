@@ -5,29 +5,24 @@ import { Callable, ConstructType } from '../interfaces/common'
 import { Middleware } from '../interfaces/graphity'
 
 function executeResolver<TSource, TContext, TArgs = { [argName: string]: any }>(
-  originParent: TSource,
-  originArgs: TArgs,
-  originContext: TContext,
-  originInfo: GraphQLResolveInfo,
+  parent: TSource,
+  args: TArgs,
+  context: TContext,
+  info: GraphQLResolveInfo,
   container: Container,
-  middlewares: ConstructType<Middleware<any, any>>[],
+  middlewares: ConstructType<Middleware>[],
   resolver: ConstructType<any> | null,
   handler: Callable
 ): Promise<any> {
   if (middlewares.length > 0) {
     const firstMiddleware = container.instances.get(middlewares[0]) as Middleware
     const nextMiddlewares = middlewares.slice(1)
-    return firstMiddleware.handle({
-      parent: originParent,
-      args: originArgs,
-      context: originContext,
-      info: originInfo,
-    }, ({ parent, args, context, info } = {}) => {
+    return firstMiddleware.handle({ parent, args, context, info }, (next = {}) => {
       return executeResolver(
-        typeof parent === 'undefined' ? originParent : parent,
-        typeof args === 'undefined' ? originArgs : args,
-        typeof context === 'undefined' ? originContext : context,
-        typeof info === 'undefined' ? originInfo : info,
+        typeof next.parent === 'undefined' ? parent : next.parent,
+        typeof next.args === 'undefined' ? args : next.args,
+        typeof next.context === 'undefined' ? context : next.context,
+        typeof next.info === 'undefined' ? info : next.info,
         container,
         nextMiddlewares,
         resolver,
@@ -37,13 +32,13 @@ function executeResolver<TSource, TContext, TArgs = { [argName: string]: any }>(
   }
   const resolveInstance = resolver && container.instances.get(resolver) || null
   return resolveInstance
-    ? handler.call(resolveInstance, originParent, originArgs, originContext, originInfo)
-    : handler(originParent, originArgs, originContext, originInfo)
+    ? handler.call(resolveInstance, parent, args, context, info)
+    : handler(parent, args, context, info)
 }
 
 export function createResolver<TSource, TContext, TArgs = Record<string, any>>(
   container: Container,
-  middlewares: ConstructType<Middleware<any, any>>[],
+  middlewares: ConstructType<Middleware>[],
   resolver: ConstructType<any> | null,
   handler: Callable
 ): GraphQLFieldResolver<TSource, TContext, TArgs> {
