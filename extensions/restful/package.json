@@ -1,5 +1,5 @@
 {
-  "name": "@graphity/restful",
+  "name": "@graphity-extensions/restful",
   "version": "0.6.0-alpha.1",
   "description": "GraphQL Schema to RestFUL API.",
   "keywords": [

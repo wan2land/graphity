@@ -19,5 +19,10 @@
 ## Projects
 
 - [graphity](./packages/graphity)
-- [@graphity/restful](./packages/graphity-restful)
-- [@graphity/container](./packages/graphity-container)
+- [@graphity/container](./packages/container)
+
+## Extensions
+
+- [@graphity-extensions/types](./packages/graphity-types)
+- [@graphity-extensions/restful](./packages/graphity-restful)
+- [@graphity-extensions/jwt](./packages/graphity-jwt)
