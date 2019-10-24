@@ -1,8 +1,8 @@
-# Graphity - RESTFul
+# Graphity Extensions - RESTFul
 
-[![Downloads](https://img.shields.io/npm/dt/@graphity/restful.svg)](https://npmcharts.com/compare/@graphity/restful?minimal=true)
-[![Version](https://img.shields.io/npm/v/@graphity/restful.svg)](https://www.npmjs.com/package/@graphity/restful)
-[![License](https://img.shields.io/npm/l/@graphity/restful.svg)](https://www.npmjs.com/package/@graphity/restful)
+[![Downloads](https://img.shields.io/npm/dt/@graphity-extensions/restful.svg)](https://npmcharts.com/compare/@graphity-extensions/restful?minimal=true)
+[![Version](https://img.shields.io/npm/v/@graphity-extensions/restful.svg)](https://www.npmjs.com/package/@graphity-extensions/restful)
+[![License](https://img.shields.io/npm/l/@graphity-extensions/restful.svg)](https://www.npmjs.com/package/@graphity-extensions/restful)
 ![Typescript](https://img.shields.io/badge/language-Typescript-007acc.svg?style=flat-square)
 
 ## How to use
@@ -10,13 +10,13 @@
 ### Installation
 
 ```bash
-npm install @graphity/restful --save
+npm install @graphity-extensions/restful --save
 ```
 
 ### Simple Example
 
 ```typescript
-import { createExpressAdapter } from "@graphity/restful"
+import { createExpressAdapter } from "@graphity-extensions/restful"
 import { ApolloServer } from "apollo-server-express"
 import bodyParser from "body-parser"
 
@@ -62,7 +62,3 @@ app.use(createExpressAdapter(schema, {
 
 app.listen(8080)
 ```
-
-## Licesnse
-
-MIT

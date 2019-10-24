@@ -1,8 +1,8 @@
-# Graphity - Types
+# Graphity Extensions - Types
 
-[![Downloads](https://img.shields.io/npm/dt/@graphity/types.svg)](https://npmcharts.com/compare/@graphity/types?minimal=true)
-[![Version](https://img.shields.io/npm/v/@graphity/types.svg)](https://www.npmjs.com/package/@graphity/types)
-[![License](https://img.shields.io/npm/l/@graphity/types.svg)](https://www.npmjs.com/package/@graphity/types)
+[![Downloads](https://img.shields.io/npm/dt/@graphity-extensions/types.svg)](https://npmcharts.com/compare/@graphity-extensions/types?minimal=true)
+[![Version](https://img.shields.io/npm/v/@graphity-extensions/types.svg)](https://www.npmjs.com/package/@graphity-extensions/types)
+[![License](https://img.shields.io/npm/l/@graphity-extensions/types.svg)](https://www.npmjs.com/package/@graphity-extensions/types)
 ![Typescript](https://img.shields.io/badge/language-Typescript-007acc.svg?style=flat-square)
 
 ## How to use
@@ -10,7 +10,7 @@
 ### Installation
 
 ```bash
-npm install @graphity/types --save
+npm install @graphity-extensions/types --save
 ```
 
 ### Usage Helpers
@@ -56,7 +56,3 @@ npm install @graphity/types --save
 - GraphQLUSCurrency (from `graphiql-scalars`)
 - GraphQLJSON (from `graphiql-scalars`)
 - GraphQLJSONObject (from `graphiql-scalars`)
-
-## Licesnse
-
-MIT

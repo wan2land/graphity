@@ -1,4 +1,4 @@
-import { Container } from '@graphity/container/src'
+import { Container } from '@graphity/container'
 import { printType } from 'graphql'
 
 import { entityToGraphQLObjectType } from './entity-to-graphql-object-type'
