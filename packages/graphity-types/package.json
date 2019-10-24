@@ -17,5 +17,6 @@
   "dependencies": {
     "core-js": "^3.2.1",
     "graphql-scalars": "^1.0.2"
-  }
+  },
+  "gitHead": "da730f2e894afccb856baac46e283d944b74faa2"
 }
