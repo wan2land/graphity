@@ -16,8 +16,44 @@ npm install @graphity-extensions/types --save
 ### Usage Helpers
 
 - inputify (`type Name { ... }` => `input InputName { ... }` except interface, union)
-- listOf (`String` => `type ListOfString { count: Int!, nodes: [String!]! }`)
-- nonNullList (`String` => `[String!]!`)
+- GraphQLList (`String` => `type ListOfString { count: Int!, nodes: [String!]! }`)
+- GraphQLNonNullList (`String` => `[String!]!`)
+- GraphQLInput
+
+#### GraphQLInput
+
+```js
+const inputType = GraphQLInput({
+  name: 'CreateUser',
+  fields: {
+    id: GraphQLNonNull(GraphQLID),
+    name: GraphQLString,
+    email: GraphQLString,
+    address: {
+      address1: GraphQLNonNull(GraphQLString),
+      address2: GraphQLString,
+      zipcode: GraphQLString,
+    },
+  },
+})
+```
+
+to
+
+```graphql
+input CreateUser {
+  id: ID!
+  name: String
+  email: String
+  address: CreateUserAddress
+}
+
+input CreateUserAddress {
+  address1: String!
+  address2: String
+  zipcode: String
+}
+```
 
 ### Usage Types
 

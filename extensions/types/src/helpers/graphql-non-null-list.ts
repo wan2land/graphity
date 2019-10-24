@@ -1,5 +1,5 @@
 import { GraphQLList, GraphQLNonNull, GraphQLNullableType } from 'graphql'
 
-export function nonNullList(type: GraphQLNullableType) {
+export function GraphQLNonNullList(type: GraphQLNullableType) {
   return GraphQLNonNull(GraphQLList(GraphQLNonNull(type)))
 }
