@@ -14,7 +14,7 @@ class TestResolver {
   }
 }
 
-class TestMiddleware1 implements Middleware<any, any> {
+class TestMiddleware1 implements Middleware {
   public async handle({ parent, args, context, info }: MiddlewareCarry<any, any>, next: MiddlewareNext<any, any>) {
     context.stack.push('before middleware1')
     const result = await next({ parent, args, context, info })
@@ -23,7 +23,7 @@ class TestMiddleware1 implements Middleware<any, any> {
   }
 }
 
-class TestMiddleware2 implements Middleware<any, any> {
+class TestMiddleware2 implements Middleware {
   public async handle({ parent, args, context, info }: MiddlewareCarry<any, any>, next: MiddlewareNext<any, any>) {
     context.stack.push('before middleware2')
     const result = await next({ parent, args, context, info })

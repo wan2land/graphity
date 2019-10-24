@@ -20,8 +20,8 @@ export interface CreateQueryObjectOptions {
   name?: string
   types?: Map<ConstructType<any>, GraphQLObjectType>
   resolvers?: ConstructType<any>[]
-  rootMiddlewares?: ConstructType<Middleware<any, any>>[]
-  rootQueryMiddlewares?: ConstructType<Middleware<any, any>>[]
+  rootMiddlewares?: ConstructType<Middleware>[]
+  rootQueryMiddlewares?: ConstructType<Middleware>[]
 }
 
 export function createQueryObject(container: Container, {
@@ -51,8 +51,8 @@ export function createQueryObject(container: Container, {
       const fields = parentObjectType.getFields()
 
       const middlewares = parentObjectType === queryObjectType
-        ? ([] as ConstructType<Middleware<any, any>>[]).concat(rootMiddlewares, rootQueryMiddlewares, metadataResolver.middlewares, query.middlewares)
-        : ([] as ConstructType<Middleware<any, any>>[]).concat(metadataResolver.middlewares, query.middlewares)
+        ? ([] as ConstructType<Middleware>[]).concat(rootMiddlewares, rootQueryMiddlewares, metadataResolver.middlewares, query.middlewares)
+        : ([] as ConstructType<Middleware>[]).concat(metadataResolver.middlewares, query.middlewares)
 
       fields[query.name] = {
         name: query.name,

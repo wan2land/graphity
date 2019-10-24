@@ -12,13 +12,13 @@ import { Middleware } from './graphity'
 export interface MetadataResolver {
   target: any
   typeFactory?: GraphQLResolverTypeFactory
-  middlewares: ConstructType<Middleware<any, any>>[]
+  middlewares: ConstructType<Middleware>[]
 }
 
 export interface MetadataResolve {
   target: (...args: any[]) => any
   parent?: GraphQLParentTypeFactory
-  middlewares: ConstructType<Middleware<any, any>>[]
+  middlewares: ConstructType<Middleware>[]
   name: string
   input?: GraphQLFieldConfigArgumentMap
   returns?: GraphQLReturnFactory
@@ -36,7 +36,7 @@ export interface MetadataField {
   target: any
   property: string | symbol
   typeFactory: GraphQLFieldTypeFactory
-  middlewares: ConstructType<Middleware<any, any>>[]
+  middlewares: ConstructType<Middleware>[]
   name: string
   resolve?: GraphQLFieldResolver<any, any>
   description?: string
