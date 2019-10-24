@@ -1,13 +1,7 @@
-import { IncomingHttpHeaders } from 'http'
+import { HttpRequest } from './graphity'
 
 export interface JwtUser {
   id: string | number
-}
-
-export interface HttpRequest {
-  method: string
-  url?: string
-  headers: IncomingHttpHeaders
 }
 
 export interface GraphQLAuthContext<TAuthUser = any, TAuthRole = string> {

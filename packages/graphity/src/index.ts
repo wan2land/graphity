@@ -1,4 +1,16 @@
 
+export {
+  Containable,
+  Container,
+  ContainerFluent,
+  Inject,
+  InjectDecoratorFactory,
+  Name,
+  MetadataInject,
+  MetadataInjectOption,
+  Provider,
+} from '@graphity/container'
+
 export * from './decorators/resolver'
 export * from './decorators/query'
 export * from './decorators/mutation'
@@ -12,6 +24,8 @@ export * from './interfaces/decorator'
 export * from './interfaces/metadata'
 
 export * from './errors/graphity-error'
+
+export * from './schema/context-factory'
 
 export * from './middlewares/authorized'
 

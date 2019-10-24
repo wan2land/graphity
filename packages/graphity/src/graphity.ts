@@ -2,10 +2,11 @@ import { Container } from '@graphity/container'
 import { GraphQLObjectType, GraphQLSchema, GraphQLString, isOutputType } from 'graphql'
 
 import { ConstructType } from './interfaces/common'
-import { GraphityOptions, Middleware } from './interfaces/graphity'
+import { GraphityOptions, HttpRequest, Middleware } from './interfaces/graphity'
 import { MetadataFields, MetadataMutations, MetadataQueries, MetadataResolvers } from './metadata'
 import { createMutationObject } from './schema/create-mutation-object'
 import { createQueryObject } from './schema/create-query-object'
+import { ContextFactory } from './schema/context-factory'
 
 export class Graphity extends Container {
 
@@ -22,6 +23,10 @@ export class Graphity extends Container {
   }
 
   public boot(): Promise<void> {
+    if (!this.descriptors.has(ContextFactory)) {
+      this.bind(ContextFactory, ContextFactory) // default context factory
+    }
+
     const middlewareClassSet = new Set<ConstructType<Middleware>>()
     const resolverClassSet = new Set<ConstructType<any>>()
 
@@ -103,5 +108,9 @@ export class Graphity extends Container {
       query: queryObject,
       mutation: Object.keys(mutationObject.getFields()).length > 0 ? mutationObject : undefined,
     })
+  }
+
+  public createContext(request: HttpRequest) {
+    return this.get(ContextFactory).then(factory => factory.factory(request))
   }
 }
