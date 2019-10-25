@@ -5,12 +5,20 @@ import { Middleware, MiddlewareCarry, MiddlewareNext } from '../interfaces/graph
 
 export function Authorized<TAuthUser = any, TRole = string>(
   roles?: MaybeArray<TRole>,
-  handler?: (auth: { roles: TRole[], user?: TAuthUser }, resource: any) => MaybePromise<boolean>,
+  handler?: (auth: { roles?: TRole[], user?: TAuthUser }, resource: any) => MaybePromise<boolean>,
 ) {
   return class implements Middleware<null, GraphQLAuthContext<TAuthUser, TRole>> {
     public async handle({ context }: MiddlewareCarry<null, GraphQLAuthContext<TAuthUser, TRole>>, next: MiddlewareNext<null, GraphQLAuthContext<TAuthUser, TRole>>) {
       if (!context.auth || !context.auth.user) {
         throw new GraphityError('Access denied.', 'UNAUTHORIZED')
+      }
+      if (!roles) { // roles not defined, ignore
+        const resource = await next()
+        if (handler) {
+          if (!await handler(context.auth, resource)) {
+            throw new GraphityError('Access denied.', 'FORBIDDEN')
+          }
+        }
       }
       for (const role of !roles ? [] : Array.isArray(roles) ? roles : [roles]) {
         if (context.auth.roles.includes(role)) {
