@@ -1,6 +1,6 @@
 {
   "name": "@graphity-extensions/jwt",
-  "version": "0.6.0-alpha.1",
+  "version": "0.6.0-alpha.2",
   "description": "Graphity JWT extension",
   "keywords": [
     "jwt",
@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "core-js": "^3.2.1",
-    "graphity": "^0.6.0-alpha.1",
+    "graphity": "^0.6.0-alpha.2",
     "jsonwebtoken": "^8.5.1"
   },
   "gitHead": "da730f2e894afccb856baac46e283d944b74faa2"
