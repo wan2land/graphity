@@ -1,27 +1,31 @@
 /* eslint-disable max-classes-per-file, @typescript-eslint/no-extraneous-class */
-import { Container, Inject } from '../lib'
-import { sleep } from './utils'
+import { Inject, SharedContainer } from '../lib'
 
+function sleep(time: number) {
+  return new Promise((resolve) => setTimeout(resolve, time))
+}
 
 describe('testsuite of container', () => {
   it('test instance', async () => {
-    const container = new Container()
+    const container = new SharedContainer()
 
     container.instance('obj1', { message: 'this is obj1' })
     container.instance('obj2', { message: 'this is obj2' })
 
-    const result1 = await container.get('obj1')
-    const result2 = await container.get('obj2')
+    await container.boot()
+
+    const result1 = container.get('obj1')
+    const result2 = container.get('obj2')
 
     expect(result1).toEqual({ message: 'this is obj1' })
     expect(result2).toEqual({ message: 'this is obj2' })
 
-    await expect(container.get('obj1')).resolves.toBe(result1)
-    await expect(container.get('obj2')).resolves.toBe(result2)
+    expect(container.get('obj1')).toBe(result1)
+    expect(container.get('obj2')).toBe(result2)
   })
 
   it('test promise instance', async () => {
-    const container = new Container()
+    const container = new SharedContainer()
 
     function promise1() {
       return new Promise(resolve => resolve({ message: 'this is promise1' }))
@@ -34,18 +38,20 @@ describe('testsuite of container', () => {
     container.instance('promise1', promise1())
     container.instance('promise2', promise2())
 
-    const result1 = await container.get('promise1')
-    const result2 = await container.get('promise2')
+    await container.boot()
+
+    const result1 = container.get('promise1')
+    const result2 = container.get('promise2')
 
     expect(result1).toEqual({ message: 'this is promise1' })
     expect(result2).toEqual({ message: 'this is promise2' })
 
-    await expect(container.get('promise1')).resolves.toBe(result1)
-    await expect(container.get('promise2')).resolves.toBe(result2)
+    expect(container.get('promise1')).toBe(result1)
+    expect(container.get('promise2')).toBe(result2)
   })
 
   it('test resolve', async () => {
-    const container = new Container()
+    const container = new SharedContainer()
 
     container.resolver('resolve1', () => ({ message: 'this is resolve' }))
     container.resolver('resolve2', () => {
@@ -58,19 +64,17 @@ describe('testsuite of container', () => {
       return { message: 'this is async resolve' }
     })
 
-    const result1 = await container.get('resolve1')
-    const result2 = await container.get('resolve2')
-    const result3 = await container.get('resolve3')
+    await container.boot()
 
-    expect(result1).toEqual({ message: 'this is resolve' })
-    expect(result2).toEqual({ message: 'this is promise resolve' })
-    expect(result3).toEqual({ message: 'this is async resolve' })
+    expect(container.get('resolve1')).toEqual({ message: 'this is resolve' })
+    expect(container.get('resolve2')).toEqual({ message: 'this is promise resolve' })
+    expect(container.get('resolve3')).toEqual({ message: 'this is async resolve' })
   })
 
   it('test bind', async () => {
     expect.assertions(2)
 
-    const container = new Container()
+    const container = new SharedContainer()
 
     class Driver {
     }
@@ -83,14 +87,16 @@ describe('testsuite of container', () => {
     container.bind('driver', Driver)
     container.bind('connection', Connection)
 
-    const connection = await container.get<Connection>('connection')
+    await container.boot()
+
+    const connection = container.get<Connection>('connection')
 
     expect(connection).toBeInstanceOf(Connection)
     expect(connection.driver).toBeInstanceOf(Driver)
   })
 
   it('test create method', async () => {
-    const container = new Container()
+    const container = new SharedContainer()
 
     class Connection {
     }
@@ -109,7 +115,7 @@ describe('testsuite of container', () => {
   })
 
   it('test invoke method', async () => {
-    const container = new Container()
+    const container = new SharedContainer()
 
     class Connection {
     }
@@ -128,20 +134,20 @@ describe('testsuite of container', () => {
   })
 
   it('test setToGlobal', () => {
-    const originContainer = Container.instance
+    const originSharedContainer = SharedContainer.instance
 
-    expect(Container.instance).toBeInstanceOf(Container)
-    expect(Container.instance).toBe(Container.instance)
+    expect(SharedContainer.instance).toBeInstanceOf(SharedContainer)
+    expect(SharedContainer.instance).toBe(SharedContainer.instance)
 
-    const container = new Container().setToGlobal()
-    expect(container).toBeInstanceOf(Container)
-    expect(container).toBe(Container.instance)
+    const container = new SharedContainer().setToGlobal()
+    expect(container).toBeInstanceOf(SharedContainer)
+    expect(container).toBe(SharedContainer.instance)
 
-    expect(container).not.toBe(originContainer)
+    expect(container).not.toBe(originSharedContainer)
   })
 
   it('test boot lock', async () => {
-    const container = new Container()
+    const container = new SharedContainer()
 
     let countOfCallRegister = 0
     let countOfCallBoot = 0
@@ -171,7 +177,7 @@ describe('testsuite of container', () => {
   })
 
   it('test boot force', async () => {
-    const container = new Container()
+    const container = new SharedContainer()
 
     let countOfCallRegister = 0
     let countOfCallBoot = 0
@@ -203,25 +209,23 @@ describe('testsuite of container', () => {
   })
 
   it('test get singleton instance in same time', async () => {
-    const container = new Container()
+    const container = new SharedContainer()
 
     container.resolver('instance', async () => {
       await new Promise(resolve => setTimeout(resolve, 1000))
       return { name: 'instance' }
     })
 
-    await container.boot()
-
     const [inst1, inst2] = await Promise.all([
-      container.get('instance'),
-      container.get('instance'),
+      container.resolve('instance'),
+      container.resolve('instance'),
     ])
 
     expect(inst1).toBe(inst2)
   })
 
   it('test get singleton instance in similar time', async () => {
-    const container = new Container()
+    const container = new SharedContainer()
 
     container.resolver('instance', async () => {
       await new Promise(resolve => setTimeout(resolve, 1000))
@@ -231,10 +235,10 @@ describe('testsuite of container', () => {
     await container.boot()
 
     const [inst1, inst2] = await Promise.all([
-      container.get('instance'),
+      container.resolve('instance'),
       (async () => {
         await new Promise(resolve => setTimeout(resolve, 100))
-        return container.get('instance')
+        return container.resolve('instance')
       })(),
     ])
 

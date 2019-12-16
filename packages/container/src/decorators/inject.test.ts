@@ -1,5 +1,5 @@
 /* eslint-disable max-classes-per-file */
-import { create, Inject } from '../../lib'
+import { SharedContainer, Inject } from '../../lib'
 
 class Mysql {
   public name = 'mysql'
@@ -32,7 +32,7 @@ class TestInjectController {
 
 describe('testsuite of decorators/inject', () => {
   it('test inject', async () => {
-    const container = create()
+    const container = new SharedContainer()
 
     const mysql = new Mysql()
     const postgres = new Postgres()
