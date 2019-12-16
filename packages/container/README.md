@@ -16,10 +16,10 @@ npm install @graphity/container --save
 ## Usage
 
 ```javascript
-const { Container } = require("@graphity/container")
-// or import { Container } from "@graphity/container"
+const { SharedContainer } = require("@graphity/container")
+// or import { SharedContainer } from "@graphity/container"
 
-const container = new Container()
+const container = new SharedContainer()
 ```
 
 
@@ -78,7 +78,7 @@ console.log(await container.get("resolver3")) // {message: "this is async resolv
 ### Bind class
 
 ```ts
-import { Container, Inject } from "@graphity/container"
+import { Inject } from "@graphity/container"
 
 class Driver {
 }
@@ -119,7 +119,7 @@ console.log(await container.get("class.factory") === await container.get("class.
 ### create
 
 ```ts
-import { Container, Inject } from "@graphity/container"
+import { Inject } from "@graphity/container"
 
 class Connection {
 }
@@ -139,7 +139,7 @@ console.log(controller) // Controller { connection: Connection {} }
 ### invoke
 
 ```ts
-import { Container, Inject } from "@graphity/container"
+import { Inject } from "@graphity/container"
 
 class Connection {
 }
@@ -192,7 +192,7 @@ export const typeorm: Provider = {
 `controllers/user-controller.ts`
 
 ```ts
-import { Container, Inject } from "@graphity/container"
+import { Inject } from "@graphity/container"
 import { Connection, Repository } from 'typeorm'
 import { User } from '../entities/user.ts'
 
@@ -214,11 +214,11 @@ export class UserController {
 `entry.ts`
 
 ```ts
-import { Container } from "@graphity/container"
+import { SharedContainer } from "@graphity/container"
 import { typeorm } from './providers/typeorm'
 import { UserController } from './controllers/user-controller'
 
-const app = new Container()
+const app = new SharedContainer()
 app.register(typeorm)
 
 await app.boot()

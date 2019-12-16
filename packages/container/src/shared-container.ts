@@ -1,11 +1,11 @@
 import { Descriptor } from './descriptor'
 import { ConstructType, Name } from './interfaces/common'
-import { Containable, ContainerFluent, Provider } from './interfaces/container'
+import { Container, ContainerFluent, Provider, ProviderDescriptor } from './interfaces/container'
 import { MetadataInject } from './metadata'
 
-export class Container implements Containable {
+export class SharedContainer implements Container, ProviderDescriptor {
 
-  public static instance = new Container()
+  public static instance = new SharedContainer()
 
   public descriptors: Map<any, Descriptor<any>>
   public instances: Map<any, any>
@@ -26,7 +26,7 @@ export class Container implements Containable {
   }
 
   public setToGlobal() {
-    return (Container.instance = this)
+    return (SharedContainer.instance = this)
   }
 
   public instance<T>(name: Name<T>, value: T | Promise<T>): void {
