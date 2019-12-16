@@ -15,7 +15,7 @@ function executeResolver<TSource, TContext, TArgs = { [argName: string]: any }>(
   handler: Callable
 ): Promise<any> {
   if (middlewares.length > 0) {
-    const firstMiddleware = container.instances.get(middlewares[0]) as Middleware
+    const firstMiddleware = container.get(middlewares[0])
     const nextMiddlewares = middlewares.slice(1)
     return firstMiddleware.handle({ parent, args, context, info }, (next = {}) => {
       return executeResolver(
@@ -30,7 +30,7 @@ function executeResolver<TSource, TContext, TArgs = { [argName: string]: any }>(
       )
     })
   }
-  const resolveInstance = resolver && container.instances.get(resolver) || null
+  const resolveInstance = resolver && container.get(resolver) || null
   return resolveInstance
     ? handler.call(resolveInstance, parent, args, context, info)
     : handler(parent, args, context, info)
@@ -43,7 +43,7 @@ export function createResolver<TSource, TContext, TArgs = Record<string, any>>(
   handler: Callable
 ): GraphQLFieldResolver<TSource, TContext, TArgs> {
   if (middlewares.length === 0) {
-    const resolveInstance = resolver && container.instances.get(resolver) || null
+    const resolveInstance = resolver && container.get(resolver) || null
     return (parent, args, context, info) => resolveInstance
       ? handler.call(resolveInstance, parent, args, context, info)
       : handler(parent, args, context, info)

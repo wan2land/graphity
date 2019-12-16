@@ -1,92 +1,66 @@
-import { Container } from '@graphity/container'
+import { SharedContainer } from '@graphity/container'
 import { GraphQLObjectType, GraphQLSchema, GraphQLString, isOutputType } from 'graphql'
 
+import { DefaultContextBuilder } from './context/default-context-builder'
 import { ConstructType } from './interfaces/common'
-import { GraphityOptions, HttpRequest, Middleware } from './interfaces/graphity'
+import { ContextBuilder, GraphityContext, GraphityOptions, HttpRequest, Middleware } from './interfaces/graphity'
 import { MetadataFields, MetadataMutations, MetadataQueries, MetadataResolvers } from './metadata'
 import { createMutationObject } from './schema/create-mutation-object'
 import { createQueryObject } from './schema/create-query-object'
-import { ContextFactory } from './schema/context-factory'
 
-export class Graphity extends Container {
+export class Graphity<TContext = GraphityContext> extends SharedContainer {
 
-  public options: GraphityOptions
+  public graphityResolvers: ConstructType<any>[]
+  public graphityCommonMiddlewares: ConstructType<Middleware>[]
+  public graphityCommonQueryMiddlewares: ConstructType<Middleware>[]
+  public graphityCommonMutationMiddlewares: ConstructType<Middleware>[]
+  public contextBuilder?: ConstructType<ContextBuilder<TContext>>
 
-  public constructor(options: Partial<GraphityOptions> = {}) {
+  public constructor(options: GraphityOptions<TContext> = {}) {
     super()
-    this.options = {
-      entries: options.entries || [],
-      commonMiddlewares: options.commonMiddlewares || [],
-      commonQueryMiddlewares: options.commonQueryMiddlewares || [],
-      commonMutationMiddlewares: options.commonMutationMiddlewares || [],
-    }
+    this.graphityResolvers = options.resolvers || []
+    this.graphityCommonMiddlewares = options.commonMiddlewares || []
+    this.graphityCommonQueryMiddlewares = options.commonQueryMiddlewares || []
+    this.graphityCommonMutationMiddlewares = options.commonMutationMiddlewares || []
+    this.contextBuilder = options.contextBuilder
   }
 
   public boot(): Promise<void> {
-    if (!this.descriptors.has(ContextFactory)) {
-      this.bind(ContextFactory, ContextFactory) // default context factory
+    if (this.contextBuilder) {
+      this.bind('graphity:contextBuilder', this.contextBuilder)
+    } else {
+      this.instance('graphity:contextBuilder', new DefaultContextBuilder(this))
     }
 
-    const middlewareClassSet = new Set<ConstructType<Middleware>>()
-    const resolverClassSet = new Set<ConstructType<any>>()
+    this.graphityCommonMiddlewares.forEach(middleware => this.bind(middleware, middleware))
+    this.graphityCommonQueryMiddlewares.forEach(middleware => this.bind(middleware, middleware))
+    this.graphityCommonMutationMiddlewares.forEach(middleware => this.bind(middleware, middleware))
 
-    for (const middleware of this.options.commonMiddlewares) {
-      middlewareClassSet.add(middleware)
-    }
-    for (const middleware of this.options.commonQueryMiddlewares) {
-      middlewareClassSet.add(middleware)
-    }
-    for (const middleware of this.options.commonMutationMiddlewares) {
-      middlewareClassSet.add(middleware)
-    }
-    for (const resolver of this.options.entries) {
-      resolverClassSet.add(resolver)
+    for (const resolver of this.graphityResolvers) {
+      this.bind(resolver, resolver)
 
       const metadataResolver = MetadataResolvers.get(resolver)
       if (metadataResolver) {
-        for (const middleware of metadataResolver.middlewares) {
-          middlewareClassSet.add(middleware)
-        }
+        metadataResolver.middlewares.forEach(middleware => this.bind(middleware, middleware))
 
         // field middlewares
         const ctorOrType = metadataResolver.typeFactory && metadataResolver.typeFactory(undefined) || GraphQLString
         if (!isOutputType(ctorOrType)) {
           for (const field of MetadataFields.get(ctorOrType) || []) {
-            for (const middleware of field.middlewares) {
-              middlewareClassSet.add(middleware)
-            }
+            field.middlewares.forEach(middleware => this.bind(middleware, middleware))
           }
         }
       }
       // query & mutation middlewares
       for (const query of MetadataQueries.get(resolver) || []) {
-        for (const middleware of query.middlewares) {
-          middlewareClassSet.add(middleware)
-        }
+        query.middlewares.forEach(middleware => this.bind(middleware, middleware))
       }
       for (const mutation of MetadataMutations.get(resolver) || []) {
-        for (const middleware of mutation.middlewares) {
-          middlewareClassSet.add(middleware)
-        }
+        mutation.middlewares.forEach(middleware => this.bind(middleware, middleware))
       }
     }
 
-    const middlewareClasses = [...middlewareClassSet]
-    const resolverClasses = [...resolverClassSet]
     return super.boot()
-      .then(() => Promise.all(middlewareClasses.map(middleware => this.create(middleware))))
-      .then((middlewares) => {
-        middlewares.forEach((middleware, middlewareIndex) => {
-          this.instances.set(middlewareClasses[middlewareIndex], middleware)
-        })
-        return Promise.all(resolverClasses.map(resolver => this.create(resolver)))
-      })
-      .then((resolvers) => {
-        resolvers.forEach((resolver, resolverIndex) => {
-          this.instances.set(resolverClasses[resolverIndex], resolver)
-        })
-        return Promise.resolve()
-      })
   }
 
   public createSchema(): GraphQLSchema {
@@ -94,15 +68,15 @@ export class Graphity extends Container {
 
     const queryObject = createQueryObject(this, {
       types,
-      resolvers: this.options.entries,
-      rootMiddlewares: this.options.commonMiddlewares,
-      rootQueryMiddlewares: this.options.commonQueryMiddlewares,
+      resolvers: this.graphityResolvers,
+      rootMiddlewares: this.graphityCommonMiddlewares,
+      rootQueryMiddlewares: this.graphityCommonQueryMiddlewares,
     })
     const mutationObject = createMutationObject(this, {
       types,
-      resolvers: this.options.entries,
-      rootMiddlewares: this.options.commonMiddlewares,
-      rootMutationMiddlewares: this.options.commonMutationMiddlewares,
+      resolvers: this.graphityResolvers,
+      rootMiddlewares: this.graphityCommonMiddlewares,
+      rootMutationMiddlewares: this.graphityCommonMutationMiddlewares,
     })
     return new GraphQLSchema({
       query: queryObject,
@@ -111,6 +85,6 @@ export class Graphity extends Container {
   }
 
   public createContext(request: HttpRequest) {
-    return this.get(ContextFactory).then(factory => factory.factory(request))
+    return this.get<ContextBuilder>('graphity:contextBuilder').buildContext(request)
   }
 }

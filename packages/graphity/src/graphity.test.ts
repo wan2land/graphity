@@ -20,7 +20,7 @@ describe('testsuite of graphity', () => {
 
   it('test createSchema simple', async () => {
     const graphity = new Graphity({
-      entries: [
+      resolvers: [
         ArticleResolver,
         UserResolver,
         HomeResolver,
@@ -193,7 +193,7 @@ type User {
 
   it('test createSchema middlewares', async () => {
     const graphity = new Graphity({
-      entries: [
+      resolvers: [
         CommentResolver,
       ],
       commonMiddlewares: [
