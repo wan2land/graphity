@@ -29,11 +29,13 @@ const container = new SharedContainer()
 container.instance("obj1", {message: "this is obj1"})
 container.instance("obj2", {message: "this is obj2"})
 
-console.log(await container.get("obj1")) // {message: "this is obj1"}
-console.log(await container.get("obj2")) // {message: "this is obj2"}
+await container.boot() // boot!
 
-console.log(await container.get("obj1") === await container.get("obj1")) // true
-console.log(await container.get("obj2") === await container.get("obj2")) // true
+console.log(container.get("obj1")) // {message: "this is obj1"}
+console.log(container.get("obj2")) // {message: "this is obj2"}
+
+console.log(container.get("obj1") === container.get("obj1")) // true
+console.log(container.get("obj2") === container.get("obj2")) // true
 ```
 
 ### Bind promise value
@@ -49,11 +51,13 @@ async function promise2() {
 container.instance("promise1", promise1())
 container.instance("promise2", promise2())
 
-console.log(await container.get("promise1")) // {message: "this is promise1"}
-console.log(await container.get("promise2")) // {message: "this is promise2"}
+await container.boot() // boot!
 
-console.log(await container.get("promise1") === await container.get("promise1")) // true
-console.log(await container.get("promise2") === await container.get("promise2")) // true
+console.log(container.get("promise1")) // {message: "this is promise1"}
+console.log(container.get("promise2")) // {message: "this is promise2"}
+
+console.log(container.get("promise1") === container.get("promise1")) // true
+console.log(container.get("promise2") === container.get("promise2")) // true
 ```
 
 ### Bind resolver
@@ -70,9 +74,11 @@ container.resolver("resolver3", async () => {
   return {message: "this is async resolver"}
 })
 
-console.log(await container.get("resolver1")) // {message: "this is resolver"}
-console.log(await container.get("resolver2")) // {message: "this is promise resolver"}
-console.log(await container.get("resolver3")) // {message: "this is async resolver"}
+await container.boot() // boot!
+
+console.log(container.get("resolver1")) // {message: "this is resolver"}
+console.log(container.get("resolver2")) // {message: "this is promise resolver"}
+console.log(container.get("resolver3")) // {message: "this is async resolver"}
 ```
 
 ### Bind class
@@ -90,30 +96,12 @@ class Connection {
 container.bind("driver", Driver)
 container.bind("connection", Connection)
 
-const connection = await container.get<Connection>("connection")
+await container.boot() // boot!
+
+const connection = container.get<Connection>("connection")
 
 console.log(connection) // Connection { driver: Driver {} }
 console.log(connection.driver) // Driver {}
-```
-
-### Factory descriptor
-
-Descriptor is very useful if you using factory or bind. this is example of factory.
-
-```ts
-container.resolver("resolver.normal", () => ({message: "this is resolver"}))
-container.resolver("resolver.factory", () => ({message: "this is resolver with factory"})).factory()
-
-container.bind("class.normal", Foo)
-container.bind("class.factory", Foo).factory()
-
-// always same
-console.log(await container.get("resolver.normal") === await container.get("resolver.normal")) // true
-console.log(await container.get("class.normal") === await container.get("class.normal")) // true
-
-// not same
-console.log(await container.get("resolver.factory") === await container.get("resolver.factory")) // false
-console.log(await container.get("class.factory") === await container.get("class.factory")) // false
 ```
 
 ### create
@@ -130,6 +118,8 @@ class Controller {
 }
 
 container.bind("connection", Connection)
+
+await container.boot()
 
 const controller = await container.create(Controller)
 
@@ -153,6 +143,8 @@ class Controller {
 container.bind("connection", Connection)
 
 const controller = new Controller()
+
+await container.boot()
 
 console.log(await container.invoke(controller, "retrieve")) // Connection { }
 ```
