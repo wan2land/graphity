@@ -8,6 +8,4 @@ export { Inject } from './decorators/inject'
 
 export * from './metadata'
 
-
-export { Container } from './container'
-export { create } from './create'
+export { SharedContainer } from './shared-container'
