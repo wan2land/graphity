@@ -1,0 +1,23 @@
+{
+  "private": true,
+  "scripts": {
+    "start": "npm run build && node dist/entry.js",
+    "build": "babel ./src --out-dir ./dist --extensions \".ts\""
+  },
+  "dependencies": {
+    "@graphity-extensions/types": "file:../../extensions/types",
+    "apollo-server": "^2.9.13",
+    "graphity": "file:../../packages/graphity",
+    "graphql": "^14.5.8"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.6.4",
+    "@babel/core": "^7.6.4",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/plugin-proposal-decorators": "^7.6.0",
+    "@babel/plugin-proposal-object-rest-spread": "^7.6.2",
+    "@babel/preset-env": "^7.6.3",
+    "@babel/preset-typescript": "^7.6.0",
+    "typescript": "^3.4.5"
+  }
+}
