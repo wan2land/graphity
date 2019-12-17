@@ -34,3 +34,9 @@ export { Graphity } from './graphity'
 export { Authorized } from './middlewares/authorized'
 
 export { AuthProvider } from './providers/auth-provider'
+
+export { createGraphQLInput } from './types/create-graphql-input'
+export { createGraphQLObject } from './types/create-graphql-object'
+export { GraphQLListOf } from './types/graphql-list-of'
+export { GraphQLNonNullList } from './types/graphql-non-null-list'
+export { inputify } from './types/inputify'

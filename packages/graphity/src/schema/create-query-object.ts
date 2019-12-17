@@ -5,12 +5,12 @@ import { ConstructType } from '../interfaces/common'
 import { Middleware } from '../interfaces/graphity'
 import { MetadataQueries, MetadataResolvers } from '../metadata'
 import { createResolver } from './create-resolver'
-import { entityToGraphQLObjectType } from './entity-to-graphql-object-type'
+import { entityToBindedGraphQLObject } from './entity-to-binded-graphql-object'
 
 function getObjectType(container: Container, types: Map<ConstructType<any>, GraphQLObjectType>, entity: ConstructType<any>): GraphQLObjectType {
   let type = types.get(entity)
   if (!type) {
-    type = entityToGraphQLObjectType(container, entity)
+    type = entityToBindedGraphQLObject(container, entity)
     types.set(entity, type)
   }
   return type

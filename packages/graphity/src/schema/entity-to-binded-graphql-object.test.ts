@@ -2,7 +2,7 @@ import { SharedContainer } from '@graphity/container'
 import { printType } from 'graphql'
 
 import { Article } from '../../stubs/entities/article'
-import { entityToGraphQLObjectType } from './entity-to-graphql-object-type'
+import { entityToBindedGraphQLObject } from './entity-to-binded-graphql-object'
 
 
 class UndefinedEntity {} // eslint-disable-line @typescript-eslint/no-extraneous-class
@@ -12,7 +12,7 @@ describe('testsuite of schema/create-object-type-factory', () => {
     const container = new SharedContainer()
     container.bind(Article, Article)
 
-    const type = entityToGraphQLObjectType(container, Article)
+    const type = entityToBindedGraphQLObject(container, Article)
     expect(printType(type)).toEqual(`"""article entity"""
 type Article {
   """article id"""
@@ -25,7 +25,7 @@ type Article {
   it('test undefined entity type factory', async () => {
     const container = new SharedContainer()
 
-    const schema = entityToGraphQLObjectType(container, UndefinedEntity)
+    const schema = entityToBindedGraphQLObject(container, UndefinedEntity)
     expect(printType(schema)).toEqual('type UndefinedEntity')
   })
 })
