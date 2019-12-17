@@ -5,6 +5,7 @@ export interface Container {
   invoke<TIns, TRet = any>(instance: TIns, method: keyof TIns): Promise<TRet>
   resolve<T>(name: Name<T>): Promise<T>
   get<T>(name: Name<T>): T
+  has<T>(name: Name<T>): boolean
 }
 
 export interface ProviderDescriptor {
