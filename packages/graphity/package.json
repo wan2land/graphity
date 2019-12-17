@@ -20,7 +20,8 @@
   },
   "dependencies": {
     "@graphity/container": "^0.6.0-alpha.2",
-    "core-js": "^3.2.1"
+    "core-js": "^3.2.1",
+    "jsonwebtoken": "^8.5.1"
   },
   "gitHead": "da730f2e894afccb856baac46e283d944b74faa2"
 }

@@ -21,9 +21,16 @@ export * from './interfaces/common'
 export * from './interfaces/graphity'
 export * from './interfaces/decorator'
 export * from './interfaces/metadata'
+export * from './interfaces/auth'
 
-export * from './errors/graphity-error'
+export * from './constants/container'
 
 export * from './metadata'
 
-export * from './graphity'
+export { GraphityError } from './errors/graphity-error'
+
+export { Graphity } from './graphity'
+
+export { Authorized } from './middlewares/authorized'
+
+export { AuthProvider } from './providers/auth-provider'

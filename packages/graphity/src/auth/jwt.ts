@@ -1,6 +1,6 @@
 import { Secret, sign, SignOptions, verify, VerifyOptions } from 'jsonwebtoken'
 
-import { JwtOptions } from '../interfaces/jwt'
+import { JwtOptions } from '../interfaces/auth'
 
 export class Jwt {
 
