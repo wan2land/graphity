@@ -93,6 +93,10 @@ export class SharedContainer implements Container, ProviderDescriptor {
     throw new Error(`"${typeof name === 'symbol' ? name.toString() : name}" is not resolved.`)
   }
 
+  public has<T>(name: Name<T>): boolean {
+    return this.instances.has(name)
+  }
+
   public resolve<T>(name: Name<T>): Promise<T> {
     if (this.instances.has(name)) {
       return Promise.resolve(this.instances.get(name) as T)
