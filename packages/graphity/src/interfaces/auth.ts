@@ -27,3 +27,17 @@ export interface JwtRsaOptions {
   privateKey: Secret
   publicKey: string | Buffer
 }
+
+export interface GraphityAuth {
+  user: UserIdentifier
+  roles: string[]
+}
+
+export interface UserIdentifier {
+  id: string | number
+}
+
+export interface UserProvider {
+  findUser(id: string | number): Promise<UserIdentifier | undefined>
+  getRoles(user?: UserIdentifier): string[]
+}

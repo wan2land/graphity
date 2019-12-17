@@ -1,5 +1,5 @@
 /* eslint-disable max-classes-per-file */
-import { Container } from '@graphity/container'
+import { SharedContainer } from '@graphity/container'
 import { GraphQLResolveInfo } from 'graphql'
 
 import { Middleware, MiddlewareCarry, MiddlewareNext } from '../interfaces/graphity'
@@ -34,7 +34,7 @@ class TestMiddleware2 implements Middleware {
 
 describe('testsuite of schema/create-resolver', () => {
   it('test empty middlewares & resolve', async () => {
-    const container = new Container()
+    const container = new SharedContainer()
     container.instance(TestResolver, new TestResolver())
 
     const resolve = createResolver(container, [], TestResolver, TestResolver.prototype.resolve)
@@ -58,7 +58,7 @@ describe('testsuite of schema/create-resolver', () => {
   })
 
   it('test guards & resolve', async () => {
-    const container = new Container()
+    const container = new SharedContainer()
     container.instance(TestResolver, new TestResolver())
     container.instance(TestMiddleware1, new TestMiddleware1())
     container.instance(TestMiddleware2, new TestMiddleware2())

@@ -1,22 +1,23 @@
 import { SharedContainer } from '@graphity/container'
 import { GraphQLObjectType, GraphQLSchema, GraphQLString, isOutputType } from 'graphql'
 
+import { InstanceName } from './constants/container'
 import { DefaultContextBuilder } from './context/default-context-builder'
 import { ConstructType } from './interfaces/common'
-import { ContextBuilder, GraphityContext, GraphityOptions, HttpRequest, Middleware } from './interfaces/graphity'
+import { ContextBuilder, GraphityOptions, HttpRequest, Middleware } from './interfaces/graphity'
 import { MetadataFields, MetadataMutations, MetadataQueries, MetadataResolvers } from './metadata'
 import { createMutationObject } from './schema/create-mutation-object'
 import { createQueryObject } from './schema/create-query-object'
 
-export class Graphity<TContext = GraphityContext> extends SharedContainer {
+export class Graphity extends SharedContainer {
 
   public graphityResolvers: ConstructType<any>[]
   public graphityCommonMiddlewares: ConstructType<Middleware>[]
   public graphityCommonQueryMiddlewares: ConstructType<Middleware>[]
   public graphityCommonMutationMiddlewares: ConstructType<Middleware>[]
-  public contextBuilder?: ConstructType<ContextBuilder<TContext>>
+  public contextBuilder?: ConstructType<ContextBuilder>
 
-  public constructor(options: GraphityOptions<TContext> = {}) {
+  public constructor(options: GraphityOptions = {}) {
     super()
     this.graphityResolvers = options.resolvers || []
     this.graphityCommonMiddlewares = options.commonMiddlewares || []
@@ -27,9 +28,9 @@ export class Graphity<TContext = GraphityContext> extends SharedContainer {
 
   public boot(): Promise<void> {
     if (this.contextBuilder) {
-      this.bind('graphity:contextBuilder', this.contextBuilder)
+      this.bind(InstanceName.ContextBuilder, this.contextBuilder)
     } else {
-      this.instance('graphity:contextBuilder', new DefaultContextBuilder(this))
+      this.instance(InstanceName.ContextBuilder, new DefaultContextBuilder(this))
     }
 
     this.graphityCommonMiddlewares.forEach(middleware => this.bind(middleware, middleware))
@@ -85,6 +86,6 @@ export class Graphity<TContext = GraphityContext> extends SharedContainer {
   }
 
   public createContext(request: HttpRequest) {
-    return this.get<ContextBuilder>('graphity:contextBuilder').buildContext(request)
+    return this.get<ContextBuilder>(InstanceName.ContextBuilder).buildContext(request)
   }
 }

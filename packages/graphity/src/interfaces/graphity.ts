@@ -2,6 +2,7 @@ import { Container } from '@graphity/container'
 import { GraphQLResolveInfo } from 'graphql'
 import { IncomingHttpHeaders } from 'http'
 
+import { GraphityAuth } from './auth'
 import { ConstructType, MaybePromise } from './common'
 
 export interface HttpRequest {
@@ -10,12 +11,12 @@ export interface HttpRequest {
   headers: IncomingHttpHeaders
 }
 
-export interface GraphityOptions<TContext> {
+export interface GraphityOptions {
   resolvers?: ConstructType<any>[]
   commonMiddlewares?: ConstructType<Middleware>[]
   commonQueryMiddlewares?: ConstructType<Middleware>[]
   commonMutationMiddlewares?: ConstructType<Middleware>[]
-  contextBuilder?: ConstructType<ContextBuilder<TContext>>
+  contextBuilder?: ConstructType<ContextBuilder>
 }
 
 export interface MiddlewareCarry<TSource = any, TContext = any, TArgs = Record<string, any>> {
@@ -31,17 +32,17 @@ export interface Middleware<TSource = any, TContext = any, TArgs = Record<string
   handle(carry: MiddlewareCarry<TSource, TContext, TArgs>, next: MiddlewareNext<TSource, TContext, TArgs>): MaybePromise<any>
 }
 
-export interface ContextBuilder<TAuth = any> {
-  buildContext(request: HttpRequest): Promise<GraphityContext<TAuth>>
+export interface ContextBuilder {
+  buildContext(request: HttpRequest): Promise<GraphityContext>
 }
 
-export interface AuthBuilder<TAuth = any> {
-  buildAuth(request: HttpRequest): TAuth
+export interface AuthBuilder {
+  buildAuth(request: HttpRequest): Promise<GraphityAuth | undefined>
 }
 
-export interface GraphityContext<TAuth = any> {
+export interface GraphityContext {
   request: HttpRequest
   container: Container
-  auth?: TAuth
+  auth?: GraphityAuth
   [name: string]: any
 }
