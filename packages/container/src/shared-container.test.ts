@@ -1,9 +1,19 @@
 /* eslint-disable max-classes-per-file, @typescript-eslint/no-extraneous-class */
-import { Inject, SharedContainer } from '../lib'
+import { Inject, SharedContainer, UndefinedError } from '../lib'
 
 function sleep(time: number) {
   return new Promise((resolve) => setTimeout(resolve, time))
 }
+
+async function catcha(handler: () => any): Promise<any> {
+  try {
+    return await handler()
+  } catch (e) {
+    return e
+  }
+}
+
+class Something {}
 
 describe('testsuite of container', () => {
   it('test instance', async () => {
@@ -243,5 +253,130 @@ describe('testsuite of container', () => {
     ])
 
     expect(inst1).toBe(inst2)
+  })
+
+  it('test simple error message', async () => {
+    const container = new SharedContainer()
+
+    const name1 = 'instance'
+    const error1 = await catcha(() => container.get(name1))
+    expect(error1).toBeInstanceOf(UndefinedError)
+    expect(error1.message).toEqual('"instance" is not defined!\nresolve stack: "instance"')
+    expect(error1.target).toEqual(name1)
+    expect(error1.resolveStack).toEqual([name1])
+
+    const name2 = Symbol('symbol')
+    const error2 = await catcha(() => container.get(name2))
+    expect(error2).toBeInstanceOf(UndefinedError)
+    expect(error2.message).toEqual('Symbol(symbol) is not defined!\nresolve stack: Symbol(symbol)')
+    expect(error2.target).toEqual(name2)
+    expect(error2.resolveStack).toEqual([name2])
+
+    const name3 = Something
+    const error3 = await catcha(() => container.get(name3))
+    expect(error3).toBeInstanceOf(UndefinedError)
+    expect(error3.message).toEqual('Something is not defined!\nresolve stack: Something')
+    expect(error3.target).toEqual(name3)
+    expect(error3.resolveStack).toEqual([name3])
+
+    const name4 = (() => class {})()
+    const error4 = await catcha(() => container.get(name4))
+    expect(error4).toBeInstanceOf(UndefinedError)
+    expect(error4.message).toEqual('(anonymous class) is not defined!\nresolve stack: (anonymous class)')
+    expect(error4.target).toEqual(name4)
+    expect(error4.resolveStack).toEqual([name4])
+  })
+
+  it('test error message stack by resolver', async () => {
+    const container = new SharedContainer()
+
+    const stack1 = ['resolver1', 'instance']
+    container.resolver(stack1[0], async () => ({ instance: await container.resolve(stack1[1]) }))
+    const error1 = await catcha(() => container.resolve(stack1[0]))
+    expect(error1).toBeInstanceOf(UndefinedError)
+    expect(error1.message).toEqual('"instance" is not defined!\nresolve stack: "resolver1" -> "instance"')
+    expect(error1.target).toEqual(stack1[1])
+    expect(error1.resolveStack).toEqual(stack1)
+
+    const stack2 = ['resolver2', Symbol('symbol')]
+    container.resolver(stack2[0], async () => ({ instance: await container.resolve(stack2[1]) }))
+    const error2 = await catcha(() => container.resolve(stack2[0]))
+    expect(error2).toBeInstanceOf(UndefinedError)
+    expect(error2.message).toEqual('Symbol(symbol) is not defined!\nresolve stack: "resolver2" -> Symbol(symbol)')
+    expect(error2.target).toEqual(stack2[1])
+    expect(error2.resolveStack).toEqual(stack2)
+
+    const stack3 = ['resolver3', Something]
+    container.resolver(stack3[0], async () => ({ instance: await container.resolve(stack3[1]) }))
+    const error3 = await catcha(() => container.resolve(stack3[0]))
+    expect(error3).toBeInstanceOf(UndefinedError)
+    expect(error3.message).toEqual('Something is not defined!\nresolve stack: "resolver3" -> Something')
+    expect(error3.target).toEqual(stack3[1])
+    expect(error3.resolveStack).toEqual(stack3)
+
+    const stack4 = ['resolver4', (() => class {})()]
+    container.resolver(stack4[0], async () => ({ instance: await container.resolve(stack4[1]) }))
+    const error4 = await catcha(() => container.resolve(stack4[0]))
+    expect(error4).toBeInstanceOf(UndefinedError)
+    expect(error4.message).toEqual('(anonymous class) is not defined!\nresolve stack: "resolver4" -> (anonymous class)')
+    expect(error4.target).toEqual(stack4[1])
+    expect(error4.resolveStack).toEqual(stack4)
+  })
+
+  it('test error message stack by resolver', async () => {
+    const container = new SharedContainer()
+
+    const stack1 = ['bind1', 'instance']
+    class Bind1 { public constructor(@Inject(stack1[1]) public param: any) {} }
+    container.bind(stack1[0], Bind1)
+    const error1 = await catcha(() => container.resolve(stack1[0]))
+    expect(error1).toBeInstanceOf(UndefinedError)
+    expect(error1.message).toEqual('"instance" is not defined!\nresolve stack: "bind1" -> "instance"')
+    expect(error1.target).toEqual(stack1[1])
+    expect(error1.resolveStack).toEqual(stack1)
+
+    const stack2 = ['bind2', Symbol('symbol')]
+    class Bind2 { public constructor(@Inject(stack2[1]) public param: any) {} }
+    container.bind(stack2[0], Bind2)
+    const error2 = await catcha(() => container.resolve(stack2[0]))
+    expect(error2).toBeInstanceOf(UndefinedError)
+    expect(error2.message).toEqual('Symbol(symbol) is not defined!\nresolve stack: "bind2" -> Symbol(symbol)')
+    expect(error2.target).toEqual(stack2[1])
+    expect(error2.resolveStack).toEqual(stack2)
+
+    const stack3 = ['bind3', Something]
+    class Bind3 { public constructor(@Inject(stack3[1]) public param: any) {} }
+    container.bind(stack3[0], Bind3)
+    const error3 = await catcha(() => container.resolve(stack3[0]))
+    expect(error3).toBeInstanceOf(UndefinedError)
+    expect(error3.message).toEqual('Something is not defined!\nresolve stack: "bind3" -> Something')
+    expect(error3.target).toEqual(stack3[1])
+    expect(error3.resolveStack).toEqual(stack3)
+
+    const stack4 = ['bind4', (() => class {})()]
+    class Bind4 { public constructor(@Inject(stack4[1]) public param: any) {} }
+    container.bind(stack4[0], Bind4)
+    const error4 = await catcha(() => container.resolve(stack4[0]))
+    expect(error4).toBeInstanceOf(UndefinedError)
+    expect(error4.message).toEqual('(anonymous class) is not defined!\nresolve stack: "bind4" -> (anonymous class)')
+    expect(error4.target).toEqual(stack4[1])
+    expect(error4.resolveStack).toEqual(stack4)
+  })
+
+  it('test error message mnany stack', async () => {
+    const container = new SharedContainer()
+
+    const stack = ['instance', Symbol('symbol'), Something, (() => class {})(), 'unknown']
+
+    container.resolver(stack[0], async () => ({ instance: await container.resolve(stack[1]) }))
+    container.resolver(stack[1], async () => ({ instance: await container.resolve(stack[2]) }))
+    container.resolver(stack[2], async () => ({ instance: await container.resolve(stack[3]) }))
+    container.resolver(stack[3], async () => ({ instance: await container.resolve(stack[4]) }))
+
+    const e = await catcha(() => container.resolve(stack[0]))
+    expect(e).toBeInstanceOf(UndefinedError)
+    expect(e.message).toEqual('"unknown" is not defined!\nresolve stack: "instance" -> Symbol(symbol) -> Something -> (anonymous class) -> "unknown"')
+    expect(e.target).toEqual(stack[4])
+    expect(e.resolveStack).toEqual(stack)
   })
 })
