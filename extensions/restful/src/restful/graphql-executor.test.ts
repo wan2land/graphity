@@ -2,7 +2,7 @@ import 'jest'
 
 import { GraphQLID, GraphQLInt, GraphQLList, GraphQLNonNull, GraphQLObjectType, GraphQLSchema, GraphQLString, parse } from 'graphql'
 
-import { GraphQLExecutor } from '../../src/restful/graphql-executor'
+import { GraphQLExecutor } from './graphql-executor'
 
 const GraphQLArticle = new GraphQLObjectType({
   name: 'Article',
