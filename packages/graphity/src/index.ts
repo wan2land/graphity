@@ -31,6 +31,8 @@ export { GraphityError } from './errors/graphity-error'
 
 export { Graphity } from './graphity'
 
+export { Jwt } from './auth/jwt'
+
 export { Authorized } from './middlewares/authorized'
 
 export { AuthProvider } from './providers/auth-provider'
