@@ -5,18 +5,18 @@
 <p align="center">GraphQL Typescript Framework</p>
 
 <p align="center">
-  <a href="https://npmcharts.com/compare/graphity?minimal=true"><img alt="Downloads" src="https://img.shields.io/npm/dt/graphity.svg" /></a>
-  <a href="https://www.npmjs.com/package/graphity"><img alt="Version" src="https://img.shields.io/npm/v/graphity.svg" /></a>
-  <a href="https://www.npmjs.com/package/graphity"><img alt="License" src="https://img.shields.io/npm/l/graphity.svg" /></a>
+  <a href="https://npmcharts.com/compare/graphity?minimal=true"><img alt="Downloads" src="https://img.shields.io/npm/dt/graphity.svg?style=flat-square" /></a>
+  <a href="https://www.npmjs.com/package/graphity"><img alt="Version" src="https://img.shields.io/npm/v/graphity.svg?style=flat-square" /></a>
+  <a href="https://david-dm.org/wan2land/graphity"><img alt="dependencies Status" src="https://img.shields.io/david/wan2land/graphity.svg?style=flat-square" /></a>
+  <a href="https://david-dm.org/wan2land/graphity?type=dev"><img alt="devDependencies Status" src="https://img.shields.io/david/dev/wan2land/graphity.svg?style=flat-square" /></a>
   <br />
-  <a href="https://www.npmjs.com/package/graphity"><img alt="NPM" src="https://nodei.co/npm/graphity.png" /></a>
+  <img alt="License" src="https://img.shields.io/npm/l/graphity.svg?style=flat-square" />
+  <img alt="Typescript" src="https://img.shields.io/badge/language-Typescript-007acc.svg?style=flat-square" />
 </p>
 
 **Graphity** is a library that makes typescript and GraphQL easy to use. As much as possible, the object of [GraphQL.js](https://github.com/graphql/graphql-js) can be used as it is.
 
-## How to use
-
-### Installation
+## Installation
 
 Currently, **Graphity** is only responsible for the Schema of GraphQL and can be run through [Apollo Server](https://github.com/apollographql/apollo-server).
 
@@ -37,7 +37,7 @@ set this option in `tsconfig.json` file of your project.
 
 ## Example
 
-[Show Serverless Full Source](./examples/todo-list)
+[Todo App](./examples/todo)
 
 ## Documents
 
@@ -238,11 +238,17 @@ import { ApolloServer } from "apollo-server"
 import { createSchema } from "graphity"
 import { TodoResolver } from "./resolvers/todo-resolver"
 
-const server = new ApolloServer({
-  schema: createSchema([
+const app = new Graphity({
+  resolvers: [
     TodoResolver,
-  ]),
+  ],
 })
+
+const server = new ApolloServer({
+  schema: app.createSchema(),
+  context: ({ req }) => app.createContext(req),
+})
+
 server.listen(8888)
 
 ```
