@@ -1,5 +1,5 @@
-*
-!/lib/**/*
-!/src/**/*
+/stubs
+**/*.test.ts
+**/*.test.js
 *.md
 !README.md
