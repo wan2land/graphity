@@ -14,11 +14,7 @@ const PORT = process.env.PORT || '8888'
 
   const server = new ApolloServer({
     schema: app.createSchema(),
-    context: ({ req }) => app.createContext({
-      method: req.method,
-      url: req.url,
-      headers: req.headers,
-    }),
+    context: ({ req }) => app.createContext(req),
   })
 
   server.listen(+PORT)
