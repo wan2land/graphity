@@ -23,6 +23,5 @@
 
 ## Extensions
 
-- [@graphity-extensions/types](./packages/graphity-types)
-- [@graphity-extensions/restful](./packages/graphity-restful)
-- [@graphity-extensions/jwt](./packages/graphity-jwt)
+- [@graphity-extensions/types](./extensions/types)
+- [@graphity-extensions/restful](./extensions/restful)
