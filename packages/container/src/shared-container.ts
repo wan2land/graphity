@@ -1,6 +1,8 @@
+import { UndefinedError } from './errors/undefined-error'
 import { ConstructType, Name } from './interfaces/common'
 import { Container, Provider, ProviderDescriptor } from './interfaces/container'
 import { MetadataInject } from './metadata'
+import { normalizeName } from './utils'
 
 type ContainerType = 'resolver' | 'bind' | 'instance' | 'promise'
 
@@ -88,9 +90,9 @@ export class SharedContainer implements Container, ProviderDescriptor {
 
     const descriptor = this.types.get(name)
     if (!descriptor) {
-      throw new Error(`"${typeof name === 'symbol' ? name.toString() : name}" is not defined!`)
+      throw new UndefinedError(name, [name])
     }
-    throw new Error(`"${typeof name === 'symbol' ? name.toString() : name}" is not resolved.`)
+    throw new Error(`${normalizeName(name)} is not resolved.`)
   }
 
   public has<T>(name: Name<T>): boolean {
@@ -107,7 +109,7 @@ export class SharedContainer implements Container, ProviderDescriptor {
 
     const descriptor = this.types.get(name)
     if (!descriptor) {
-      throw new Error(`"${typeof name === 'symbol' ? name.toString() : name}" is not defined!`)
+      throw new UndefinedError(name, [name])
     }
     this.freezes.set(name, true)
 
@@ -128,10 +130,16 @@ export class SharedContainer implements Container, ProviderDescriptor {
       if (bind) {
         return resolve(this.create(bind))
       }
-      reject(new Error(`"${typeof name === 'symbol' ? name.toString() : name}" is not defined!`))
+      reject(new UndefinedError(name, [name]))
     }).then((instance) => {
       this.instances.set(name, instance) // caching
       return Promise.resolve(instance)
+    }).catch((e) => {
+      if (e instanceof UndefinedError) {
+        throw new UndefinedError(e.target, [name, ...e.resolveStack])
+      } else {
+        throw e
+      }
     })
 
     this.locks.set(name, promise)
@@ -143,7 +151,7 @@ export class SharedContainer implements Container, ProviderDescriptor {
     for (const name of names) {
       if (this.types.has(name)) {
         if (this.freezes.get(name)) {
-          throw new Error(`cannot change ${typeof name === 'symbol' ? name.toString() : name}`)
+          throw new Error(`cannot change ${normalizeName(name)}`)
         }
         this.types.delete(name)
       }
@@ -156,7 +164,7 @@ export class SharedContainer implements Container, ProviderDescriptor {
 
   public register(provider: Provider): void {
     if (this.booted) {
-      throw new Error('cannot register a provider with a container that is already booted.')
+      throw new Error('cannot register a provider after booting.')
     }
     this.providers.push(provider)
   }
