@@ -5,8 +5,7 @@
 <img alt="License" src="https://img.shields.io/npm/l/@graphity-extensions/types.svg?style=flat-square" />
 <img alt="Typescript" src="https://img.shields.io/badge/language-Typescript-007acc.svg?style=flat-square" />
 <br />
-<a href="https://david-dm.org/wan2land/@graphity-extensions/types"><img alt="dependencies Status" src="https://img.shields.io/david/wan2land/@graphity-extensions/types.svg?style=flat-square" /></a>
-<a href="https://david-dm.org/wan2land/@graphity-extensions/types?type=dev"><img alt="devDependencies Status" src="https://img.shields.io/david/dev/wan2land/@graphity-extensions/types.svg?style=flat-square" /></a>
+<a href="https://david-dm.org/wan2land/graphity?path=extensions/types"><img alt="dependencies Status" src="https://img.shields.io/david/wan2land/graphity.svg?style=flat-square&path=extensions/types" /></a>
 
 ## Installation
 
