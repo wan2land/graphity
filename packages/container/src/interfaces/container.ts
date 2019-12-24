@@ -6,6 +6,11 @@ export interface Container {
   resolve<T>(name: Name<T>): Promise<T>
   get<T>(name: Name<T>): T
   has<T>(name: Name<T>): boolean
+  has<T>(name: Name<T>): boolean
+  delete(...names: Name<any>[]): void
+
+  register(provider: Provider): void
+  boot(forced?: boolean): Promise<void>
 }
 
 export interface ProviderDescriptor {
