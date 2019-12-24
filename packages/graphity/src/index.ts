@@ -22,6 +22,7 @@ export * from './interfaces/graphity'
 export * from './interfaces/decorator'
 export * from './interfaces/metadata'
 export * from './interfaces/auth'
+export * from './interfaces/jwt'
 
 export * from './constants/container'
 

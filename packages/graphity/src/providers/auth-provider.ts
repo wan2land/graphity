@@ -4,7 +4,8 @@ import { DefaultUserProvider } from '../auth/default-user-provider'
 import { Jwt } from '../auth/jwt'
 import { JwtAuthBuilder } from '../auth/jwt-auth-builder'
 import { InstanceName } from '../constants/container'
-import { JwtOptions, UserProvider } from '../interfaces/auth'
+import { UserProvider } from '../interfaces/auth'
+import { JwtOptions } from '../interfaces/jwt'
 
 export class AuthProvider implements Provider {
   public constructor(public options: { jwt: JwtOptions }) {
