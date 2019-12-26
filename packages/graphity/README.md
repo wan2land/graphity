@@ -21,7 +21,6 @@ Currently, **Graphity** is only responsible for the Schema of GraphQL and can be
 
 ```
 npm i graphity apollo-server
-npm i @types/graphql -D
 ```
 
 ### Typescript Confituration
