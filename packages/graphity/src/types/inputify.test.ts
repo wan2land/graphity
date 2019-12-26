@@ -2,22 +2,41 @@ import { GraphQLID, GraphQLNonNull, GraphQLObjectType, GraphQLString, printType 
 
 import { inputify } from './inputify'
 
+function e(schema: string) {
+  return schema.replace(/\s+/g, ' ')
+}
+
 describe('testsuite of helpers/inputify', () => {
   it('test simple', () => {
-    expect(printType(inputify(new GraphQLObjectType({
+    const inputUser1 = inputify(new GraphQLObjectType({
       name: 'User',
       fields: {
         id: { type: GraphQLNonNull(GraphQLID) },
         name: { type: GraphQLNonNull(GraphQLString) },
       },
-    })))).toBe(`input InputUser {
-  id: ID!
-  name: String!
-}`)
+    }))
+    expect(e(printType(inputUser1))).toBe(e(`input InputUser {
+      id: ID!
+      name: String!
+    }`))
+
+    const inputUser2 = inputify(new GraphQLObjectType({
+      name: 'User',
+      fields: {
+        id: { type: GraphQLNonNull(GraphQLID) },
+        name: { type: GraphQLNonNull(GraphQLString) },
+      },
+    }), {
+      name: 'CustomInputName',
+    })
+    expect(e(printType(inputUser2))).toBe(e(`input CustomInputName {
+      id: ID!
+      name: String!
+    }`))
   })
 
   it('test recursive', () => {
-    expect(printType(inputify(new GraphQLObjectType({
+    const inputUser1 = inputify(new GraphQLObjectType({
       name: 'User',
       fields: {
         id: { type: GraphQLNonNull(GraphQLID) },
@@ -30,13 +49,19 @@ describe('testsuite of helpers/inputify', () => {
           },
         }) },
       },
-    })))).toBe(`input InputUser {
-  id: ID!
-  name: String!
-  company: InputCompany
-}`)
+    }))
 
-    expect(printType(inputify(new GraphQLObjectType({
+    expect(e(printType(inputUser1))).toBe(e(`input InputUser {
+      id: ID!
+      name: String!
+      company: InputCompany
+    }`))
+    expect(e(printType((inputUser1.getFields() as any).company.type))).toBe(e(`input InputCompany {
+      id: ID!
+      name: String
+    }`))
+
+    const inputUser2 = inputify(new GraphQLObjectType({
       name: 'User',
       fields: {
         id: { type: GraphQLNonNull(GraphQLID) },
@@ -49,9 +74,35 @@ describe('testsuite of helpers/inputify', () => {
           },
         }) },
       },
-    }), { disableRecursive: true }))).toBe(`input InputUser {
-  id: ID!
-  name: String!
-}`)
+    }), { disableRecursive: true })
+
+    expect(e(printType(inputUser2))).toBe(e(`input InputUser {
+      id: ID!
+      name: String!
+    }`))
+  })
+
+  it('test except', () => {
+    const inputUser1 = inputify(new GraphQLObjectType({
+      name: 'User',
+      fields: {
+        id: { type: GraphQLNonNull(GraphQLID) },
+        name: { type: GraphQLNonNull(GraphQLString) },
+        company: { type: new GraphQLObjectType({
+          name: 'Company',
+          fields: {
+            id: { type: GraphQLNonNull(GraphQLID) },
+            name: { type: GraphQLString },
+          },
+        }) },
+      },
+    }), {
+      except: ['name'],
+    })
+
+    expect(e(printType(inputUser1))).toBe(e(`input InputUser {
+      id: ID!
+      company: InputCompany
+    }`))
   })
 })
