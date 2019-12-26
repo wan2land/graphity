@@ -1,0 +1,20 @@
+{
+  "name": "@graphity-extensions/orm",
+  "version": "0.0.1",
+  "description": "GraphQL-specific ORM.",
+  "keywords": [
+    "orm",
+    "typescript"
+  ],
+  "author": "Changwan Jun <wan2land@gmail.com>",
+  "license": "MIT",
+  "repository": "https://github.com/wan2land/graphity/tree/master/extensions/orm",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "build": "rimraf ./lib && tsc && babel ./src --out-dir ./lib --extensions \".ts\" --ignore \"src/**/*.test.ts\""
+  },
+  "dependencies": {
+    "core-js": "^3.2.1"
+  }
+}
