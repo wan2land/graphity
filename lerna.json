@@ -2,7 +2,8 @@
   "version": "0.6.0-alpha.5",
   "npmClient": "npm",
   "packages": [
-    "extensions/*",
-    "packages/*"
+    "core/*",
+    "packages/*",
+    "extensions/*"
   ]
 }

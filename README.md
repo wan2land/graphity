@@ -19,7 +19,10 @@
 ## Projects
 
 - [graphity](./packages/graphity)
-- [@graphity/container](./packages/container)
+
+## Core (included in graphity)
+
+- [@graphity/container](./core/container)
 
 ## Extensions
 

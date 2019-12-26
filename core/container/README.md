@@ -5,7 +5,7 @@
 <img alt="License" src="https://img.shields.io/npm/l/@graphity/container.svg?style=flat-square" />
 <img alt="Typescript" src="https://img.shields.io/badge/language-Typescript-007acc.svg?style=flat-square" />
 <br />
-<a href="https://david-dm.org/wan2land/graphity?path=packages/container"><img alt="dependencies Status" src="https://img.shields.io/david/wan2land/graphity.svg?style=flat-square&path=packages/container" /></a>
+<a href="https://david-dm.org/wan2land/graphity?path=core/container"><img alt="dependencies Status" src="https://img.shields.io/david/wan2land/graphity.svg?style=flat-square&path=core/container" /></a>
 
 Super slim DI(Depdency Injection) container with Async/Promise for Javascript(& Typescript).
 
