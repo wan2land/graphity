@@ -9,6 +9,9 @@ yarn-error.log
 /examples/*/node_modules
 /examples/*/.envrc
 
+/core/*/node_modules
+/core/*/lib
+
 /packages/*/node_modules
 /packages/*/lib
 
