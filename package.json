@@ -29,7 +29,7 @@
     "graphql": "14.5.8",
     "jest": "24.9.0",
     "lerna": "3.16.4",
-    "lerna-update-wizard": "0.16.0",
+    "lerna-update-wizard": "0.17.6",
     "rimraf": "3.0.0",
     "ts-jest": "24.0.2",
     "typescript": "3.7.4"
