@@ -1,4 +1,4 @@
-import { GraphityError } from './graphity-error'
+import { GraphityError } from '../../lib/errors/graphity-error'
 
 describe('testsuite of errors/graphity-error', () => {
   it('test create error', () => {

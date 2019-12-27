@@ -6,8 +6,8 @@
   "scripts": {
     "build": "lerna run build",
     "test": "npm run build && npm run test:lint && npm run test:unit",
-    "test:lint": "eslint '{packages,extensions}/*/src/**/*.ts' --ignore-pattern node_modules",
-    "test:unit": "jest packages"
+    "test:lint": "eslint '{packages,extensions,core}/*/src/**/*.ts' --ignore-pattern node_modules",
+    "test:unit": "jest {packages,extensions,core}"
   },
   "devDependencies": {
     "@babel/cli": "7.7.7",
@@ -17,7 +17,7 @@
     "@babel/plugin-proposal-object-rest-spread": "7.7.7",
     "@babel/preset-env": "7.7.7",
     "@babel/preset-typescript": "7.7.7",
-    "@stdjs/eslint-config": "2.0.0-alpha.3",
+    "@stdjs/eslint-config": "^2.0.0",
     "@types/express": "4.17.2",
     "@types/graphql-type-json": "0.3.2",
     "@types/jest": "24.0.24",
