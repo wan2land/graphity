@@ -345,23 +345,26 @@ type User {
       ],
       [
         'start :: entity / user.id ... 1 (parent={"id":"1.1.1"})',
-        'start :: entity / user.id ... 1 (parent={"id":"1.1.2"})',
-        'start :: entity / user.id ... 1 (parent={"id":"1.2.1"})',
-        'start :: entity / user.id ... 1 (parent={"id":"1.2.2"})',
-
         'start :: entity / user.id ... 2 (parent={"id":"1.1.1"})',
-        'start :: entity / user.id ... 2 (parent={"id":"1.1.2"})',
-        'start :: entity / user.id ... 2 (parent={"id":"1.2.1"})',
-        'start :: entity / user.id ... 2 (parent={"id":"1.2.2"})',
-
         'end :: entity / user.id ... 2 (parent={"id":"1.1.1"}, next="1.1.1")',
-        'end :: entity / user.id ... 2 (parent={"id":"1.1.2"}, next="1.1.2")',
-        'end :: entity / user.id ... 2 (parent={"id":"1.2.1"}, next="1.2.1")',
-        'end :: entity / user.id ... 2 (parent={"id":"1.2.2"}, next="1.2.2")',
-
         'end :: entity / user.id ... 1 (parent={"id":"1.1.1"}, next="1.1.1")',
+      ],
+      [
+        'start :: entity / user.id ... 1 (parent={"id":"1.1.2"})',
+        'start :: entity / user.id ... 2 (parent={"id":"1.1.2"})',
+        'end :: entity / user.id ... 2 (parent={"id":"1.1.2"}, next="1.1.2")',
         'end :: entity / user.id ... 1 (parent={"id":"1.1.2"}, next="1.1.2")',
+      ],
+      [
+        'start :: entity / user.id ... 1 (parent={"id":"1.2.1"})',
+        'start :: entity / user.id ... 2 (parent={"id":"1.2.1"})',
+        'end :: entity / user.id ... 2 (parent={"id":"1.2.1"}, next="1.2.1")',
         'end :: entity / user.id ... 1 (parent={"id":"1.2.1"}, next="1.2.1")',
+      ],
+      [
+        'start :: entity / user.id ... 1 (parent={"id":"1.2.2"})',
+        'start :: entity / user.id ... 2 (parent={"id":"1.2.2"})',
+        'end :: entity / user.id ... 2 (parent={"id":"1.2.2"}, next="1.2.2")',
         'end :: entity / user.id ... 1 (parent={"id":"1.2.2"}, next="1.2.2")',
       ],
     ]
