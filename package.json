@@ -19,7 +19,7 @@
     "@babel/plugin-proposal-optional-chaining": "^7.7.5",
     "@babel/preset-env": "7.7.7",
     "@babel/preset-typescript": "7.7.7",
-    "@stdjs/eslint-config": "^2.0.0",
+    "@stdjs/eslint-config": "2.0.0",
     "@types/express": "4.17.2",
     "@types/graphql-type-json": "0.3.2",
     "@types/jest": "24.0.25",
