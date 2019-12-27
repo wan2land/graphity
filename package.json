@@ -6,15 +6,17 @@
   "scripts": {
     "build": "lerna run build",
     "test": "npm run build && npm run test:lint && npm run test:unit",
-    "test:lint": "eslint '{packages,extensions,core}/*/src/**/*.ts' --ignore-pattern node_modules",
-    "test:unit": "jest {packages,extensions,core}"
+    "test:lint": "eslint '**/src/**/*.ts'",
+    "test:unit": "jest"
   },
   "devDependencies": {
     "@babel/cli": "7.7.7",
     "@babel/core": "7.7.7",
     "@babel/plugin-proposal-class-properties": "7.7.4",
     "@babel/plugin-proposal-decorators": "7.7.4",
+    "@babel/plugin-proposal-nullish-coalescing-operator": "^7.7.4",
     "@babel/plugin-proposal-object-rest-spread": "7.7.7",
+    "@babel/plugin-proposal-optional-chaining": "^7.7.5",
     "@babel/preset-env": "7.7.7",
     "@babel/preset-typescript": "7.7.7",
     "@stdjs/eslint-config": "^2.0.0",
