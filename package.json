@@ -6,7 +6,7 @@
   "scripts": {
     "build": "lerna run build",
     "test": "npm run build && npm run test:lint && npm run test:unit",
-    "test:lint": "eslint '**/src/**/*.ts'",
+    "test:lint": "eslint '{packages,extensions,core}/*/src/**/*.ts'",
     "test:unit": "jest"
   },
   "devDependencies": {
