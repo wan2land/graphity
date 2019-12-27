@@ -216,7 +216,7 @@ type User {
 
     const schema = graphity.createSchema()
 
-    const ctx = { $: true, stack: [] }
+    const ctx: { $: true, stack: string[] } = { $: true, stack: [] }
     const response = await execute({
       schema,
       document: parse(`query {
@@ -278,10 +278,12 @@ type User {
       },
     })
 
-    expect(ctx).toEqual({
-      $: true,
-      stack: [
-        // common -> comment
+    expect(ctx.$).toBe(true)
+    expect(ctx.stack.length).toEqual(62)
+    expect([...new Set(ctx.stack)].length).toEqual(62)
+
+    const serials = [
+      [
         'start :: common (parent=null)',
         'start :: common query (parent=null)',
         'start :: resolver ... 1 (parent=null)',
@@ -292,54 +294,61 @@ type User {
         'end :: resolver ... 1 (parent=null, next={"id":"1"})',
         'end :: common query (parent=null, next={"id":"1"})',
         'end :: common (parent=null, next={"id":"1"})',
-
-        // common -> comment -> id
-        // common -> comment -> comments
+      ],
+      [
         'start :: entity / user.id ... 1 (parent={"id":"1"})',
-        'start :: resolver ... 1 (parent={"id":"1"})',
         'start :: entity / user.id ... 2 (parent={"id":"1"})',
-        'start :: resolver ... 2 (parent={"id":"1"})',
         'end :: entity / user.id ... 2 (parent={"id":"1"}, next="1")',
         'end :: entity / user.id ... 1 (parent={"id":"1"}, next="1")',
+      ],
+      [
+        'start :: resolver ... 1 (parent={"id":"1"})',
+        'start :: resolver ... 2 (parent={"id":"1"})',
         'start :: resolver / comments ... 1 (parent={"id":"1"})',
         'start :: resolver / comments ... 2 (parent={"id":"1"})',
         'end :: resolver / comments ... 2 (parent={"id":"1"}, next={"count":2,"nodes":[{"id":"1.1"},{"id":"1.2"}]})',
         'end :: resolver / comments ... 1 (parent={"id":"1"}, next={"count":2,"nodes":[{"id":"1.1"},{"id":"1.2"}]})',
         'end :: resolver ... 2 (parent={"id":"1"}, next={"count":2,"nodes":[{"id":"1.1"},{"id":"1.2"}]})',
         'end :: resolver ... 1 (parent={"id":"1"}, next={"count":2,"nodes":[{"id":"1.1"},{"id":"1.2"}]})',
-
-        // common -> comment -> comments -> [*]id
-        // common -> comment -> comments -> [*]comments
+      ],
+      [
         'start :: entity / user.id ... 1 (parent={"id":"1.1"})',
-        'start :: resolver ... 1 (parent={"id":"1.1"})',
-        'start :: entity / user.id ... 1 (parent={"id":"1.2"})',
-        'start :: resolver ... 1 (parent={"id":"1.2"})',
         'start :: entity / user.id ... 2 (parent={"id":"1.1"})',
-        'start :: resolver ... 2 (parent={"id":"1.1"})',
-        'start :: entity / user.id ... 2 (parent={"id":"1.2"})',
-        'start :: resolver ... 2 (parent={"id":"1.2"})',
         'end :: entity / user.id ... 2 (parent={"id":"1.1"}, next="1.1")',
-        'end :: entity / user.id ... 2 (parent={"id":"1.2"}, next="1.2")',
         'end :: entity / user.id ... 1 (parent={"id":"1.1"}, next="1.1")',
-        'end :: entity / user.id ... 1 (parent={"id":"1.2"}, next="1.2")',
+      ],
+      [
+        'start :: resolver ... 1 (parent={"id":"1.1"})',
+        'start :: resolver ... 2 (parent={"id":"1.1"})',
         'start :: resolver / comments ... 1 (parent={"id":"1.1"})',
-        'start :: resolver / comments ... 1 (parent={"id":"1.2"})',
         'start :: resolver / comments ... 2 (parent={"id":"1.1"})',
-        'start :: resolver / comments ... 2 (parent={"id":"1.2"})',
         'end :: resolver / comments ... 2 (parent={"id":"1.1"}, next={"count":2,"nodes":[{"id":"1.1.1"},{"id":"1.1.2"}]})',
-        'end :: resolver / comments ... 2 (parent={"id":"1.2"}, next={"count":2,"nodes":[{"id":"1.2.1"},{"id":"1.2.2"}]})',
         'end :: resolver / comments ... 1 (parent={"id":"1.1"}, next={"count":2,"nodes":[{"id":"1.1.1"},{"id":"1.1.2"}]})',
-        'end :: resolver / comments ... 1 (parent={"id":"1.2"}, next={"count":2,"nodes":[{"id":"1.2.1"},{"id":"1.2.2"}]})',
         'end :: resolver ... 2 (parent={"id":"1.1"}, next={"count":2,"nodes":[{"id":"1.1.1"},{"id":"1.1.2"}]})',
-        'end :: resolver ... 2 (parent={"id":"1.2"}, next={"count":2,"nodes":[{"id":"1.2.1"},{"id":"1.2.2"}]})',
         'end :: resolver ... 1 (parent={"id":"1.1"}, next={"count":2,"nodes":[{"id":"1.1.1"},{"id":"1.1.2"}]})',
+      ],
+      [
+        'start :: entity / user.id ... 1 (parent={"id":"1.2"})',
+        'start :: entity / user.id ... 2 (parent={"id":"1.2"})',
+        'end :: entity / user.id ... 2 (parent={"id":"1.2"}, next="1.2")',
+        'end :: entity / user.id ... 1 (parent={"id":"1.2"}, next="1.2")',
+      ],
+      [
+        'start :: resolver ... 1 (parent={"id":"1.2"})',
+        'start :: resolver ... 2 (parent={"id":"1.2"})',
+        'start :: resolver / comments ... 1 (parent={"id":"1.2"})',
+        'start :: resolver / comments ... 2 (parent={"id":"1.2"})',
+        'end :: resolver / comments ... 2 (parent={"id":"1.2"}, next={"count":2,"nodes":[{"id":"1.2.1"},{"id":"1.2.2"}]})',
+        'end :: resolver / comments ... 1 (parent={"id":"1.2"}, next={"count":2,"nodes":[{"id":"1.2.1"},{"id":"1.2.2"}]})',
+        'end :: resolver ... 2 (parent={"id":"1.2"}, next={"count":2,"nodes":[{"id":"1.2.1"},{"id":"1.2.2"}]})',
         'end :: resolver ... 1 (parent={"id":"1.2"}, next={"count":2,"nodes":[{"id":"1.2.1"},{"id":"1.2.2"}]})',
-
-        // common -> comment -> comments -> [*].comments -> id
+      ],
+      [
         'start :: entity / user.id ... 1 (parent={"id":"1.1.1"})',
         'start :: entity / user.id ... 1 (parent={"id":"1.1.2"})',
         'start :: entity / user.id ... 1 (parent={"id":"1.2.1"})',
         'start :: entity / user.id ... 1 (parent={"id":"1.2.2"})',
+
         'start :: entity / user.id ... 2 (parent={"id":"1.1.1"})',
         'start :: entity / user.id ... 2 (parent={"id":"1.1.2"})',
         'start :: entity / user.id ... 2 (parent={"id":"1.2.1"})',
@@ -355,6 +364,19 @@ type User {
         'end :: entity / user.id ... 1 (parent={"id":"1.2.1"}, next="1.2.1")',
         'end :: entity / user.id ... 1 (parent={"id":"1.2.2"}, next="1.2.2")',
       ],
-    })
+    ]
+
+    let counter = 0
+    for (const serial of serials) {
+      let index = -1
+      for (const line of serial) {
+        const foundIndex = ctx.stack.indexOf(line)
+        expect(foundIndex).toBeGreaterThanOrEqual(0)
+        expect(foundIndex).toBeGreaterThanOrEqual(index)
+        index = foundIndex
+        counter++
+      }
+    }
+    expect(counter).toEqual(62)
   })
 })
