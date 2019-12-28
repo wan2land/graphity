@@ -1,4 +1,9 @@
 module.exports = {
+  globals: {
+    'ts-jest': {
+      babelConfig: '.babelrc',
+    },
+  },
   transform: {
     '^.+\\.ts$': 'ts-jest',
   },
