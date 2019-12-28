@@ -16,6 +16,10 @@ export enum ColumnType {
   Object = 'object',
 }
 
+export enum GeneratedStrategy {
+  Auto = 'auto'
+}
+
 export interface ValueTransformer<TSource = any, TEntity = {}> {
   to?(source: TSource | null | undefined): TEntity | null | undefined
   from?(dest: TEntity | null | undefined): TSource | null | undefined
