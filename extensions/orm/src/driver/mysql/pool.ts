@@ -1,12 +1,11 @@
-import { Pool as OriginPool } from 'mysql'
-
-import { Pool, PoolConnection, QueryResult, TransactionHandler } from '../../interfaces/database'
-import { MysqlPoolConnection } from './pool-connection'
+import { Connection, Pool, QueryResult } from '../../interfaces/database'
+import { MysqlConnection } from './connection'
+import { RawMysqlPool } from './interfaces'
 
 
 export class MysqlPool implements Pool {
 
-  public constructor(public pool: OriginPool) {
+  public constructor(public pool: RawMysqlPool) {
   }
 
   public close(): Promise<void> {
@@ -20,13 +19,13 @@ export class MysqlPool implements Pool {
     })
   }
 
-  public select<TRow extends Record<string, any>>(query: string, values: any[] = []): Promise<TRow[]> {
+  public select(query: string, values: any[] = []): Promise<Record<string, any>[]> {
     return new Promise((resolve, reject) => {
       this.pool.query(query, values, (err, rows: any) => {
         if (err) {
           return reject(err)
         }
-        resolve(rows?.map ? rows.map((result: any) => ({ ...result })) : [])
+        resolve(rows?.map?.((result: any) => ({ ...result })) || [])
       })
     })
   }
@@ -46,25 +45,13 @@ export class MysqlPool implements Pool {
     })
   }
 
-  public async transaction<TResult>(handler: TransactionHandler<TResult>): Promise<TResult> {
-    const connection = await this.getConnection()
-    try {
-      const result = connection.transaction(handler)
-      await connection.release()
-      return result
-    } catch (e) {
-      await connection.release()
-      throw e
-    }
-  }
-
-  public getConnection(): Promise<PoolConnection> {
+  public getConnection(): Promise<Connection> {
     return new Promise((resolve, reject) => {
       this.pool.getConnection((err, conn) => {
         if (err) {
           return reject(err)
         }
-        resolve(new MysqlPoolConnection(conn))
+        resolve(new MysqlConnection(conn))
       })
     })
   }

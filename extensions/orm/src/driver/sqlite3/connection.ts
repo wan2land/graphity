@@ -1,21 +1,9 @@
-import { Database } from 'sqlite3'
-
-import { Connection, QueryResult, TransactionHandler } from '../../interfaces/database'
+import { Connection, QueryResult } from '../../interfaces/database'
+import { RawSqlite3Database } from './interfaces'
 
 export class Sqlite3Connection implements Connection {
 
-  public constructor(public connection: Database) {
-  }
-
-  public close(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      this.connection.close((err) => {
-        if (err) {
-          return reject(err)
-        }
-        resolve()
-      })
-    })
+  public constructor(public connection: RawSqlite3Database) {
   }
 
   public select<TRow extends Record<string, any>>(query: string, values: any[] = []): Promise<TRow[]> {
@@ -35,24 +23,29 @@ export class Sqlite3Connection implements Connection {
         if (err) {
           return reject(err)
         }
+        const result = this // eslint-disable-line no-invalid-this,@typescript-eslint/no-this-alias
         resolve({
-          insertId: /^insert/i.test(query) ? this.lastID : undefined, // eslint-disable-line no-invalid-this
-          changes: this.changes, // eslint-disable-line no-invalid-this
-          raw: this, // eslint-disable-line no-invalid-this
+          insertId: /^insert/i.test(query) ? result.lastID : undefined,
+          changes: result.changes,
+          raw: result,
         })
       })
     })
   }
 
-  public async transaction<TResult>(handler: TransactionHandler<TResult>): Promise<TResult> {
-    await this.query('BEGIN TRANSACTION')
-    try {
-      const result = await handler(this)
-      await this.query('COMMIT')
-      return result
-    } catch (e) {
-      await this.query('ROLLBACK')
-      throw e
-    }
+  public release(): Promise<void> {
+    return Promise.resolve()
+  }
+
+  public beginTransaction(): Promise<void> {
+    return this.query('BEGIN TRANSACTION').then(() => Promise.resolve())
+  }
+
+  public commit(): Promise<void> {
+    return this.query('COMMIT').then(() => Promise.resolve())
+  }
+
+  public rollback(): Promise<void> {
+    return this.query('ROLLBACK').then(() => Promise.resolve())
   }
 }

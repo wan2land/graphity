@@ -1,10 +1,15 @@
-import { Connection as OriginConnection } from 'mysql2'
+import { Connection, QueryResult } from '../../interfaces/database'
+import { RawMysql2PoolConnection } from './interfaces'
 
-import { Connection, QueryResult, TransactionHandler } from '../../interfaces/database'
 
 export class Mysql2Connection implements Connection {
 
-  public constructor(public connection: OriginConnection) {
+  public constructor(public connection: RawMysql2PoolConnection) {
+  }
+
+  public release(): Promise<void> {
+    this.connection.release()
+    return Promise.resolve()
   }
 
   public close(): Promise<void> {
@@ -50,8 +55,8 @@ export class Mysql2Connection implements Connection {
     })
   }
 
-  public async transaction<TResult>(handler: TransactionHandler<TResult>): Promise<TResult> {
-    await new Promise((resolve, reject) => {
+  public beginTransaction(): Promise<void> {
+    return new Promise((resolve, reject) => {
       this.connection.beginTransaction((err) => {
         if (err) {
           return reject(err)
@@ -59,24 +64,27 @@ export class Mysql2Connection implements Connection {
         resolve()
       })
     })
-    try {
-      const ret = await handler(this)
-      await new Promise((resolve, reject) => {
-        this.connection.commit((err) => {
-          if (err) {
-            return reject(err)
-          }
-          resolve()
-        })
+  }
+
+  public commit(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.connection.commit((err) => {
+        if (err) {
+          return reject(err)
+        }
+        resolve()
       })
-      return ret
-    } catch (e) {
-      await new Promise((resolve) => {
-        this.connection.rollback(() => {
-          resolve()
-        })
+    })
+  }
+
+  public rollback(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.connection.rollback((err) => {
+        if (err) {
+          return reject(err)
+        }
+        resolve()
       })
-      throw e
-    }
+    })
   }
 }

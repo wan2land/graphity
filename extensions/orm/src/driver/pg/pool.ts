@@ -1,12 +1,10 @@
-import { Pool as OriginPool } from 'pg'
-
-import { Pool, PoolConnection, QueryResult, TransactionHandler } from '../../interfaces/database'
-import { PgPoolConnection } from './pool-connection'
-
+import { Connection, Pool, QueryResult } from '../../interfaces/database'
+import { PgConnection } from './connection'
+import { RawPgPool } from './interfaces'
 
 export class PgPool implements Pool {
 
-  public constructor(public pool: OriginPool) {
+  public constructor(public pool: RawPgPool) {
   }
 
   public async close(): Promise<void> {
@@ -14,7 +12,7 @@ export class PgPool implements Pool {
   }
 
 
-  public async select<TRow extends Record<string, any>>(query: string, values: any[] = []): Promise<TRow[]> {
+  public async select(query: string, values: any[] = []): Promise<Record<string, any>[]> {
     return (await this.pool.query(query, values || [])).rows
   }
 
@@ -33,19 +31,7 @@ export class PgPool implements Pool {
     }
   }
 
-  public async transaction<TResult>(handler: TransactionHandler<TResult>): Promise<TResult> {
-    const connection = await this.getConnection()
-    try {
-      const result = connection.transaction(handler)
-      await connection.release()
-      return result
-    } catch (e) {
-      await connection.release()
-      throw e
-    }
-  }
-
-  public async getConnection(): Promise<PoolConnection> {
-    return new PgPoolConnection(await this.pool.connect())
+  public async getConnection(): Promise<Connection> {
+    return new PgConnection(await this.pool.connect())
   }
 }
