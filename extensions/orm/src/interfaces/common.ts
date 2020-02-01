@@ -9,6 +9,7 @@ export type MaybeFactory<T> = T | Factory<T>
 
 export enum ColumnType {
   Int = 'int',
+  BigInt = 'bigint',
   Float = 'float',
   String = 'string',
   Boolean = 'boolean',

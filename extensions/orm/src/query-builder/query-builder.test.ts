@@ -1,9 +1,9 @@
-import { Builder } from './builder'
 import { Compiler } from './compiler'
+import { QueryBuilder } from './query-builder'
 
 describe('testsuite of query-builder/builder', () => {
   it('test select', () => {
-    const qb = new Builder('users').select('*').where('group', 'hello').orderByDesc('id').limit(10)
+    const qb = new QueryBuilder('users').select('*').where('group', 'hello').orderByDesc('id').limit(10)
     expect(new Compiler().compile(qb)).toEqual({
       sql: 'select * from users where group = ? order by id desc limit ?',
       bindings: ['hello', 10],
@@ -12,7 +12,7 @@ describe('testsuite of query-builder/builder', () => {
 
 
   it('test insert single', () => {
-    const qb = new Builder('users').insert({
+    const qb = new QueryBuilder('users').insert({
       name: 'wan2land',
       email: 'wan2land@gmail.com',
     })
@@ -23,7 +23,7 @@ describe('testsuite of query-builder/builder', () => {
   })
 
   it('test insert multiple', () => {
-    const qb = new Builder('users').insert([
+    const qb = new QueryBuilder('users').insert([
       {
         name: 'wan3land',
         email: 'wan3land@gmail.com',
@@ -45,7 +45,7 @@ describe('testsuite of query-builder/builder', () => {
   })
 
   it('test update', () => {
-    const qb = new Builder('users').update({ name: 'wan2land' }).where('group', 'hello').orderByDesc('id').limit(10)
+    const qb = new QueryBuilder('users').update({ name: 'wan2land' }).where('group', 'hello').orderByDesc('id').limit(10)
     expect(new Compiler().compile(qb)).toEqual({
       sql: 'update users set name = ? where group = ? order by id desc limit ?',
       bindings: ['wan2land', 'hello', 10],
@@ -53,7 +53,7 @@ describe('testsuite of query-builder/builder', () => {
   })
 
   it('test delete', () => {
-    const qb = new Builder('users').delete().where('group', 'hello').orderByDesc('id').limit(10)
+    const qb = new QueryBuilder('users').delete().where('group', 'hello').orderByDesc('id').limit(10)
     expect(new Compiler().compile(qb)).toEqual({
       sql: 'delete from users where group = ? order by id desc limit ?',
       bindings: ['hello', 10],

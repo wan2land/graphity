@@ -6,7 +6,7 @@ import { OrderByBuilder } from './orderby-builder'
 import { WhereBuilder } from './where-builder'
 
 
-export class Builder {
+export class QueryBuilder {
   public method: QueryMethod = 'select'
 
   public insertState?: InsertState
@@ -45,10 +45,10 @@ export class Builder {
   }
 }
 
-export interface Builder extends WhereBuilder, OrderByBuilder, LimitBuilder {
+export interface QueryBuilder extends WhereBuilder, OrderByBuilder, LimitBuilder {
   table: string
   method: QueryMethod
   selectState?: SelectState
 }
 
-applyMixins(Builder, [WhereBuilder, OrderByBuilder, LimitBuilder])
+applyMixins(QueryBuilder, [WhereBuilder, OrderByBuilder, LimitBuilder])
