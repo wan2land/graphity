@@ -13,7 +13,7 @@
   ],
   "author": "Changwan Jun <wan2land@gmail.com>",
   "license": "MIT",
-  "repository": "https://github.com/wan2land/graphity/tree/master/core/container",
+  "repository": "https://github.com/wan2land/graphity/tree/master/packages/container",
   "publishConfig": {
     "access": "public"
   },
