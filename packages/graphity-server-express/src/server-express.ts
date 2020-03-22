@@ -10,7 +10,7 @@ export class ServerExpress {
     this.app = app ?? express()
   }
 
-  public start(port: number = 8000, host?: string): Promise<{ apollo: ApolloServer, host: string, port: number }> {
+  public start(port = 8000, host?: string): Promise<{ apollo: ApolloServer, host: string, port: number }> {
     return new Promise((resolve, reject) => {
       Promise.all([
         this.graphity.boot(),
