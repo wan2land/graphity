@@ -1,7 +1,7 @@
 {
   "name": "eslint-config-graphity",
   "version": "0.6.0",
-  "description": "stdjs Eslint configs. support JS, TS.",
+  "description": "Graphity Eslint configs. support JS, TS.",
   "keywords": [
     "eslint",
     "eslint config",
@@ -9,7 +9,7 @@
   ],
   "author": "Changwan Jun <wan2land@gmail.com>",
   "license": "MIT",
-  "repository": "https://github.com/wan2land/stdjs/tree/master/packages/eslint-config",
+  "repository": "https://github.com/wan2land/graphity/tree/master/packages/eslint-config-graphity",
   "main": "index.js",
   "scripts": {
     "build": "echo \"done\""
