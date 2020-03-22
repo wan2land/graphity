@@ -7,6 +7,7 @@ npm-debug.log*
 yarn-error.log
 
 /examples/*/node_modules
+/examples/*/package-lock.json
 /examples/*/.envrc
 
 /core/*/node_modules
