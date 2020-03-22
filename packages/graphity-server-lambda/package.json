@@ -1,0 +1,33 @@
+{
+  "name": "@graphity/server-lambda",
+  "version": "0.6.0-alpha.5",
+  "description": "Super slim depdency injection container with Async/Promise for Javascript(& Typescript).",
+  "keywords": [
+    "di",
+    "ioc",
+    "dependency injection",
+    "inversion of control",
+    "inversify",
+    "ninject",
+    "typescript"
+  ],
+  "author": "Changwan Jun <wan2land@gmail.com>",
+  "license": "MIT",
+  "repository": "https://github.com/wan2land/graphity/tree/master/packages/graphity-server-lambda",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "build": "rimraf ./lib && tsc && babel ./src --out-dir ./lib --extensions \".ts\" --ignore \"src/**/*.test.ts\""
+  },
+  "dependencies": {
+    "apollo-server-lambda": "^2.11.0",
+    "core-js": "^3.2.1"
+  },
+  "peerDependencies": {
+    "graphity": "^0.6.0-alpha.5"
+  },
+  "gitHead": "da730f2e894afccb856baac46e283d944b74faa2"
+}
