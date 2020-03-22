@@ -1,0 +1,30 @@
+{
+  "name": "eslint-config-graphity",
+  "version": "0.6.0-alpha.5",
+  "description": "stdjs Eslint configs. support JS, TS.",
+  "keywords": [
+    "eslint",
+    "eslint config",
+    "typescript"
+  ],
+  "author": "Changwan Jun <wan2land@gmail.com>",
+  "license": "MIT",
+  "repository": "https://github.com/wan2land/stdjs/tree/master/packages/eslint-config",
+  "main": "index.js",
+  "scripts": {
+    "build": "echo \"done\""
+  },
+  "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^2.13.0",
+    "@typescript-eslint/parser": "^2.13.0",
+    "core-js": "^3.1.4",
+    "eslint-plugin-import": "^2.18.0",
+    "eslint-plugin-unicorn": "^15.0.0"
+  },
+  "devDependencies": {
+    "eslint": "6.8.0"
+  },
+  "peerDependencies": {
+    "eslint": "^6.8.0"
+  }
+}

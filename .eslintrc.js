@@ -3,8 +3,8 @@ module.exports = {
     jest: true,
   },
   extends: [
-    '@stdjs',
-    '@stdjs/eslint-config/typescript',
+    './packages/eslint-config-graphity/javascript.js',
+    './packages/eslint-config-graphity/typescript.js',
   ],
   ignorePatterns: [
     'node_modules/',
