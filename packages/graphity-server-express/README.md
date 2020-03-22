@@ -1,4 +1,4 @@
-# Graphity Server Express
+# Graphity - Server Express
 
 <a href="https://npmcharts.com/compare/@graphity/server-express?minimal=true"><img alt="Downloads" src="https://img.shields.io/npm/dt/@graphity/server-express.svg?style=flat-square" /></a>
 <a href="https://www.npmjs.com/package/@graphity/server-express"><img alt="Version" src="https://img.shields.io/npm/v/@graphity/server-express.svg?style=flat-square" /></a>
@@ -17,8 +17,17 @@ npm install @graphity/server-express --save
 import { Graphity } from 'graphity'
 import { ServerExpress } from '@graphity/server-express'
 
-const graphity = new Graphity()
+const graphity = new Graphity({
+  resolvers: [
+    HomeResolver,
+    /* ... */
+  ],
+})
 
-const server = new ServerExpress(graphity)
+graphity.register(new AuthProvider())
+graphity.register(new AwsProvider())
+graphity.register(new TypeormProvider())
+
+const server = new ServerExpress(graphity) // without boot
 server.start(8080)
 ```
