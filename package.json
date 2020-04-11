@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "build": "lerna run build",
-    "test": "npm run build && npm run test:lint && npm run test:unit",
+    "test": "npm run test:lint && npm run test:unit",
     "test:lint": "eslint '{packages,extensions}/*/src/**/*.ts'",
     "test:unit": "jest"
   },
