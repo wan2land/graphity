@@ -1,6 +1,6 @@
 {
   "name": "@graphity-extensions/types",
-  "version": "0.6.0",
+  "version": "0.6.2",
   "description": "GraphQL scalar types and helpers.",
   "keywords": [
     "graphql",

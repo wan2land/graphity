@@ -1,6 +1,6 @@
 {
   "name": "eslint-config-graphity",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "Graphity Eslint configs. support JS, TS.",
   "keywords": [
     "eslint",
