@@ -23,7 +23,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm ci
-    - run: npm run build
+    - run: node_modules/.bin/lerna exec npm install
     - run: node_modules/.bin/lerna bootstrap
     - run: npm test
       env:
