@@ -3,6 +3,8 @@ import express, { Express } from 'express'
 import { Graphity } from 'graphity'
 import portfinder from 'portfinder'
 
+import { reqToHttpRequest } from './req-to-http-request'
+
 export class ServerExpress {
   public app: Express
 
@@ -18,7 +20,7 @@ export class ServerExpress {
       ]).then(([_, startPort]) => {
         const apollo = new ApolloServer({
           schema: this.graphity.createSchema(),
-          context: ({ req }) => this.graphity.createContext(req),
+          context: ({ req }) => this.graphity.createContext(reqToHttpRequest(req)),
         })
         apollo.applyMiddleware({ app: this.app })
 

@@ -7,7 +7,7 @@ export function eventToHttpRequest(event: APIGatewayProxyEvent): HttpRequest {
 
   return {
     host: event.requestContext.domainName ?? headers.host,
-    method: event.httpMethod,
+    method: (event.httpMethod || '').toUpperCase(),
     headers,
     path: event.path,
     query: event.queryStringParameters ?? {},
