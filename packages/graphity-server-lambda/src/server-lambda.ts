@@ -2,6 +2,8 @@ import { ApolloServer } from 'apollo-server-lambda'
 import { APIGatewayProxyCallback, APIGatewayProxyEvent, APIGatewayProxyHandler, Context } from 'aws-lambda'
 import { Graphity } from 'graphity'
 
+import { eventToHttpRequest } from './event-to-http-request'
+
 export class ServerLambda {
 
   public apolloHandlerPromise: Promise<APIGatewayProxyHandler> | null = null
@@ -15,7 +17,7 @@ export class ServerLambda {
         this.graphity.boot().then(() => {
           const apollo = new ApolloServer({
             schema: this.graphity.createSchema(),
-            context: ({ req }) => this.graphity.createContext(req),
+            context: ({ event }: { event: APIGatewayProxyEvent}) => this.graphity.createContext(eventToHttpRequest(event)),
           })
           resolve(apollo.createHandler())
         })
