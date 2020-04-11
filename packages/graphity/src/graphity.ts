@@ -4,7 +4,7 @@ import { GraphQLObjectType, GraphQLSchema, GraphQLString, isOutputType } from 'g
 import { InstanceName } from './constants/container'
 import { DefaultContextBuilder } from './context/default-context-builder'
 import { ConstructType } from './interfaces/common'
-import { ContextBuilder, GraphityOptions, HttpRequest, Middleware } from './interfaces/graphity'
+import { ContextBuilder, GraphityContext, GraphityOptions, HttpRequest, Middleware } from './interfaces/graphity'
 import { MetadataFields, MetadataMutations, MetadataQueries, MetadataResolvers } from './metadata'
 import { createMutationObject } from './schema/create-mutation-object'
 import { createQueryObject } from './schema/create-query-object'
@@ -85,7 +85,7 @@ export class Graphity extends SharedContainer {
     })
   }
 
-  public createContext(request: HttpRequest) {
+  public createContext(request: HttpRequest): Promise<GraphityContext> {
     return this.get<ContextBuilder>(InstanceName.ContextBuilder).buildContext(request)
   }
 }

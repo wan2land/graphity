@@ -6,9 +6,11 @@ import { GraphityAuth } from './auth'
 import { ConstructType, MaybePromise } from './common'
 
 export interface HttpRequest {
+  host?: string
   method: string
-  url?: string
   headers: IncomingHttpHeaders
+  path: string
+  query: Record<string, any>
 }
 
 export interface GraphityOptions {
