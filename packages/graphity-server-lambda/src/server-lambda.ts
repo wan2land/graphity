@@ -4,11 +4,22 @@ import { Graphity } from 'graphity'
 
 import { eventToHttpRequest } from './event-to-http-request'
 
+export interface ServerLambdaOptions {
+  cors?: {
+    origin?: boolean | string | string[],
+    methods?: string | string[],
+    allowedHeaders?: string | string[],
+    exposedHeaders?: string | string[],
+    credentials?: boolean,
+    maxAge?: number,
+  }
+}
+
 export class ServerLambda {
 
   public apolloHandlerPromise: Promise<APIGatewayProxyHandler> | null = null
 
-  public constructor(public graphity: Graphity) {
+  public constructor(public graphity: Graphity, public _options: ServerLambdaOptions = {}) {
   }
 
   public execute(event: APIGatewayProxyEvent, context: Context, callback: APIGatewayProxyCallback): void {
@@ -19,7 +30,9 @@ export class ServerLambda {
             schema: this.graphity.createSchema(),
             context: ({ event }: { event: APIGatewayProxyEvent}) => this.graphity.createContext(eventToHttpRequest(event)),
           })
-          resolve(apollo.createHandler())
+          resolve(apollo.createHandler({
+            cors: this._options.cors,
+          }))
         })
       })
     }
