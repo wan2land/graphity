@@ -18,10 +18,21 @@
 
 ## Projects
 
+**Core**
+
 - [graphity](./packages/graphity)
 - [@graphity/container](./packages/graphity-container)
 
-## Extensions
+**Server**
+
+- [@graphity/server-express](./packages/graphity-server-express)
+- [@graphity/server-lambda](./packages/graphity-server-lambda)
+
+**Miscellaneous**
+
+- [eslint-config-graphity](./packages/eslint-config-graphity)
+
+**Extensions(Experimantal)**
 
 - [@graphity-extensions/types](./extensions/types)
 - [@graphity-extensions/restful](./extensions/restful)
