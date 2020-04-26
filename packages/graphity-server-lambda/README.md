@@ -34,3 +34,45 @@ const server = new ServerLambda(graphity) // without boot
 
 export const handler: APIGatewayProxyHandler = (event, ctx, callback) => server.execute(event, ctx, callback)
 ```
+
+
+## Options
+
+```typescript
+interface ServerLambdaOptions {
+  callbackWaitsForEmptyEventLoop?: boolean
+  cors?: {
+    origin?: boolean | string | string[],
+    methods?: string | string[],
+    allowedHeaders?: string | string[],
+    exposedHeaders?: string | string[],
+    credentials?: boolean,
+    maxAge?: number,
+  }
+}
+```
+
+**CORS**
+
+To use CORS, simply set the following options.
+
+```typescript
+const server = new ServerLambda(graphity, {
+  cors: {
+    origin: '*',
+    credentials: true,
+  },
+})
+```
+
+**callbackWaitsForEmptyEventLoop**
+
+When using a persistent connection such as a database, there may be no response. In this case, you can do the following:
+
+```typescript
+const server = new ServerLambda(graphity, {
+  callbackWaitsForEmptyEventLoop: true,
+})
+```
+
+For more information, see [AWS Lambda Context Object in Node.js](https://docs.aws.amazon.com/lambda/latest/dg/nodejs-context.html).
