@@ -5,6 +5,7 @@ import { Graphity } from 'graphity'
 import { eventToHttpRequest } from './event-to-http-request'
 
 export interface ServerLambdaOptions {
+  callbackWaitsForEmptyEventLoop?: boolean
   cors?: {
     origin?: boolean | string | string[],
     methods?: string | string[],
@@ -35,6 +36,9 @@ export class ServerLambda {
           }))
         })
       })
+    }
+    if (this._options.callbackWaitsForEmptyEventLoop !== null && typeof this._options.callbackWaitsForEmptyEventLoop !== 'undefined') {
+      context.callbackWaitsForEmptyEventLoop = this._options.callbackWaitsForEmptyEventLoop
     }
     this.apolloHandlerPromise.then((handler) => { handler(event, context, callback) })
   }
