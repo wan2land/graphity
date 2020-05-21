@@ -71,7 +71,7 @@ When using a persistent connection such as a database, there may be no response.
 
 ```typescript
 const server = new ServerLambda(graphity, {
-  callbackWaitsForEmptyEventLoop: true,
+  callbackWaitsForEmptyEventLoop: false,
 })
 ```
 

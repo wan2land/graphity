@@ -19,7 +19,7 @@ export class ServerExpress {
         portfinder.getPortPromise({ port, host }),
       ]).then(([_, startPort]) => {
         const apollo = new ApolloServer({
-          schema: this.graphity.createSchema(),
+          schema: this.graphity.createSchema() as any,
           context: ({ req }) => this.graphity.createContext(reqToHttpRequest(req)),
         })
         apollo.applyMiddleware({ app: this.app })

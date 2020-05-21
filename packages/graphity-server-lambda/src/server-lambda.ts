@@ -28,7 +28,7 @@ export class ServerLambda {
       this.apolloHandlerPromise = new Promise((resolve) => {
         this.graphity.boot().then(() => {
           const apollo = new ApolloServer({
-            schema: this.graphity.createSchema(),
+            schema: this.graphity.createSchema() as any,
             context: ({ event }: { event: APIGatewayProxyEvent}) => this.graphity.createContext(eventToHttpRequest(event)),
           })
           resolve(apollo.createHandler({

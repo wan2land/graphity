@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [10.x, 12.x, 13.x]
+        node-version: [10.x, 12.x, 13.x, 14.x]
 
     steps:
     - uses: actions/checkout@v2
@@ -23,8 +23,8 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm ci
-    - run: node_modules/.bin/lerna exec npm install
-    - run: node_modules/.bin/lerna bootstrap
-    - run: npm test
+    - run: npx lerna bootstrap
+    - run: npm run build
+    - run: npm run test
       env:
         CI: true
