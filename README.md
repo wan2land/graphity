@@ -34,5 +34,4 @@
 
 **Extensions(Experimantal)**
 
-- [@graphity-extensions/types](./extensions/types)
 - [@graphity-extensions/restful](./extensions/restful)
