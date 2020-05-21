@@ -10,4 +10,5 @@ module.exports = {
     'jsx',
     'json',
   ],
+  setupFilesAfterEnv: ['./jest.setup.js'],
 }

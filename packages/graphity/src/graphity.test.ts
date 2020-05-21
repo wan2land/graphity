@@ -1,13 +1,12 @@
 import { execute, parse, printSchema } from 'graphql'
 
-import { Graphity } from './graphity'
 import { createDetector } from '../stubs/middlewares/create-detector'
 import { Nothing } from '../stubs/middlewares/nothing'
 import { ArticleResolver } from '../stubs/resolvers/article-resolver'
 import { CommentResolver } from '../stubs/resolvers/comment-resolver'
 import { HomeResolver } from '../stubs/resolvers/home-resolver'
 import { UserResolver } from '../stubs/resolvers/user-resolver'
-
+import { Graphity } from './graphity'
 
 describe('testsuite of graphity', () => {
   it('test createSchema empty', async () => {
@@ -31,12 +30,14 @@ describe('testsuite of graphity', () => {
     const schema = graphity.createSchema()
 
     // schema.
-    expect(printSchema(schema)).toEqual(`"""article entity"""
+    expect(schema).toEqualGraphQLSchema(`
+"""article entity"""
 type Article {
+  contents: String
+
   """article id"""
   id: ID!
   title: String!
-  contents: String
   user: User
 }
 
@@ -61,22 +62,22 @@ type ListOfFriends {
 type Mutation {
   """this is createArticle"""
   createArticle(input: InputCreateArticle!): Article
-  updateArticle(id: ID!, input: InputUpdateArticle!): Article
   deleteArticle(id: ID!): Article
+  updateArticle(id: ID!, input: InputUpdateArticle!): Article
 }
 
 type Query {
   """this is article"""
   article(id: ID!): Article
-  articles(take: Int, offset: Int): ListOfArticles
+  articles(offset: Int, take: Int): ListOfArticles
   user(id: ID!): User
   version: String
 }
 
 type User {
+  friends: ListOfFriends!
   id: ID!
   name: String!
-  friends: ListOfFriends!
 }
 `)
 
