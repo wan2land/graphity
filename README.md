@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./logo.png" alt="graphity" width="400" />
+  <img src="./logo.svg" alt="graphity" width="400" />
 </p>
 
 <p align="center">GraphQL Typescript Framework</p>
