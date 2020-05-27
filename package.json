@@ -23,7 +23,7 @@
     "@types/aws-lambda": "8.10.51",
     "@types/express": "4.17.6",
     "@types/jest": "25.2.3",
-    "@types/jsonwebtoken": "8.3.9",
+    "@types/jsonwebtoken": "8.5.0",
     "@types/node": "12.12.42",
     "@typescript-eslint/eslint-plugin": "2.34.0",
     "@typescript-eslint/parser": "2.34.0",
