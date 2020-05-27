@@ -140,7 +140,7 @@ module.exports = {
     '@typescript-eslint/no-this-alias': 'error',
     // '@typescript-eslint/no-throw-literal': 'off',
     // '@typescript-eslint/no-type-alias': 'off',
-    '@typescript-eslint/no-unnecessary-condition': ['warn', { ignoreRhs: true, allowConstantLoopConditions: true }],
+    '@typescript-eslint/no-unnecessary-condition': ['warn', { allowConstantLoopConditions: true }],
     // '@typescript-eslint/no-unnecessary-qualifier': 'off',
     // '@typescript-eslint/no-unnecessary-type-arguments': 'off',
     '@typescript-eslint/no-unnecessary-type-assertion': 'error',
