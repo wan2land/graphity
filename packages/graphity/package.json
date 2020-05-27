@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@graphity/container": "^0.6.3",
+    "@graphity/types": "^0.6.3",
     "core-js": "^3.2.1",
     "jsonwebtoken": "^8.5.1"
   },

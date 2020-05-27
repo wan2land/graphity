@@ -10,6 +10,7 @@ export {
   Provider,
   SharedContainer,
 } from '@graphity/container'
+export * from '@graphity/types'
 
 export * from './decorators/resolver'
 export * from './decorators/query'
