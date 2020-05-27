@@ -1,6 +1,6 @@
 {
   "name": "@graphity/container",
-  "version": "0.6.3",
+  "version": "0.7.0",
   "description": "Super slim depdency injection container with Async/Promise for Javascript(& Typescript).",
   "keywords": [
     "di",
