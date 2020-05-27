@@ -38,7 +38,6 @@ export { Authorized } from './middlewares/authorized'
 
 export { AuthProvider } from './providers/auth-provider'
 
-export { createGraphQLInput } from './types/create-graphql-input'
 export { createGraphQLObject } from './types/create-graphql-object'
 export { entityToGraphQLObject } from './types/entity-to-graphql-object'
 export { GraphQLListOf } from './types/graphql-list-of'

@@ -15,5 +15,8 @@
     "esModuleInterop": true,
     "noImplicitReturns": true,
     "experimentalDecorators": true
-  }
+  },
+  "files": [
+    "./types/jest.d.ts"
+  ]
 }

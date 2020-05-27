@@ -1,16 +1,16 @@
 import { GraphQLInputFieldConfigMap, GraphQLInputObjectType, GraphQLInputType, isInputType } from 'graphql'
 
-export interface CreateGraphQLInputFieldMap {
-  [name: string]: CreateGraphQLInputFieldMap | GraphQLInputType
+export interface GraphQLInputFieldMap {
+  [name: string]: GraphQLInputFieldMap | GraphQLInputType
 }
 
-export interface CreateGraphQLInputOptions {
+export interface GraphQLInputOptions {
   name: string
   description?: string | null
-  fields: CreateGraphQLInputFieldMap
+  fields: GraphQLInputFieldMap
 }
 
-export function createGraphQLInput(options: CreateGraphQLInputOptions): GraphQLInputObjectType {
+export function GraphQLInput(options: GraphQLInputOptions): GraphQLInputObjectType {
   return new GraphQLInputObjectType({
     name: options.name,
     description: options.description,
@@ -20,7 +20,7 @@ export function createGraphQLInput(options: CreateGraphQLInputOptions): GraphQLI
         return carry // ignore interface & union
       }
       carry[key] = {
-        type: createGraphQLInput({
+        type: GraphQLInput({
           name: `${options.name}${key[0].toUpperCase()}${key.slice(1)}`,
           fields: field,
         }),
