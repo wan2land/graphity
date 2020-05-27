@@ -18,5 +18,8 @@
   },
   "files": [
     "./types/jest.d.ts"
-  ]
+  ],
+  "include": [
+    "packages/**/*.ts"
+  ],
 }

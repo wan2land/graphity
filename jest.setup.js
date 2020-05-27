@@ -1,4 +1,4 @@
-const { lexicographicSortSchema, printSchema, printType } = require('graphql')
+const { lexicographicSortSchema, printSchema, printType, isObjectType, isInputObjectType } = require('graphql')
 
 const originMatchers = global[Symbol.for('$$jest-matchers-object')].matchers
 
@@ -18,7 +18,7 @@ expect.extend({
     const minIndent = Math.min(...indents.slice(1))
 
     return originMatchers.toEqual(
-      printType(received).trim(),
+      isObjectType(received) || isInputObjectType(received) ? printType(received).trim() : received.toString(),
       lines.map((line, lineIndex) => lineIndex > 0 ? line.slice(minIndent) : line).join('\n'),
     )
   },

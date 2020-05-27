@@ -10,7 +10,7 @@ export interface CreateGraphQLObjectOptions {
   fields: CreateGraphQLObjectFieldMap
 }
 
-export function createGraphQLObject(options: CreateGraphQLObjectOptions): GraphQLObjectType {
+export function GraphQLObject(options: CreateGraphQLObjectOptions): GraphQLObjectType {
   return new GraphQLObjectType({
     name: options.name,
     description: options.description,
@@ -20,7 +20,7 @@ export function createGraphQLObject(options: CreateGraphQLObjectOptions): GraphQ
         return carry // ignore interface & union
       }
       carry[key] = {
-        type: createGraphQLObject({
+        type: GraphQLObject({
           name: `${options.name}${key[0].toUpperCase()}${key.slice(1)}`,
           fields: field,
         }),
