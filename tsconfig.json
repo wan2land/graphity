@@ -20,6 +20,7 @@
     "./types/jest.d.ts"
   ],
   "include": [
+    "extensions/**/*.ts",
     "packages/**/*.ts"
   ],
 }
