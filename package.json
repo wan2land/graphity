@@ -32,7 +32,7 @@
     "eslint-plugin-unicorn": "20.0.0",
     "graphql": "15.0.0",
     "jest": "26.0.1",
-    "lerna": "3.21.0",
+    "lerna": "3.22.0",
     "lerna-update-wizard": "0.17.8",
     "rimraf": "3.0.2",
     "ts-jest": "26.0.0",
