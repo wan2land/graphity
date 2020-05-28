@@ -6,7 +6,7 @@ import { Middleware, MiddlewareCarry, MiddlewareNext } from '../interfaces/graph
 import { createResolver } from './create-resolver'
 
 class TestResolver {
-  public resolve(parent: any, args: {}, ctx: any) {
+  public resolve(parent: any, args: Record<string, unknown>, ctx: any) {
     ctx.stack.push(`resolver (${JSON.stringify(parent)})`)
     return {
       success: true,

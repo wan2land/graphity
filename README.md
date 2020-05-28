@@ -30,7 +30,7 @@
 
 **Miscellaneous**
 
-- [eslint-config-graphity](./packages/eslint-config-graphity)
+- 
 
 **Extensions(Experimantal)**
 
