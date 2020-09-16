@@ -1,0 +1,25 @@
+{
+  "name": "@graphity/decorator",
+  "version": "0.7.0",
+  "description": "GraphQL Decorator utility.",
+  "keywords": [
+    "types",
+    "graphql",
+    "typescript"
+  ],
+  "author": "Changwan Jun <wan2land@gmail.com>",
+  "license": "MIT",
+  "repository": "https://github.com/wan2land/graphity/tree/master/packages/graphity-decorator",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "build": "rimraf ./lib && tsc && babel ./src --out-dir ./lib --extensions \".ts\" --ignore \"src/**/*.test.ts\""
+  },
+  "dependencies": {
+    "core-js": "^3.2.1",
+    "graphql": "^15.3.0"
+  }
+}

@@ -14,5 +14,11 @@ module.exports = {
     project: ['./tsconfig.json'],
   },
   rules: {
+    '@typescript-eslint/ban-types': ['error', {
+      types: {
+        Function: false,
+      },
+      extendDefaults: true,
+    }]
   },
 }
