@@ -2,23 +2,38 @@ module.exports = {
   env: {
     jest: true,
   },
-  extends: [
-    'stable',
-    'stable/typescript',
-  ],
   ignorePatterns: [
     'node_modules/',
   ],
-  parserOptions: {
-    tsconfigRootDir: __dirname,
-    project: ['./tsconfig.json'],
-  },
-  rules: {
-    '@typescript-eslint/ban-types': ['error', {
-      types: {
-        Function: false,
+  overrides: [
+    {
+      files: [
+        '**/*.ts',
+      ],
+      extends: [
+        'stable',
+        'stable/typescript',
+      ],
+      parserOptions: {
+        tsconfigRootDir: __dirname,
+        project: ['./tsconfig.json'],
       },
-      extendDefaults: true,
-    }]
-  },
+      rules: {
+        '@typescript-eslint/ban-types': ['error', {
+          types: {
+            Function: false,
+          },
+          extendDefaults: true,
+        }]
+      },
+    },
+    {
+      files: [
+        '**/*.js',
+      ],
+      extends: [
+        'stable',
+      ],
+    },
+  ],
 }

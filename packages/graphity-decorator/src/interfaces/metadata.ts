@@ -29,7 +29,7 @@ export interface MetadataEntity {
 export interface MetadataField {
   target: Function
   property: string | symbol
-  typeFactory: () => GraphQLOutputType
+  typeFactory: (type: any) => GraphQLOutputType | Function
   middlewares: MiddlewareConstructor[]
   name: string
   resolve: GraphQLFieldResolver<any, any> | null
