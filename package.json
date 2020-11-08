@@ -32,7 +32,7 @@
     "lerna": "3.22.1",
     "lerna-update-wizard": "0.17.8",
     "rimraf": "3.0.2",
-    "ts-jest": "26.4.3",
+    "ts-jest": "26.4.4",
     "typescript": "4.0.5"
   }
 }
