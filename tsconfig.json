@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es2015",
+    "target": "es6",
     "module": "commonjs",
     "moduleResolution": "node",
     "lib": [
@@ -16,11 +16,9 @@
     "noImplicitReturns": true,
     "experimentalDecorators": true
   },
-  "files": [
-    "./types/jest.d.ts"
-  ],
   "include": [
     "extensions/**/*.ts",
-    "packages/**/*.ts"
-  ],
+    "packages/**/*.ts",
+    "types/**/*.d.ts"
+  ]
 }

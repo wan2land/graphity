@@ -24,7 +24,7 @@ module.exports = {
             Function: false,
           },
           extendDefaults: true,
-        }]
+        }],
       },
     },
     {

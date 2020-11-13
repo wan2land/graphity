@@ -2,24 +2,32 @@ const { lexicographicSortSchema, printSchema, printType, isObjectType, isInputOb
 
 const originMatchers = global[Symbol.for('$$jest-matchers-object')].matchers
 
+function normalizeGraphQL(gql) {
+  gql = gql.trim()
+
+  const lines = gql.split('\n')
+  const indents = lines.filter(line => line.trim().length).map(line => {
+    const match = line.match(/^\s+/)
+    return match ? match[0].length : 0
+  })
+  if (indents.length < 2) {
+    return gql.trim()
+  }
+  const minIndent = Math.min(...indents.slice(1))
+  return lines.map((line, lineIndex) => lineIndex > 0 ? line.slice(minIndent) : line).join('\n')
+}
+
 expect.extend({
   toEqualGraphQLSchema(received, expected) {
     return originMatchers.toEqual(
-      printSchema(lexicographicSortSchema(received)).trim(),
-      expected.trim(),
+      normalizeGraphQL(printSchema(lexicographicSortSchema(received))),
+      normalizeGraphQL(expected)
     )
   },
   toEqualGraphQLType(received, expected) {
-    const lines = expected.trim().split('\n')
-    const indents = lines.map(line => {
-      const match = line.match(/^\s+/)
-      return match ? match[0].length : 0
-    })
-    const minIndent = Math.min(...indents.slice(1))
-
     return originMatchers.toEqual(
-      isObjectType(received) || isInputObjectType(received) ? printType(received).trim() : received.toString(),
-      lines.map((line, lineIndex) => lineIndex > 0 ? line.slice(minIndent) : line).join('\n'),
+      normalizeGraphQL(isObjectType(received) || isInputObjectType(received) ? printType(received) : received.toString()),
+      normalizeGraphQL(expected)
     )
   },
 })
