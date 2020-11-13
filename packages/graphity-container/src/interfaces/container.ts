@@ -16,6 +16,7 @@ export interface Container {
 export interface ProviderDescriptor {
   instance<T>(name: Name<T>, instance: MaybePromise<T>): void
   resolver<T>(name: Name<T>, resolver: () => MaybePromise<T>): void
+  bind<T>(constructor: ConstructType<T>): void
   bind<T>(name: Name<T>, constructor: ConstructType<T>): void
   resolve<T>(name: Name<T>): Promise<T>
 }
