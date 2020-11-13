@@ -1,5 +1,6 @@
 import { GraphQLFieldResolver, GraphQLOutputType, isOutputType } from 'graphql'
 
+import { EntityFactory } from '../interfaces/metadata'
 import { MiddlewareConstructor } from '../interfaces/middleware'
 import { MetadataStorage } from '../metadata/storage'
 
@@ -12,7 +13,7 @@ export interface FieldParams {
   metadataStorage?: MetadataStorage
 }
 
-export function Field(type: ((type: any) => GraphQLOutputType | Function) | GraphQLOutputType, params: FieldParams = {}): PropertyDecorator {
+export function Field(type: EntityFactory | GraphQLOutputType, params: FieldParams = {}): PropertyDecorator {
   const metadataFields = (params.metadataStorage ?? MetadataStorage.getGlobalStorage()).entityFields
 
   return (target, property) => {

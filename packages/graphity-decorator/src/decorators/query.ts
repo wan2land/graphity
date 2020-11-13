@@ -1,5 +1,6 @@
 import { isInputObjectType, GraphQLFieldConfigArgumentMap, GraphQLOutputType } from 'graphql'
 
+import { EntityFactory } from '../interfaces/metadata'
 import { MiddlewareConstructor } from '../interfaces/middleware'
 import { MetadataStorage } from '../metadata/storage'
 
@@ -7,7 +8,7 @@ const DEFAULT_RETURNS = (node: GraphQLOutputType) => node
 
 export interface QueryParams {
   name?: string
-  parent?: ((type: null) => GraphQLOutputType | Function)
+  parent?: EntityFactory
   input?: GraphQLFieldConfigArgumentMap
   middlewares?: MiddlewareConstructor | MiddlewareConstructor[]
   returns?: (type: GraphQLOutputType) => GraphQLOutputType | Function

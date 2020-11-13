@@ -1,5 +1,6 @@
 import { GraphQLObjectType } from 'graphql'
 
+import { EntityFactory } from '../interfaces/metadata'
 import { MiddlewareConstructor } from '../interfaces/middleware'
 import { MetadataStorage } from '../metadata/storage'
 
@@ -8,7 +9,7 @@ export interface GraphityResolverParams {
   metadataStorage?: MetadataStorage
 }
 
-export function GraphityResolver(typeFactory: () => GraphQLObjectType | Function, params: GraphityResolverParams = {}): ClassDecorator {
+export function GraphityResolver(typeFactory: EntityFactory, params: GraphityResolverParams = {}): ClassDecorator {
   const metadataResolvers = (params.metadataStorage ?? MetadataStorage.getGlobalStorage()).resolvers
 
   return (target) => {

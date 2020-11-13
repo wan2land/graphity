@@ -1,3 +1,5 @@
+import { GraphQLObjectType } from 'graphql'
+
 import { MetadataEntity, MetadataField, MetadataResolver, MetadataResolve } from '../interfaces/metadata'
 
 let storage: MetadataStorage | null = null
@@ -15,10 +17,12 @@ export class MetadataStorage {
     return storage
   }
 
-  public entities = new Map<Function, MetadataEntity>()
-  public entityFields = new Map<Function, MetadataField[]>()
+  entities = new Map<Function, MetadataEntity>()
+  entityFields = new Map<Function, MetadataField[]>()
 
-  public resolvers = new Map<Function, MetadataResolver>()
-  public resolverMutations = new Map<Function, MetadataResolve[]>()
-  public resolverQueries = new Map<Function, MetadataResolve[]>()
+  resolvers = new Map<Function, MetadataResolver>()
+  resolverMutations = new Map<Function, MetadataResolve[]>()
+  resolverQueries = new Map<Function, MetadataResolve[]>()
+
+  cachedObjects = new Map<Function, GraphQLObjectType>()
 }

@@ -2,20 +2,23 @@ import { GraphQLFieldResolver, GraphQLOutputType, GraphQLFieldConfigArgumentMap 
 
 import { MiddlewareConstructor } from './middleware'
 
+export type EntityFactory = (type: null) => (GraphQLOutputType | Function)
+export type ReturnEntityFactory = (type: GraphQLOutputType) => (GraphQLOutputType | Function)
+
 export interface MetadataResolver {
   target: Function
-  typeFactory: () => GraphQLOutputType | Function
+  typeFactory: EntityFactory
   middlewares: MiddlewareConstructor[]
 }
 
 export interface MetadataResolve {
   target: Function
   property: string | symbol
-  parent: ((type: null) => GraphQLOutputType | Function) | null
+  parent: EntityFactory | null
   name: string
   input: GraphQLFieldConfigArgumentMap | null
   middlewares: MiddlewareConstructor[]
-  returns: (type: GraphQLOutputType) => GraphQLOutputType | Function
+  returns: ReturnEntityFactory
   description: string | null
   deprecated: string | null
 }
@@ -29,7 +32,7 @@ export interface MetadataEntity {
 export interface MetadataField {
   target: Function
   property: string | symbol
-  typeFactory: (type: any) => GraphQLOutputType | Function
+  typeFactory: EntityFactory
   middlewares: MiddlewareConstructor[]
   name: string
   resolve: GraphQLFieldResolver<any, any> | null

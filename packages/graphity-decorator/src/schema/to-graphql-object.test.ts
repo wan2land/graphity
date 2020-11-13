@@ -9,42 +9,39 @@ import { toGraphQLObject } from './to-graphql-object'
 
 describe('@graphity/decorator, schema/to-graphql-object', () => {
 
+  beforeEach(() => {
+    MetadataStorage.clearGlobalStorage()
+  })
+
   it('test toGraphQLObject, undefined graphity entity', () => {
-    const metadataStorage = new MetadataStorage()
     class User {
     }
 
-    expect(toGraphQLObject(User, { metadataStorage })).toEqualGraphQLType('type User')
+    expect(toGraphQLObject(User)).toEqualGraphQLType('type User')
   })
 
   it('test toGraphQLObject, empty class', () => {
-    const metadataStorage = new MetadataStorage()
-
-    @GraphityEntity({ metadataStorage })
+    @GraphityEntity()
     class User {
     }
 
-    expect(toGraphQLObject(User, { metadataStorage })).toEqualGraphQLType('type User')
+    expect(toGraphQLObject(User)).toEqualGraphQLType('type User')
   })
 
   it('test toGraphQLObject, full class', () => {
-    const metadataStorage = new MetadataStorage()
-
-    @GraphityEntity({ metadataStorage })
+    @GraphityEntity()
     class User {
       @Field(GraphQLID, {
         description: 'ID Type',
-        metadataStorage,
       })
       id!: string
 
-      @Field(_ => GraphQLString, { metadataStorage })
+      @Field(_ => GraphQLString)
       username!: string
 
       @Field(_ => GraphQLString, {
         name: 'aliasLegacyName',
         deprecated: 'use other property',
-        metadataStorage,
       })
       legacySomething!: string
 
@@ -53,7 +50,7 @@ describe('@graphity/decorator, schema/to-graphql-object', () => {
         fields: {
           type: { type: GraphQLNonNull(GraphQLString) },
         },
-      })))), { metadataStorage })
+      })))))
       socials!: { type: string }[]
 
       @Field(() => GraphQLNonNull(GraphQLList(GraphQLNonNull(new GraphQLObjectType({
@@ -61,11 +58,11 @@ describe('@graphity/decorator, schema/to-graphql-object', () => {
         fields: {
           name: { type: GraphQLNonNull(GraphQLString) },
         },
-      })))), { metadataStorage })
+      })))))
       roles!: { name: string }[]
     }
 
-    expect(toGraphQLObject(User, { metadataStorage })).toEqualGraphQLType(`type User {
+    expect(toGraphQLObject(User)).toEqualGraphQLType(`type User {
       """ID Type"""
       id: ID
       username: String
@@ -76,42 +73,40 @@ describe('@graphity/decorator, schema/to-graphql-object', () => {
   })
 
   it('test toGraphQLObject, with other class', () => {
-    const metadataStorage = new MetadataStorage()
-
-    @GraphityEntity({ metadataStorage })
+    @GraphityEntity()
     class User {
-      @Field(GraphQLID, { metadataStorage })
+      @Field(GraphQLID)
       id!: string
 
-      @Field(() => toGraphQLObject(Role), { metadataStorage })
+      @Field(() => toGraphQLObject(Role))
       role!: Role
 
-      @Field(() => toGraphQLObject(Role), { metadataStorage })
+      @Field(() => toGraphQLObject(Role))
       otherRole!: Role
     }
 
-    @GraphityEntity({ metadataStorage })
+    @GraphityEntity()
     class Role {
-      @Field(GraphQLID, { metadataStorage })
+      @Field(GraphQLID)
       id!: string
 
-      @Field(GraphQLString, { metadataStorage })
+      @Field(GraphQLString)
       name!: string
 
-      @Field(() => User, { metadataStorage }) // also use class!
+      @Field(() => User) // also use class!
       user!: User
 
-      @Field(() => User, { metadataStorage }) // also use class!
+      @Field(() => User) // also use class!
       firstUser!: User
     }
 
-    expect(toGraphQLObject(User, { metadataStorage })).toEqualGraphQLType(`type User {
+    expect(toGraphQLObject(User)).toEqualGraphQLType(`type User {
       id: ID
       role: Role
       otherRole: Role
     }`)
 
-    expect(toGraphQLObject(Role, { metadataStorage })).toEqualGraphQLType(`type Role {
+    expect(toGraphQLObject(Role)).toEqualGraphQLType(`type Role {
       id: ID
       name: String
       user: User
