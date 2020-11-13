@@ -105,6 +105,30 @@ describe('testsuite of container', () => {
     expect(connection.driver).toBeInstanceOf(Driver)
   })
 
+  it('test bind without name', async () => {
+    expect.assertions(2)
+
+    const container = new SharedContainer()
+
+    class Driver {
+    }
+
+    class Connection {
+      public constructor(@Inject(Driver) public driver: Driver) {
+      }
+    }
+
+    container.bind(Driver)
+    container.bind(Connection)
+
+    await container.boot()
+
+    const connection = container.get(Connection)
+
+    expect(connection).toBeInstanceOf(Connection)
+    expect(connection.driver).toBeInstanceOf(Driver)
+  })
+
   it('test create method', async () => {
     const container = new SharedContainer()
 

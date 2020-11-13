@@ -57,10 +57,12 @@ export class SharedContainer implements Container, ProviderDescriptor {
     this.resolvers.set(name, resolver)
   }
 
-  public bind<T>(name: Name<T>, constructor: ConstructType<T>): void {
+  public bind<T>(constructor: ConstructType<T>): void
+  public bind<T>(name: Name<T>, constructor: ConstructType<T>): void
+  public bind<T>(name: ConstructType<T> | Name<T>, constructor?: ConstructType<T>): void {
     this.delete(name)
     this.types.set(name, 'bind')
-    this.binds.set(name, constructor)
+    this.binds.set(name, constructor ?? name as ConstructType<T>)
   }
 
   public async create<T>(ctor: ConstructType<T>): Promise<T> {
