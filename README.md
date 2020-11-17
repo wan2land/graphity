@@ -22,11 +22,13 @@
 
 - [graphity](./packages/graphity)
 - [@graphity/container](./packages/graphity-container)
+- [@graphity/schema](./packages/graphity-schema)
+- [@graphity/types](./packages/graphity-types)
 
 **Server**
 
-- [@graphity/server-express](./packages/graphity-server-express)
-- [@graphity/server-lambda](./packages/graphity-server-lambda)
+- [@graphity/server-express](./packages/graphity-server-express) - Using Graphity on Express Server
+- [@graphity/server-lambda](./packages/graphity-server-lambda) - Using Graphity on AWS Lambda
 
 **Miscellaneous**
 
