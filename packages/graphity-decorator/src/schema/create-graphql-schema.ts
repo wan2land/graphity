@@ -16,6 +16,7 @@ export interface CreateGraphQLSchemaParams {
 
 export function createGraphQLSchema(params: CreateGraphQLSchemaParams): GraphQLSchema {
   const container = params.container ?? GraphQLContainer.getGlobalContainer()
+
   const globalMiddlewares = (params.globalMiddlewares ?? []).map(middleware => container.get(middleware))
   const queryMiddlewares = (params.queryMiddlewares ?? []).map(middleware => container.get(middleware))
   const mutationMiddlewares = (params.mutationMiddlewares ?? []).map(middleware => container.get(middleware))

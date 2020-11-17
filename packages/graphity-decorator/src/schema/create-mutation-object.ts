@@ -26,16 +26,16 @@ export function createMutationObject({
   })
 
   for (const resolver of resolvers) {
-    const metadataResolver = container.metaResolvers.get(resolver)
-    if (!metadataResolver) {
+    const metaResolver = container.metaResolvers.get(resolver)
+    if (!metaResolver) {
       continue
     }
 
-    const resolverObjectType = resolveEntityFactory(metadataResolver.typeFactory, { container })
+    const resolverObjectType = resolveEntityFactory(metaResolver.typeFactory, { container })
 
-    for (const mutation of container.metaMutations.get(resolver) ?? []) {
-      const parentObjectType = typeof mutation.parent === 'function'
-        ? resolveEntityFactory(mutation.parent, { container })
+    for (const metaMutation of container.metaMutations.get(resolver) ?? []) {
+      const parentObjectType = typeof metaMutation.parent === 'function'
+        ? resolveEntityFactory(metaMutation.parent, { container })
         : mutationObjectType
 
       if (!isObjectType(parentObjectType)) {
@@ -44,11 +44,11 @@ export function createMutationObject({
 
       const fields = parentObjectType.getFields()
 
-      fields[mutation.name] = {
-        name: mutation.name,
-        type: resolveReturnEntityFactory(mutation.returns, resolverObjectType, { container }),
-        args: mutation.input
-          ? Object.entries(mutation.input).map<GraphQLArgument>(([name, arg]) => {
+      fields[metaMutation.name] = {
+        name: metaMutation.name,
+        type: resolveReturnEntityFactory(metaMutation.returns, resolverObjectType, { container }),
+        args: metaMutation.input
+          ? Object.entries(metaMutation.input).map<GraphQLArgument>(([name, arg]) => {
             return {
               name,
               type: arg.type,
@@ -60,12 +60,12 @@ export function createMutationObject({
             }
           })
           : [],
-        description: mutation.description,
-        isDeprecated: typeof mutation.deprecated === 'string',
-        deprecationReason: typeof mutation.deprecated === 'string' ? mutation.deprecated : undefined,
+        description: metaMutation.description,
+        isDeprecated: typeof metaMutation.deprecated === 'string',
+        deprecationReason: typeof metaMutation.deprecated === 'string' ? metaMutation.deprecated : undefined,
         resolve: applyMiddlewares(
-          middlewares.concat(mutation.middlewares.map(middleware => container.get(middleware))),
-          container.get<any>(mutation.target as any)[mutation.property],
+          middlewares.concat(metaResolver.middlewares.concat(metaMutation.middlewares).map(middleware => container.get(middleware))),
+          container.get<any>(metaMutation.target as any)[metaMutation.property],
         ),
         extensions: null,
         astNode: null,

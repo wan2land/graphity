@@ -26,16 +26,16 @@ export function createQueryObject({
   })
 
   for (const resolver of resolvers) {
-    const metadataResolver = container.metaResolvers.get(resolver)
-    if (!metadataResolver) {
+    const metaResolver = container.metaResolvers.get(resolver)
+    if (!metaResolver) {
       continue
     }
 
-    const resolverObjectType = resolveEntityFactory(metadataResolver.typeFactory, { container })
+    const resolverObjectType = resolveEntityFactory(metaResolver.typeFactory, { container })
 
-    for (const query of container.metaQueries.get(resolver) ?? []) {
-      const parentObjectType = typeof query.parent === 'function'
-        ? resolveEntityFactory(query.parent, { container })
+    for (const metaQuery of container.metaQueries.get(resolver) ?? []) {
+      const parentObjectType = typeof metaQuery.parent === 'function'
+        ? resolveEntityFactory(metaQuery.parent, { container })
         : queryObjectType
 
       if (!isObjectType(parentObjectType)) {
@@ -44,11 +44,11 @@ export function createQueryObject({
 
       const fields = parentObjectType.getFields()
 
-      fields[query.name] = {
-        name: query.name,
-        type: resolveReturnEntityFactory(query.returns, resolverObjectType, { container }),
-        args: query.input
-          ? Object.entries(query.input).map<GraphQLArgument>(([name, arg]) => {
+      fields[metaQuery.name] = {
+        name: metaQuery.name,
+        type: resolveReturnEntityFactory(metaQuery.returns, resolverObjectType, { container }),
+        args: metaQuery.input
+          ? Object.entries(metaQuery.input).map<GraphQLArgument>(([name, arg]) => {
             return {
               name,
               type: arg.type,
@@ -60,12 +60,12 @@ export function createQueryObject({
             }
           })
           : [],
-        description: query.description,
-        isDeprecated: typeof query.deprecated === 'string',
-        deprecationReason: typeof query.deprecated === 'string' ? query.deprecated : undefined,
+        description: metaQuery.description,
+        isDeprecated: typeof metaQuery.deprecated === 'string',
+        deprecationReason: typeof metaQuery.deprecated === 'string' ? metaQuery.deprecated : undefined,
         resolve: applyMiddlewares(
-          middlewares.concat(query.middlewares.map(middleware => container.get(middleware))),
-          container.get<any>(query.target as any)[query.property],
+          middlewares.concat(metaResolver.middlewares.concat(metaQuery.middlewares).map(middleware => container.get(middleware))),
+          container.get<any>(metaQuery.target as any)[metaQuery.property],
         ),
         extensions: null,
         astNode: null,
