@@ -13,5 +13,4 @@ export interface Middleware<TSource = any, TContext = any, TArgs = Record<string
   handle(carry: MiddlewareCarry<TSource, TContext, TArgs>, next: MiddlewareNext<TSource, TContext, TArgs>): any
 }
 
-export type MiddlewareConstructor<TSource = any, TContext = any, TArgs = Record<string, any>> = new (...args: any[]) => Middleware<TSource, TContext, TArgs>
-
+export type MiddlewareClass<TSource = any, TContext = any, TArgs = Record<string, any>> = new (...args: any[]) => Middleware<TSource, TContext, TArgs>

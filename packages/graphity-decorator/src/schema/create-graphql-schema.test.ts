@@ -1,31 +1,32 @@
 /* eslint-disable max-classes-per-file,@typescript-eslint/no-extraneous-class */
-import { GraphQLString, GraphQLObjectType, GraphQLNonNull, GraphQLList, GraphQLID } from 'graphql'
+import { GraphQLNonNull, GraphQLID } from 'graphql'
 
+import { GraphQLContainer } from '../container/graphql-container'
 import { Field } from '../decorators/field'
 import { GraphityEntity } from '../decorators/graphity-entity'
 import { GraphityResolver } from '../decorators/graphity-resolver'
 import { Mutation } from '../decorators/mutation'
 import { Query } from '../decorators/query'
-import { MetadataStorage } from '../metadata/storage'
 import { createGraphQLSchema } from './create-graphql-schema'
-import { toGraphQLObject } from './to-graphql-object'
 
 
 describe('@graphity/decorator, schema/create-graphql-schema', () => {
 
   beforeEach(() => {
-    MetadataStorage.clearGlobalStorage()
+    GraphQLContainer.clearGlobalContainer()
   })
 
-  it('test createGraphQLSchema, empty', () => {
+  it('test createGraphQLSchema, empty', async () => {
     const schema = createGraphQLSchema({
       resolvers: [],
     })
 
+    await GraphQLContainer.getGlobalContainer().boot()
+
     expect(schema).toEqualGraphQLSchema('')
   })
 
-  it('test createGraphQLSchema, only query', () => {
+  it('test createGraphQLSchema, only query', async () => {
     @GraphityEntity()
     class User {
       @Field(GraphQLNonNull(GraphQLID))
@@ -39,6 +40,8 @@ describe('@graphity/decorator, schema/create-graphql-schema', () => {
         //
       }
     }
+
+    await GraphQLContainer.getGlobalContainer().boot()
 
     const schema = createGraphQLSchema({
       resolvers: [
@@ -57,7 +60,7 @@ describe('@graphity/decorator, schema/create-graphql-schema', () => {
     `)
   })
 
-  it('test createGraphQLSchema, only mutation', () => {
+  it('test createGraphQLSchema, only mutation', async () => {
     @GraphityEntity()
     class User {
       @Field(GraphQLNonNull(GraphQLID))
@@ -71,6 +74,9 @@ describe('@graphity/decorator, schema/create-graphql-schema', () => {
         //
       }
     }
+
+
+    await GraphQLContainer.getGlobalContainer().boot()
 
     const schema = createGraphQLSchema({
       resolvers: [

@@ -1,8 +1,9 @@
 import { isInputObjectType, GraphQLFieldConfigArgumentMap, GraphQLOutputType } from 'graphql'
 
+import { GraphQLContainer } from '../container/graphql-container'
 import { EntityFactory } from '../interfaces/metadata'
-import { MiddlewareConstructor } from '../interfaces/middleware'
-import { MetadataStorage } from '../metadata/storage'
+import { MiddlewareClass } from '../interfaces/middleware'
+
 
 const DEFAULT_RETURNS = (node: GraphQLOutputType) => node
 
@@ -10,22 +11,27 @@ export interface QueryParams {
   name?: string
   parent?: EntityFactory
   input?: GraphQLFieldConfigArgumentMap
-  middlewares?: MiddlewareConstructor | MiddlewareConstructor[]
+  middlewares?: MiddlewareClass | MiddlewareClass[]
   returns?: (type: GraphQLOutputType) => GraphQLOutputType | Function
   description?: string
   deprecated?: string
-  metadataStorage?: MetadataStorage
+  container?: GraphQLContainer
 }
 
 export function Query(params: QueryParams = {}): MethodDecorator {
-  const metadataQueries = (params.metadataStorage ?? MetadataStorage.getGlobalStorage()).resolverQueries
+  const container = params.container ?? GraphQLContainer.getGlobalContainer()
+  const metaQueries = container.metaQueries
   return (target, property) => {
-    let resolves = metadataQueries.get(target.constructor)
+    let resolves = metaQueries.get(target.constructor)
     if (!resolves) {
       resolves = []
-      metadataQueries.set(target.constructor, resolves)
+      metaQueries.set(target.constructor, resolves)
     }
+
     const middleware = params.middlewares ?? []
+    const middlewares = Array.isArray(middleware) ? middleware : [middleware]
+    middlewares.forEach(middleware => container.bind(middleware))
+
     const input = params.input
     resolves.push({
       target: target.constructor,

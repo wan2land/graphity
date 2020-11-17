@@ -1,10 +1,24 @@
 import { GraphQLArgument, GraphQLObjectType, isObjectType } from 'graphql'
 
-import { MetadataStorage } from '../metadata/storage'
+import { GraphQLContainer } from '../container/graphql-container'
+import { Middleware } from '../interfaces/middleware'
+import { applyMiddlewares } from '../resolver/apply-middlewares'
 import { resolveEntityFactory, resolveReturnEntityFactory } from './resolve-entity-factory'
 
 
-export function createQueryObject(name: string, resolvers: Function[], metadataStorage: MetadataStorage): GraphQLObjectType {
+export interface CreateQueryObjectParams {
+  container: GraphQLContainer
+  name: string
+  middlewares: Middleware[]
+  resolvers: Function[]
+}
+
+export function createQueryObject({
+  container,
+  name,
+  middlewares,
+  resolvers,
+}: CreateQueryObjectParams): GraphQLObjectType {
 
   const queryObjectType = new GraphQLObjectType({
     name,
@@ -12,16 +26,16 @@ export function createQueryObject(name: string, resolvers: Function[], metadataS
   })
 
   for (const resolver of resolvers) {
-    const metadataResolver = metadataStorage.resolvers.get(resolver)
+    const metadataResolver = container.metaResolvers.get(resolver)
     if (!metadataResolver) {
       continue
     }
 
-    const resolverObjectType = resolveEntityFactory(metadataResolver.typeFactory, { metadataStorage })
+    const resolverObjectType = resolveEntityFactory(metadataResolver.typeFactory, { container })
 
-    for (const query of metadataStorage.resolverQueries.get(resolver) ?? []) {
+    for (const query of container.metaQueries.get(resolver) ?? []) {
       const parentObjectType = typeof query.parent === 'function'
-        ? resolveEntityFactory(query.parent, { metadataStorage })
+        ? resolveEntityFactory(query.parent, { container })
         : queryObjectType
 
       if (!isObjectType(parentObjectType)) {
@@ -32,7 +46,7 @@ export function createQueryObject(name: string, resolvers: Function[], metadataS
 
       fields[query.name] = {
         name: query.name,
-        type: resolveReturnEntityFactory(query.returns, resolverObjectType, { metadataStorage }),
+        type: resolveReturnEntityFactory(query.returns, resolverObjectType, { container }),
         args: query.input
           ? Object.entries(query.input).map<GraphQLArgument>(([name, arg]) => {
             return {
@@ -49,6 +63,10 @@ export function createQueryObject(name: string, resolvers: Function[], metadataS
         description: query.description,
         isDeprecated: typeof query.deprecated === 'string',
         deprecationReason: typeof query.deprecated === 'string' ? query.deprecated : undefined,
+        resolve: applyMiddlewares(
+          middlewares.concat(query.middlewares.map(middleware => container.get(middleware))),
+          container.get<any>(query.target as any)[query.property],
+        ),
         extensions: null,
         astNode: null,
       }

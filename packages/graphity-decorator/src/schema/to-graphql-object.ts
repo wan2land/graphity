@@ -1,22 +1,24 @@
 import { GraphQLFieldConfigMap, GraphQLObjectType, isOutputType } from 'graphql'
 
-import { MetadataStorage } from '../metadata/storage'
+import { GraphQLContainer } from '../container/graphql-container'
+import { MetadataContainer } from '../interfaces/container'
+
 
 export interface ToGraphQLObjectParams {
-  metadataStorage?: MetadataStorage
+  container?: MetadataContainer
 }
 
 export function toGraphQLObject(entity: Function, params: ToGraphQLObjectParams = {}): GraphQLObjectType {
-  const storage = params.metadataStorage ?? MetadataStorage.getGlobalStorage()
-  const metadataEntity = storage.entities.get(entity)
+  const container = params.container ?? GraphQLContainer.getGlobalContainer()
+  const metadataEntity = container.metaEntities.get(entity)
 
-  let cachedObject = storage.cachedObjects.get(entity)
+  let cachedObject = container.cachedGraphQLObjects.get(entity)
   if (!cachedObject) {
     cachedObject = new GraphQLObjectType({
       name: metadataEntity?.name ?? entity.name,
       description: metadataEntity?.description,
       fields: () => {
-        const metadataFields = storage.entityFields.get(entity) ?? []
+        const metadataFields = container.metaFields.get(entity) ?? []
         return metadataFields.reduce<GraphQLFieldConfigMap<any, any>>((carry, field) => {
           const type = field.typeFactory(null)
           return Object.assign<GraphQLFieldConfigMap<any, any>, GraphQLFieldConfigMap<any, any>>(carry, {
@@ -29,7 +31,7 @@ export function toGraphQLObject(entity: Function, params: ToGraphQLObjectParams 
         }, {})
       },
     })
-    storage.cachedObjects.set(entity, cachedObject)
+    container.cachedGraphQLObjects.set(entity, cachedObject)
   }
   return cachedObject
 }

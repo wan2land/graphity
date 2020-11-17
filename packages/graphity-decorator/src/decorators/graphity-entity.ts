@@ -1,16 +1,18 @@
-import { MetadataStorage } from '../metadata/storage'
+import { GraphQLContainer } from '../container/graphql-container'
+
 
 export interface GraphityEntityParams {
   name?: string
   description?: string
-  metadataStorage?: MetadataStorage
+  container?: GraphQLContainer
 }
 
 export function GraphityEntity(params: GraphityEntityParams = {}): ClassDecorator {
-  const metadataEntities = (params.metadataStorage ?? MetadataStorage.getGlobalStorage()).entities
+  const container = params.container ?? GraphQLContainer.getGlobalContainer()
+  const metaEntities = container.metaEntities
 
   return (target) => {
-    metadataEntities.set(target, {
+    metaEntities.set(target, {
       target,
       name: params.name ?? target.name,
       description: params.description ?? null,

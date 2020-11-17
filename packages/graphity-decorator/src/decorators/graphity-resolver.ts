@@ -1,23 +1,28 @@
-import { GraphQLObjectType } from 'graphql'
-
+import { GraphQLContainer } from '../container/graphql-container'
 import { EntityFactory } from '../interfaces/metadata'
-import { MiddlewareConstructor } from '../interfaces/middleware'
-import { MetadataStorage } from '../metadata/storage'
+import { MiddlewareClass } from '../interfaces/middleware'
+
 
 export interface GraphityResolverParams {
-  middlewares?: MiddlewareConstructor | MiddlewareConstructor[]
-  metadataStorage?: MetadataStorage
+  middlewares?: MiddlewareClass | MiddlewareClass[]
+  container?: GraphQLContainer
 }
 
 export function GraphityResolver(typeFactory: EntityFactory, params: GraphityResolverParams = {}): ClassDecorator {
-  const metadataResolvers = (params.metadataStorage ?? MetadataStorage.getGlobalStorage()).resolvers
+  const container = params.container ?? GraphQLContainer.getGlobalContainer()
+  const metaResolvers = container.metaResolvers
 
   return (target) => {
     const middleware = params.middlewares ?? []
-    metadataResolvers.set(target, {
+    const middlewares = Array.isArray(middleware) ? middleware : [middleware]
+
+    container.bind(target as any)
+    middlewares.forEach(middleware => container.bind(middleware))
+
+    metaResolvers.set(target, {
       target,
       typeFactory,
-      middlewares: Array.isArray(middleware) ? middleware : [middleware],
+      middlewares,
     })
   }
 }
