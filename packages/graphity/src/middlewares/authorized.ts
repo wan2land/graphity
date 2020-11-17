@@ -1,4 +1,4 @@
-import { Middleware, MiddlewareCarry, MiddlewareClass, MiddlewareNext } from '@graphity/decorator'
+import { Middleware, MiddlewareCarry, MiddlewareClass, MiddlewareNext } from '@graphity/schema'
 
 import { GraphityError } from '../errors/graphity-error'
 import { UserIdentifier } from '../interfaces/auth'

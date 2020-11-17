@@ -11,7 +11,7 @@ import { Middleware, MiddlewareCarry, MiddlewareClass, MiddlewareNext } from '..
 import { createGraphQLSchema } from './create-graphql-schema'
 
 
-describe('@graphity/decorator, schema/create-graphql-schema', () => {
+describe('@graphity/schema, schema/create-graphql-schema', () => {
 
   beforeEach(() => {
     GraphQLContainer.clearGlobalContainer()

@@ -27,7 +27,7 @@ export {
   Query,
   QueryParams,
   ReturnEntityFactory,
-} from '@graphity/decorator'
+} from '@graphity/schema'
 
 export * from '@graphity/types'
 

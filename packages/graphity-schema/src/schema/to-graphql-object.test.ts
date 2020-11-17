@@ -7,7 +7,7 @@ import { GraphityEntity } from '../decorators/graphity-entity'
 import { toGraphQLObject } from './to-graphql-object'
 
 
-describe('@graphity/decorator, schema/to-graphql-object', () => {
+describe('@graphity/schema, schema/to-graphql-object', () => {
 
   beforeEach(() => {
     GraphQLContainer.clearGlobalContainer()

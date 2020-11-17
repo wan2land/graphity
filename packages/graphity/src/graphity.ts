@@ -1,5 +1,5 @@
-import { createGraphQLSchema, MiddlewareClass } from '@graphity/decorator'
-import { GraphQLContainer } from '@graphity/decorator/lib/container/graphql-container'
+import { createGraphQLSchema, MiddlewareClass } from '@graphity/schema'
+import { GraphQLContainer } from '@graphity/schema/lib/container/graphql-container'
 import { GraphQLSchema } from 'graphql'
 
 import { InstanceName } from './constants/container'
