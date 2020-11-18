@@ -1,33 +1,6 @@
 
-export {
-  Container,
-  ProviderDescriptor,
-  Inject,
-  InjectDecoratorFactory,
-  Name,
-  MetadataInject,
-  MetadataInjectOption,
-  Provider,
-  SharedContainer,
-} from '@graphity/container'
-
-export {
-  EntityFactory,
-  Field,
-  FieldParams,
-  GraphityEntity,
-  GraphityEntityParams,
-  GraphityResolver,
-  GraphityResolverParams,
-  Middleware,
-  MiddlewareCarry,
-  MiddlewareNext,
-  Mutation,
-  MutationParams,
-  Query,
-  QueryParams,
-  ReturnEntityFactory,
-} from '@graphity/schema'
+export * from '@graphity/container'
+export * from '@graphity/schema'
 
 export * from '@graphity/types'
 

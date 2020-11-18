@@ -9,7 +9,7 @@ export function Authorized(
   handler?: (auth: { roles?: string[], user?: UserIdentifier }, resource: any) => boolean | Promise<boolean>,
 ): MiddlewareClass {
   return class implements Middleware<null, GraphityContext> {
-    public async handle({ context }: MiddlewareCarry<null, GraphityContext>, next: MiddlewareNext<null, GraphityContext>) {
+    async handle({ context }: MiddlewareCarry<null, GraphityContext>, next: MiddlewareNext<null, GraphityContext>) {
       if (!context.auth || !context.auth.user) {
         throw new GraphityError('Access denied.', 'UNAUTHORIZED')
       }

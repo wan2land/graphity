@@ -1,4 +1,0 @@
-
-describe('testsuite of graphity', () => {
-  //
-})
