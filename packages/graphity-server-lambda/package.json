@@ -1,6 +1,6 @@
 {
   "name": "@graphity/server-lambda",
-  "version": "0.7.0",
+  "version": "0.8.0-alpha.0",
   "description": "Super slim depdency injection container with Async/Promise for Javascript(& Typescript).",
   "keywords": [
     "di",
@@ -27,7 +27,7 @@
     "core-js": "^3.2.1"
   },
   "devDependencies": {
-    "graphity": "^0.7.0"
+    "graphity": "^0.8.0-alpha.0"
   },
   "peerDependencies": {
     "graphity": "^0.6.0-alpha.5"

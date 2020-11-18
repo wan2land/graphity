@@ -1,6 +1,6 @@
 {
   "name": "@graphity/schema",
-  "version": "0.7.0",
+  "version": "0.8.0-alpha.0",
   "description": "GraphQL Decorator utility.",
   "keywords": [
     "types",
@@ -19,7 +19,7 @@
     "build": "rimraf ./lib && tsc && babel ./src --out-dir ./lib --extensions \".ts\" --ignore \"src/**/*.test.ts\""
   },
   "dependencies": {
-    "@graphity/container": "^0.7.0",
+    "@graphity/container": "^0.8.0-alpha.0",
     "core-js": "^3.2.1"
   },
   "peerDependencies": {
