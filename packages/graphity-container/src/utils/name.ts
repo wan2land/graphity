@@ -1,6 +1,6 @@
-import { Name } from './interfaces/common'
+import { Name } from '../interfaces/common'
 
-export function normalizeName(name: Name<any>): string {
+export function nameToString(name: Name<any>): string {
   if (typeof name === 'symbol') {
     return name.toString()
   }

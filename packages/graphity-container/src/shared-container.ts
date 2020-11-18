@@ -2,28 +2,28 @@ import { UndefinedError } from './errors/undefined-error'
 import { ConstructType, Name } from './interfaces/common'
 import { Container, Provider, ProviderDescriptor } from './interfaces/container'
 import { MetadataInject } from './metadata'
-import { normalizeName } from './utils'
+import { nameToString } from './utils/name'
 
 type ContainerType = 'resolver' | 'bind' | 'instance' | 'promise'
 
 export class SharedContainer implements Container, ProviderDescriptor {
 
-  public static instance = new SharedContainer()
+  static instance = new SharedContainer()
 
-  public types: Map<any, ContainerType>
-  public instances: Map<any, any>
-  public promises: Map<any, Promise<any>>
-  public resolvers: Map<any, () => any>
-  public binds: Map<any, ConstructType<any>>
+  types: Map<any, ContainerType>
+  instances: Map<any, any>
+  promises: Map<any, Promise<any>>
+  resolvers: Map<any, () => any>
+  binds: Map<any, ConstructType<any>>
 
-  public locks: Map<any, Promise<any>>
-  public freezes: Map<any, true>
+  locks: Map<any, Promise<any>>
+  freezes: Map<any, true>
 
-  public providers: Provider[]
+  providers: Provider[]
 
-  public booted: Promise<any> | undefined
+  booted: Promise<any> | undefined
 
-  public constructor() {
+  constructor() {
     this.types = new Map<any, ContainerType>()
     this.instances = new Map<any, any>()
     this.promises = new Map<any, Promise<any>>()
@@ -36,11 +36,11 @@ export class SharedContainer implements Container, ProviderDescriptor {
     this.providers = []
   }
 
-  public setToGlobal() {
+  setToGlobal() {
     return (SharedContainer.instance = this)
   }
 
-  public instance<T>(name: Name<T>, value: T | Promise<T>): void {
+  instance<T>(name: Name<T>, value: T | Promise<T>): void {
     this.delete(name)
     if (value instanceof Promise) {
       this.types.set(name, 'promise')
@@ -51,21 +51,21 @@ export class SharedContainer implements Container, ProviderDescriptor {
     }
   }
 
-  public resolver<T>(name: Name<T>, resolver: () => T | Promise<T>): void {
+  resolver<T>(name: Name<T>, resolver: () => T | Promise<T>): void {
     this.delete(name)
     this.types.set(name, 'resolver')
     this.resolvers.set(name, resolver)
   }
 
-  public bind<T>(constructor: ConstructType<T>): void
-  public bind<T>(name: Name<T>, constructor: ConstructType<T>): void
-  public bind<T>(name: ConstructType<T> | Name<T>, constructor?: ConstructType<T>): void {
+  bind<T>(constructor: ConstructType<T>): void
+  bind<T>(name: Name<T>, constructor: ConstructType<T>): void
+  bind<T>(name: ConstructType<T> | Name<T>, constructor?: ConstructType<T>): void {
     this.delete(name)
     this.types.set(name, 'bind')
     this.binds.set(name, constructor ?? name as ConstructType<T>)
   }
 
-  public async create<T>(ctor: ConstructType<T>): Promise<T> {
+  async create<T>(ctor: ConstructType<T>): Promise<T> {
     const params = []
     const options = (MetadataInject.get(ctor) || []).filter(({ propertyKey }) => !propertyKey)
     for (const { index, name, resolver } of options) {
@@ -75,7 +75,7 @@ export class SharedContainer implements Container, ProviderDescriptor {
     return new (ctor as any)(...params)
   }
 
-  public async invoke<TIns, TRet = any>(instance: TIns, method: keyof TIns): Promise<TRet> {
+  async invoke<TIns, TRet = any>(instance: TIns, method: keyof TIns): Promise<TRet> {
     const params = []
     const options = (MetadataInject.get((instance as any).constructor) || []).filter(({ propertyKey }) => propertyKey === method)
     for (const { index, name, resolver } of options) {
@@ -85,7 +85,7 @@ export class SharedContainer implements Container, ProviderDescriptor {
     return (instance as any)[method](...params)
   }
 
-  public get<T>(name: Name<T>): T {
+  get<T>(name: Name<T>): T {
     if (this.instances.has(name)) {
       return this.instances.get(name) as T
     }
@@ -94,14 +94,14 @@ export class SharedContainer implements Container, ProviderDescriptor {
     if (!descriptor) {
       throw new UndefinedError(name, [name])
     }
-    throw new Error(`${normalizeName(name)} is not resolved.`)
+    throw new Error(`${nameToString(name)} is not resolved.`)
   }
 
-  public has<T>(name: Name<T>): boolean {
+  has<T>(name: Name<T>): boolean {
     return this.instances.has(name)
   }
 
-  public resolve<T>(name: Name<T>): Promise<T> {
+  resolve<T>(name: Name<T>): Promise<T> {
     if (this.instances.has(name)) {
       return Promise.resolve(this.instances.get(name) as T)
     }
@@ -149,11 +149,11 @@ export class SharedContainer implements Container, ProviderDescriptor {
     return promise
   }
 
-  public delete(...names: Name<any>[]): void {
+  delete(...names: Name<any>[]): void {
     for (const name of names) {
       if (this.types.has(name)) {
         if (this.freezes.get(name)) {
-          throw new Error(`cannot change ${normalizeName(name)}`)
+          throw new Error(`cannot change ${nameToString(name)}`)
         }
         this.types.delete(name)
       }
@@ -164,14 +164,14 @@ export class SharedContainer implements Container, ProviderDescriptor {
     }
   }
 
-  public register(provider: Provider): void {
+  register(provider: Provider): void {
     if (this.booted) {
       throw new Error('cannot register a provider after booting.')
     }
     this.providers.push(provider)
   }
 
-  public boot(forced = false): Promise<void> {
+  boot(forced = false): Promise<void> {
     if (this.booted && !forced) {
       return this.booted
     }
@@ -183,7 +183,7 @@ export class SharedContainer implements Container, ProviderDescriptor {
     return this.booted
   }
 
-  public close(): Promise<void> {
+  close(): Promise<void> {
     if (this.booted) {
       return this.booted
         .then(() => Promise.all(this.providers.filter(p => p.close).map(p => p.close!(this))))
