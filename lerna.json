@@ -2,6 +2,7 @@
   "version": "0.7.0",
   "npmClient": "npm",
   "packages": [
+    "examples/*",
     "extensions/*",
     "packages/*"
   ]

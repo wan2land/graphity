@@ -5,10 +5,8 @@
     "build": "babel ./src --out-dir ./dist --extensions \".ts\""
   },
   "dependencies": {
-    "@graphity-extensions/types": "file:../../extensions/types",
-    "apollo-server": "^2.9.13",
-    "graphity": "file:../../packages/graphity",
-    "graphql": "^14.5.8"
+    "@graphity/server-express": "^0.7.0",
+    "graphity": "^0.7.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.6.4",
