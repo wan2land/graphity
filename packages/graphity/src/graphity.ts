@@ -1,9 +1,11 @@
+import { Provider } from '@graphity/container'
 import { createGraphQLSchema, MiddlewareClass, GraphQLContainer } from '@graphity/schema'
 import { GraphQLSchema } from 'graphql'
 
 import { InstanceName } from './constants/container'
-import { DefaultContextBuilder } from './context/default-context-builder'
-import { ContextBuilder, ContextBuilderClass, GraphityContext, HttpRequest } from './interfaces/graphity'
+import { GraphityContextBuilder } from './context-builder/graphity-context-builder'
+import { GraphityContext } from './interfaces/graphity'
+import { ContextBuilder, ContextBuilderClass, HttpRequest } from './interfaces/graphql'
 
 
 export interface GraphityParams {
@@ -15,10 +17,10 @@ export interface GraphityParams {
 
   resolvers?: Function[]
 
-  contextBuilder?: ContextBuilderClass
+  contextBuilder?: ContextBuilderClass<any>
 }
 
-export class Graphity {
+export class Graphity<TContext = GraphityContext> {
 
   container: GraphQLContainer
 
@@ -28,8 +30,6 @@ export class Graphity {
 
   resolvers: Function[]
 
-  contextBuilder?: ContextBuilderClass
-
   constructor(options: GraphityParams = {}) {
     this.container = options.container ?? GraphQLContainer.getGlobalContainer()
 
@@ -38,15 +38,16 @@ export class Graphity {
     this.mutationMiddlewares = options.mutationMiddlewares ?? []
 
     this.resolvers = options.resolvers ?? []
+  }
 
-    this.contextBuilder = options.contextBuilder
+  register(provider: Provider): this {
+    this.container.register(provider)
+    return this
   }
 
   boot(): Promise<void> {
-    if (this.contextBuilder) {
-      this.container.bind(InstanceName.ContextBuilder, this.contextBuilder)
-    } else {
-      this.container.instance(InstanceName.ContextBuilder, new DefaultContextBuilder(this.container))
+    if (!this.container.has(InstanceName.ContextBuilder)) {
+      this.container.instance(InstanceName.ContextBuilder, new GraphityContextBuilder(this.container))
     }
 
     this.globalMiddlewares.forEach(middleware => this.container.bind(middleware, middleware))
@@ -69,7 +70,7 @@ export class Graphity {
     })
   }
 
-  createContext(request: HttpRequest): Promise<GraphityContext> {
-    return this.container.get<ContextBuilder>(InstanceName.ContextBuilder).buildContext(request)
+  createContext(request: HttpRequest): Promise<TContext> {
+    return this.container.get<ContextBuilder<TContext>>(InstanceName.ContextBuilder).buildContext(request)
   }
 }

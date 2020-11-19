@@ -10,22 +10,22 @@ export function Authorized(
 ): MiddlewareClass {
   return class implements Middleware<null, GraphityContext> {
     async handle({ context }: MiddlewareCarry<null, GraphityContext>, next: MiddlewareNext<null, GraphityContext>) {
-      if (!context.auth || !context.auth.user) {
+      if (!context.$auth || !context.$auth.user) {
         throw new GraphityError('Access denied.', 'UNAUTHORIZED')
       }
       if (!roles) { // roles not defined, ignore
         const resource = await next()
         if (handler) {
-          if (!await handler(context.auth, resource)) {
+          if (!await handler(context.$auth, resource)) {
             throw new GraphityError('Access denied.', 'FORBIDDEN')
           }
         }
       }
       for (const role of !roles ? [] : Array.isArray(roles) ? roles : [roles]) {
-        if (context.auth.roles.includes(role)) {
+        if (context.$auth.roles.includes(role)) {
           const resource = await next()
           if (handler) {
-            if (!await handler(context.auth, resource)) {
+            if (!await handler(context.$auth, resource)) {
               throw new GraphityError('Access denied.', 'FORBIDDEN')
             }
           }
