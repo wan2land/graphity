@@ -1,9 +1,10 @@
-import { GraphQLSchema } from 'graphql'
+import { GraphQLObjectType, GraphQLSchema } from 'graphql'
 
 import { GraphQLContainer } from '../container/graphql-container'
 import { MiddlewareClass } from '../interfaces/middleware'
 import { createMutationObject } from './create-mutation-object'
 import { createQueryObject } from './create-query-object'
+import { createSubscriptionObject } from './create-subscription-object'
 
 
 export interface CreateGraphQLSchemaParams {
@@ -33,9 +34,16 @@ export function createGraphQLSchema(params: CreateGraphQLSchemaParams): GraphQLS
     middlewares: globalMiddlewares.concat(mutationMiddlewares),
     resolvers: params.resolvers,
   })
+  const subscription = createSubscriptionObject({
+    container,
+    name: 'Subscription',
+    middlewares: [],
+    resolvers: params.resolvers,
+  })
 
   return new GraphQLSchema({
     ...Object.keys(query.getFields()).length > 0 ? { query } : {},
     ...Object.keys(mutation.getFields()).length > 0 ? { mutation } : {},
+    ...Object.keys(subscription.getFields()).length > 0 ? { subscription } : {},
   })
 }

@@ -43,6 +43,7 @@ export function Mutation(params: MutationParams = {}): MethodDecorator {
       returns: params.returns ?? DEFAULT_RETURNS,
       description: params.description ?? null,
       deprecated: params.deprecated ?? null,
+      subscribe: null,
     })
   }
 }

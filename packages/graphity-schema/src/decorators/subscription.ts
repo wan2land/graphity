@@ -1,4 +1,4 @@
-import { isInputObjectType, GraphQLFieldConfigArgumentMap, GraphQLOutputType } from 'graphql'
+import { isInputObjectType, GraphQLFieldConfigArgumentMap, GraphQLOutputType, GraphQLFieldResolver } from 'graphql'
 
 import { GraphQLContainer } from '../container/graphql-container'
 import { EntityFactory } from '../interfaces/metadata'
@@ -7,7 +7,7 @@ import { MiddlewareClass } from '../interfaces/middleware'
 
 const DEFAULT_RETURNS = (node: GraphQLOutputType) => node
 
-export interface QueryParams {
+export interface SubscriptionParams {
   name?: string
   parent?: EntityFactory
   input?: GraphQLFieldConfigArgumentMap
@@ -15,17 +15,18 @@ export interface QueryParams {
   returns?: (type: GraphQLOutputType) => GraphQLOutputType | Function
   description?: string
   deprecated?: string
+  subscribe: GraphQLFieldResolver<any, any>
   container?: GraphQLContainer
 }
 
-export function Query(params: QueryParams = {}): MethodDecorator {
+export function Subscription(params: SubscriptionParams): MethodDecorator {
   const container = params.container ?? GraphQLContainer.getGlobalContainer()
-  const metaQueries = container.metaQueries
+  const metaSubscriptions = container.metaSubscriptions
   return (target, property) => {
-    let resolves = metaQueries.get(target.constructor)
+    let resolves = metaSubscriptions.get(target.constructor)
     if (!resolves) {
       resolves = []
-      metaQueries.set(target.constructor, resolves)
+      metaSubscriptions.set(target.constructor, resolves)
     }
 
     const middleware = params.middlewares ?? []
@@ -43,7 +44,7 @@ export function Query(params: QueryParams = {}): MethodDecorator {
       returns: params.returns ?? DEFAULT_RETURNS,
       description: params.description ?? null,
       deprecated: params.deprecated ?? null,
-      subscribe: null,
+      subscribe: params.subscribe,
     })
   }
 }

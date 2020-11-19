@@ -23,6 +23,10 @@ export interface MetadataResolve {
   deprecated: string | null
 }
 
+export interface MetadataSubscriptionResolve extends MetadataResolve {
+  subscribe: GraphQLFieldResolver<any, any>
+}
+
 export interface MetadataEntity {
   target: Function
   name: string
@@ -35,7 +39,7 @@ export interface MetadataField {
   typeFactory: EntityFactory
   middlewares: MiddlewareClass[]
   name: string
-  resolve: GraphQLFieldResolver<any, any> | null
   description: string | null
   deprecated: string | null
+  resolve: GraphQLFieldResolver<any, any> | null
 }
