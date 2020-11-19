@@ -1,7 +1,7 @@
 import { JsonWebTokenError } from 'jsonwebtoken'
 
-import { GraphityAuth, UserIdentifier, UserProvider } from '../interfaces/auth'
-import { AuthBuilder, HttpRequest } from '../interfaces/graphity'
+import { AuthBuilder, GraphityAuth, UserIdentifier, UserProvider } from '../interfaces/auth'
+import { HttpRequest } from '../interfaces/graphql'
 import { Jwt } from './jwt'
 
 

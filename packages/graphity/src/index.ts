@@ -4,6 +4,7 @@ export * from '@graphity/schema'
 
 export * from '@graphity/types'
 
+export * from './interfaces/graphql'
 export * from './interfaces/graphity'
 export * from './interfaces/auth'
 export * from './interfaces/jwt'
