@@ -15,7 +15,7 @@ export interface SubscriptionParams {
   returns?: (type: GraphQLOutputType) => GraphQLOutputType | Function
   description?: string
   deprecated?: string
-  subscribe: GraphQLFieldResolver<any, any>
+  subscribe: GraphQLFieldResolver<any, any, any>
   container?: GraphQLContainer
 }
 

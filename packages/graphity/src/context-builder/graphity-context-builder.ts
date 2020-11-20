@@ -3,12 +3,15 @@ import { Container } from '@graphity/container'
 import { InstanceName } from '../constants/container'
 import { AuthBuilder } from '../interfaces/auth'
 import { GraphityContext } from '../interfaces/graphity'
-import { ContextBuilder, HttpRequest } from '../interfaces/graphql'
+import { HttpRequest } from '../interfaces/graphql'
+import { BaseContextBuilder } from './base-context-builder'
 
-export class GraphityContextBuilder implements ContextBuilder<GraphityContext> {
+export class GraphityContextBuilder extends BaseContextBuilder<GraphityContext> {
 
   constructor(public container: Container) {
+    super()
   }
+
 
   buildContext(request: HttpRequest): Promise<GraphityContext> {
     if (this.container.has(InstanceName.AuthBuilder)) {

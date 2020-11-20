@@ -9,7 +9,8 @@ export interface HttpRequest {
 }
 
 export interface ContextBuilder<TContext> {
-  buildContext(request: HttpRequest): Promise<TContext>
+  buildHttpContext(request: HttpRequest, context: any): Promise<TContext>
+  buildWsContext(request: HttpRequest, context: any): Promise<TContext>
 }
 
 export type ContextBuilderClass<TContext> = new (...args: any[]) => ContextBuilder<TContext>

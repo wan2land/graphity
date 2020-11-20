@@ -18,22 +18,21 @@ export interface ServerLambdaOptions {
 
 export class ServerLambda {
 
-  public apolloHandlerPromise: Promise<APIGatewayProxyHandler> | null = null
+  apolloHandlerPromise: Promise<APIGatewayProxyHandler> | null = null
 
-  public constructor(public graphity: Graphity, public _options: ServerLambdaOptions = {}) {
+  constructor(public graphity: Graphity, public _options: ServerLambdaOptions = {}) {
   }
 
-  public execute(event: APIGatewayProxyEvent, context: Context, callback: APIGatewayProxyCallback): void {
+  execute(event: APIGatewayProxyEvent, context: Context, callback: APIGatewayProxyCallback): void {
     if (!this.apolloHandlerPromise) {
-      this.apolloHandlerPromise = new Promise((resolve) => {
-        this.graphity.boot().then(() => {
-          const apollo = new ApolloServer({
-            schema: this.graphity.createSchema() as any,
-            context: ({ event }: { event: APIGatewayProxyEvent}) => this.graphity.createContext(eventToHttpRequest(event)),
-          })
-          resolve(apollo.createHandler({
-            cors: this._options.cors,
-          }))
+      this.apolloHandlerPromise = this.graphity.boot().then(() => {
+        const contextBuilder = this.graphity.getContextBuilder()
+        const apollo = new ApolloServer({
+          schema: this.graphity.createSchema() as any,
+          context: (context: { event: APIGatewayProxyEvent}) => contextBuilder.buildHttpContext(eventToHttpRequest(context.event), context),
+        })
+        return apollo.createHandler({
+          cors: this._options.cors,
         })
       })
     }

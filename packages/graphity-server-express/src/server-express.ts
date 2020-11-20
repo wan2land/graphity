@@ -1,38 +1,65 @@
 import { ApolloServer } from 'apollo-server-express'
 import express, { Express } from 'express'
-import { Graphity } from 'graphity'
+import { Graphity, ContextBuilder } from 'graphity'
+import { subscribe, execute } from 'graphql'
+import { createServer, Server } from 'http'
 import portfinder from 'portfinder'
 
 import { reqToHttpRequest } from './req-to-http-request'
 
 export class ServerExpress {
-  public app: Express
+  app: Express
 
-  public constructor(public graphity: Graphity, app?: Express) {
+  constructor(
+    public graphity: Graphity,
+    app?: Express
+  ) {
     this.app = app ?? express()
   }
 
-  public start(port = 8000, host?: string): Promise<{ apollo: ApolloServer, host: string, port: number }> {
-    return new Promise((resolve, reject) => {
-      Promise.all([
-        this.graphity.boot(),
-        portfinder.getPortPromise({ port, host }),
-      ]).then(([_, startPort]) => {
-        const apollo = new ApolloServer({
-          schema: this.graphity.createSchema() as any,
-          context: ({ req }) => this.graphity.createContext(reqToHttpRequest(req)),
-        })
-        apollo.applyMiddleware({ app: this.app })
+  async start(port = 8000, host?: string): Promise<{ apollo: ApolloServer, host: string, port: number }> {
+    return Promise.all([
+      portfinder.getPortPromise({ port, host }),
+      this.graphity.boot(),
+    ]).then(([startPort]) => {
+      const contextBuilder = this.graphity.getContextBuilder()
+      const schema = this.graphity.createSchema()
+      const apollo = new ApolloServer({
+        schema,
+        context: (context) => contextBuilder.buildHttpContext(reqToHttpRequest(context.req), context),
+      })
+      apollo.applyMiddleware({ app: this.app })
 
-        this.app.listen(startPort, () => {
-          console.log(`🚀 Start Graphity on ${host || 'localhost'}:${startPort}`)
-          resolve({
-            apollo,
-            host: host || 'localhost',
-            port: startPort,
+      let serverPromise: Promise<Express | Server> = Promise.resolve(this.app)
+      if (schema.getSubscriptionType()) {
+        serverPromise = import('subscriptions-transport-ws').then(({ SubscriptionServer }) => {
+          const server = createServer(this.app)
+          SubscriptionServer.create({
+            schema,
+            subscribe,
+            execute,
+            onOperation: (_: any, connection: any, websocket: any) => {
+              return contextBuilder.buildWsContext(reqToHttpRequest(websocket.upgradeReq), websocket).then(context => ({
+                ...connection,
+                context,
+              }))
+            },
+          }, {
+            server,
+            path: '/graphql',
           })
+          return server
         })
-      }).catch(reject)
+      }
+
+      return serverPromise.then((server) => new Promise((resolve) => server.listen(startPort, () => {
+        console.log(`🚀 Start Graphity on ${host ?? 'localhost'}:${startPort}`)
+        resolve({
+          apollo,
+          host: host ?? 'localhost',
+          port: startPort,
+        })
+      })))
     })
   }
 }

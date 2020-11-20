@@ -16,6 +16,9 @@ export { GraphityError } from './errors/graphity-error'
 
 export { Graphity, GraphityParams } from './graphity'
 
+export { BaseContextBuilder } from './context-builder/base-context-builder'
+export { GraphityContextBuilder } from './context-builder/graphity-context-builder'
+
 export { Jwt } from './auth/jwt'
 
 export { Authorized } from './middlewares/authorized'

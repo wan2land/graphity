@@ -5,7 +5,7 @@ import { GraphQLSchema } from 'graphql'
 import { InstanceName } from './constants/container'
 import { GraphityContextBuilder } from './context-builder/graphity-context-builder'
 import { GraphityContext } from './interfaces/graphity'
-import { ContextBuilder, ContextBuilderClass, HttpRequest } from './interfaces/graphql'
+import { ContextBuilder, ContextBuilderClass } from './interfaces/graphql'
 
 
 export interface GraphityParams {
@@ -70,7 +70,10 @@ export class Graphity<TContext = GraphityContext> {
     })
   }
 
-  createContext(request: HttpRequest): Promise<TContext> {
-    return this.container.get<ContextBuilder<TContext>>(InstanceName.ContextBuilder).buildContext(request)
+  getContextBuilder(): ContextBuilder<TContext> {
+    if (!this.container.booted) {
+      throw new Error('Graphity is not booted.')
+    }
+    return this.container.get<ContextBuilder<TContext>>(InstanceName.ContextBuilder)
   }
 }
