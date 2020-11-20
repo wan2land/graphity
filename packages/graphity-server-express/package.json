@@ -1,6 +1,6 @@
 {
   "name": "@graphity/server-express",
-  "version": "0.8.0-alpha.1",
+  "version": "0.8.0-alpha.2",
   "description": "Graphity server for Express",
   "keywords": [
     "graphql",
@@ -25,7 +25,7 @@
     "portfinder": "^1.0.25"
   },
   "devDependencies": {
-    "graphity": "^0.8.0-alpha.1"
+    "graphity": "^0.8.0-alpha.2"
   },
   "peerDependencies": {
     "graphity": "^0.6.0-alpha.5"
