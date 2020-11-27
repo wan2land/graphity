@@ -1,6 +1,6 @@
 import { ApolloServer } from 'apollo-server-express'
 import express, { Express } from 'express'
-import { Graphity, ContextBuilder } from 'graphity'
+import { Graphity } from 'graphity'
 import { subscribe, execute } from 'graphql'
 import { createServer, Server } from 'http'
 import portfinder from 'portfinder'
