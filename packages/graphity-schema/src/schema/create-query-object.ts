@@ -44,6 +44,7 @@ export function createQueryObject({
 
       const fields = parentObjectType.getFields()
 
+      const resolveTarget = container.get<any>(metaQuery.target as any)
       fields[metaQuery.name] = {
         name: metaQuery.name,
         type: resolveReturnEntityFactory(metaQuery.returns, resolverObjectType, { container }),
@@ -65,7 +66,7 @@ export function createQueryObject({
         deprecationReason: typeof metaQuery.deprecated === 'string' ? metaQuery.deprecated : undefined,
         resolve: applyMiddlewares(
           middlewares.concat(metaResolver.middlewares.concat(metaQuery.middlewares).map(middleware => container.get(middleware))),
-          container.get<any>(metaQuery.target as any)[metaQuery.property],
+          resolveTarget[metaQuery.property].bind(resolveTarget),
         ),
         extensions: null,
         astNode: null,

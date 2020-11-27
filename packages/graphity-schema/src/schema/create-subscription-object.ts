@@ -44,6 +44,7 @@ export function createSubscriptionObject({
 
       const fields = parentObjectType.getFields()
 
+      const resolveTarget = container.get<any>(metaSubscription.target as any)
       fields[metaSubscription.name] = {
         name: metaSubscription.name,
         type: resolveReturnEntityFactory(metaSubscription.returns, resolverObjectType, { container }),
@@ -66,7 +67,7 @@ export function createSubscriptionObject({
         subscribe: metaSubscription.subscribe,
         resolve: applyMiddlewares(
           middlewares.concat(metaResolver.middlewares.concat(metaSubscription.middlewares).map(middleware => container.get(middleware))),
-          container.get<any>(metaSubscription.target as any)[metaSubscription.property],
+          resolveTarget[metaSubscription.property].bind(resolveTarget),
         ),
         extensions: null,
         astNode: null,

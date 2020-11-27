@@ -126,6 +126,9 @@ describe('@graphity/schema, schema/create-graphql-schema', () => {
     @GraphityResolver(returns => Article)
     class ArticleResolver {
 
+      prefix = 'article (id='
+      suffix = ')'
+
       @Query({
         input: {
           id: { type: GraphQLNonNull(GraphQLID) },
@@ -136,7 +139,7 @@ describe('@graphity/schema, schema/create-graphql-schema', () => {
         await new Promise(resolve => setTimeout(resolve, 50))
         return Object.assign(new Article(), {
           id: `${input.id}`,
-          title: `this is ${input.id} article`,
+          title: `${this.prefix}${input.id}${this.suffix}`,
         })
       }
 
@@ -162,7 +165,7 @@ describe('@graphity/schema, schema/create-graphql-schema', () => {
           nodes: [...new Array(take).keys()].map(i => {
             return Object.assign(new Article(), {
               id: offset + i,
-              title: `this is ${offset + i} article`,
+              title: `article (id=${offset + i})`,
             })
           }),
         }
@@ -217,7 +220,7 @@ describe('@graphity/schema, schema/create-graphql-schema', () => {
         await new Promise(resolve => setTimeout(resolve, 50))
         return Object.assign(new Article(), {
           id: input.id,
-          title: `this is ${input.id}`,
+          title: `${this.prefix}${input.id}${this.suffix}`,
         })
       }
     }
@@ -355,18 +358,18 @@ describe('@graphity/schema, schema/create-graphql-schema', () => {
       data: {
         article: {
           id: '1',
-          title: 'this is 1 article',
+          title: 'article (id=1)',
         },
         articles: {
           count: 9999,
           nodes: [
             {
               id: '10',
-              title: 'this is 10 article',
+              title: 'article (id=10)',
             },
             {
               id: '11',
-              title: 'this is 11 article',
+              title: 'article (id=11)',
             },
           ],
         },

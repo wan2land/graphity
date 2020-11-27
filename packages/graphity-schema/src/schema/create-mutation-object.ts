@@ -44,6 +44,7 @@ export function createMutationObject({
 
       const fields = parentObjectType.getFields()
 
+      const resolveTarget = container.get<any>(metaMutation.target as any)
       fields[metaMutation.name] = {
         name: metaMutation.name,
         type: resolveReturnEntityFactory(metaMutation.returns, resolverObjectType, { container }),
@@ -65,7 +66,7 @@ export function createMutationObject({
         deprecationReason: typeof metaMutation.deprecated === 'string' ? metaMutation.deprecated : undefined,
         resolve: applyMiddlewares(
           middlewares.concat(metaResolver.middlewares.concat(metaMutation.middlewares).map(middleware => container.get(middleware))),
-          container.get<any>(metaMutation.target as any)[metaMutation.property],
+          resolveTarget[metaMutation.property].bind(resolveTarget),
         ),
         extensions: null,
         astNode: null,
