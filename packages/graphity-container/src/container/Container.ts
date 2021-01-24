@@ -1,28 +1,28 @@
 import { UndefinedError } from '../errors/UndefinedError'
 import { ConstructType, Name } from '../interfaces/common'
-import { Container, Provider, ProviderDescriptor } from '../interfaces/container'
-import { MetadataStorage } from '../interfaces/metadata'
-import { DefaultMetadataStorage } from '../metadata/DefaultMetadataStorage'
+import { Containable, Provider, ProviderDescriptor } from '../interfaces/container'
+import { MetadataStorable } from '../interfaces/metadata'
+import { MetadataStorage } from '../metadata/MetadataStorage'
 import { nameToString } from '../utils/nameToString'
 
 type ContainerType = 'resolver' | 'bind' | 'instance' | 'promise'
 
-export interface SharedContainerOptions {
-  storage?: MetadataStorage
+export interface ContainerOptions {
+  storage?: MetadataStorable
 }
 
-export class SharedContainer implements Container, ProviderDescriptor {
+export class Container implements Containable, ProviderDescriptor {
 
-  static _instance: Container | null = null
+  static _instance: Containable | null = null
 
   static get instance() {
-    if (!SharedContainer._instance) {
-      SharedContainer._instance = new SharedContainer()
+    if (!Container._instance) {
+      Container._instance = new Container()
     }
-    return SharedContainer._instance
+    return Container._instance
   }
 
-  storage: MetadataStorage
+  storage: MetadataStorable
 
   types: Map<any, ContainerType>
   instances: Map<any, any>
@@ -37,8 +37,8 @@ export class SharedContainer implements Container, ProviderDescriptor {
 
   booted: Promise<any> | undefined
 
-  constructor(options: SharedContainerOptions = {}) {
-    this.storage = options.storage ?? DefaultMetadataStorage.getGlobalStorage()
+  constructor(options: ContainerOptions = {}) {
+    this.storage = options.storage ?? MetadataStorage.getGlobalStorage()
 
     this.types = new Map<any, ContainerType>()
     this.instances = new Map<any, any>()
@@ -53,7 +53,7 @@ export class SharedContainer implements Container, ProviderDescriptor {
   }
 
   setToGlobal() {
-    return (SharedContainer._instance = this)
+    return (Container._instance = this)
   }
 
   instance<T>(name: Name<T>, value: T | Promise<T>): void {

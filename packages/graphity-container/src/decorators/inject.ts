@@ -1,9 +1,9 @@
 import { Name } from '../interfaces/common'
-import { MetadataStorage } from '../interfaces/metadata'
-import { DefaultMetadataStorage } from '../metadata/DefaultMetadataStorage'
+import { MetadataStorable } from '../interfaces/metadata'
+import { MetadataStorage } from '../metadata/MetadataStorage'
 
 export interface InjectParams<T> {
-  storage?: MetadataStorage
+  storage?: MetadataStorable
   resolver?: (instance: T) => any
 }
 
@@ -11,7 +11,7 @@ export function Inject<T>(name: Name<T>): ParameterDecorator
 export function Inject<T>(name: Name<T>, immediatelyResolver: (instance: T) => any): ParameterDecorator
 export function Inject<T>(name: Name<T>, params: InjectParams<T>): ParameterDecorator
 export function Inject<T>(name: Name<T>, resolverOrParams?: ((instance: T) => any) | InjectParams<T>): ParameterDecorator {
-  let storage = DefaultMetadataStorage.getGlobalStorage()
+  let storage = MetadataStorage.getGlobalStorage()
   let resolver: ((instance: T) => any) | null = null
   if (typeof resolverOrParams === 'function') {
     resolver = resolverOrParams

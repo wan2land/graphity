@@ -1,7 +1,7 @@
 /* eslint-disable max-classes-per-file, @typescript-eslint/no-extraneous-class */
 import { Inject } from '../decorators/inject'
 import { UndefinedError } from '../errors/UndefinedError'
-import { SharedContainer } from './SharedContainer'
+import { Container } from './Container'
 
 
 function sleep(time: number) {
@@ -18,7 +18,7 @@ async function catcha(handler: () => any): Promise<any> {
 
 class Something {}
 
-describe('@graphity/container, container/SharedContainer', () => {
+describe('@graphity/container, container/Container', () => {
   it('test inject', async () => {
 
     class Mysql {
@@ -49,7 +49,7 @@ describe('@graphity/container, container/SharedContainer', () => {
       }
     }
 
-    const container = new SharedContainer()
+    const container = new Container()
 
     const mysql = new Mysql()
     const postgres = new Postgres()
@@ -69,7 +69,7 @@ describe('@graphity/container, container/SharedContainer', () => {
   })
 
   it('test instance', async () => {
-    const container = new SharedContainer()
+    const container = new Container()
 
     container.instance('obj1', { message: 'this is obj1' })
     container.instance('obj2', { message: 'this is obj2' })
@@ -87,7 +87,7 @@ describe('@graphity/container, container/SharedContainer', () => {
   })
 
   it('test promise instance', async () => {
-    const container = new SharedContainer()
+    const container = new Container()
 
     function promise1() {
       return new Promise(resolve => resolve({ message: 'this is promise1' }))
@@ -113,7 +113,7 @@ describe('@graphity/container, container/SharedContainer', () => {
   })
 
   it('test resolve', async () => {
-    const container = new SharedContainer()
+    const container = new Container()
 
     container.resolver('resolve1', () => ({ message: 'this is resolve' }))
     container.resolver('resolve2', () => {
@@ -136,7 +136,7 @@ describe('@graphity/container, container/SharedContainer', () => {
   it('test bind', async () => {
     expect.assertions(2)
 
-    const container = new SharedContainer()
+    const container = new Container()
 
     class Driver {
     }
@@ -160,7 +160,7 @@ describe('@graphity/container, container/SharedContainer', () => {
   it('test bind without name', async () => {
     expect.assertions(2)
 
-    const container = new SharedContainer()
+    const container = new Container()
 
     class Driver {
     }
@@ -182,7 +182,7 @@ describe('@graphity/container, container/SharedContainer', () => {
   })
 
   it('test create method', async () => {
-    const container = new SharedContainer()
+    const container = new Container()
 
     class Connection {
     }
@@ -201,7 +201,7 @@ describe('@graphity/container, container/SharedContainer', () => {
   })
 
   it('test invoke method', async () => {
-    const container = new SharedContainer()
+    const container = new Container()
 
     class Connection {
     }
@@ -220,20 +220,20 @@ describe('@graphity/container, container/SharedContainer', () => {
   })
 
   it('test setToGlobal', () => {
-    const originSharedContainer = SharedContainer.instance
+    const originContainer = Container.instance
 
-    expect(SharedContainer.instance).toBeInstanceOf(SharedContainer)
-    expect(SharedContainer.instance).toBe(SharedContainer.instance)
+    expect(Container.instance).toBeInstanceOf(Container)
+    expect(Container.instance).toBe(Container.instance)
 
-    const container = new SharedContainer().setToGlobal()
-    expect(container).toBeInstanceOf(SharedContainer)
-    expect(container).toBe(SharedContainer.instance)
+    const container = new Container().setToGlobal()
+    expect(container).toBeInstanceOf(Container)
+    expect(container).toBe(Container.instance)
 
-    expect(container).not.toBe(originSharedContainer)
+    expect(container).not.toBe(originContainer)
   })
 
   it('test boot lock', async () => {
-    const container = new SharedContainer()
+    const container = new Container()
 
     let countOfCallRegister = 0
     let countOfCallBoot = 0
@@ -263,7 +263,7 @@ describe('@graphity/container, container/SharedContainer', () => {
   })
 
   it('test boot force', async () => {
-    const container = new SharedContainer()
+    const container = new Container()
 
     let countOfCallRegister = 0
     let countOfCallBoot = 0
@@ -295,7 +295,7 @@ describe('@graphity/container, container/SharedContainer', () => {
   })
 
   it('test get singleton instance in same time', async () => {
-    const container = new SharedContainer()
+    const container = new Container()
 
     container.resolver('instance', async () => {
       await new Promise(resolve => setTimeout(resolve, 1000))
@@ -311,7 +311,7 @@ describe('@graphity/container, container/SharedContainer', () => {
   })
 
   it('test get singleton instance in similar time', async () => {
-    const container = new SharedContainer()
+    const container = new Container()
 
     container.resolver('instance', async () => {
       await new Promise(resolve => setTimeout(resolve, 1000))
@@ -332,7 +332,7 @@ describe('@graphity/container, container/SharedContainer', () => {
   })
 
   it('test simple error message', async () => {
-    const container = new SharedContainer()
+    const container = new Container()
 
     const name1 = 'instance'
     const error1 = await catcha(() => container.get(name1))
@@ -364,7 +364,7 @@ describe('@graphity/container, container/SharedContainer', () => {
   })
 
   it('test error message stack by resolver', async () => {
-    const container = new SharedContainer()
+    const container = new Container()
 
     const stack1 = ['resolver1', 'instance']
     container.resolver(stack1[0], async () => ({ instance: await container.resolve(stack1[1]) }))
@@ -400,7 +400,7 @@ describe('@graphity/container, container/SharedContainer', () => {
   })
 
   it('test error message stack by resolver', async () => {
-    const container = new SharedContainer()
+    const container = new Container()
 
     const stack1 = ['bind1', 'instance']
     class Bind1 { public constructor(@Inject(stack1[1]) public param: any) {} }
@@ -440,7 +440,7 @@ describe('@graphity/container, container/SharedContainer', () => {
   })
 
   it('test error message mnany stack', async () => {
-    const container = new SharedContainer()
+    const container = new Container()
 
     const stack = ['instance', Symbol('symbol'), Something, (() => class {})(), 'unknown']
 

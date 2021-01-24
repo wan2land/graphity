@@ -18,88 +18,88 @@ npm install @graphity/container --save
 ## Usage
 
 ```javascript
-import { SharedContainer } from '@graphity/container'
+import { Container } from '@graphity/container'
 
-const container = new SharedContainer()
+const container = new Container()
 ```
 
 
 ### Bind simple value
 
 ```ts
-container.instance("obj1", {message: "this is obj1"})
-container.instance("obj2", {message: "this is obj2"})
+container.instance('obj1', {message: 'this is obj1'})
+container.instance('obj2', {message: 'this is obj2'})
 
 await container.boot() // boot!
 
-console.log(container.get("obj1")) // {message: "this is obj1"}
-console.log(container.get("obj2")) // {message: "this is obj2"}
+console.log(container.get('obj1')) // {message: 'this is obj1'}
+console.log(container.get('obj2')) // {message: 'this is obj2'}
 
-console.log(container.get("obj1") === container.get("obj1")) // true
-console.log(container.get("obj2") === container.get("obj2")) // true
+console.log(container.get('obj1') === container.get('obj1')) // true
+console.log(container.get('obj2') === container.get('obj2')) // true
 ```
 
 ### Bind promise value
 
 ```ts
 function promise1() {
-  return new Promise(resolve => resolve({message: "this is promise1"}))
+  return new Promise(resolve => resolve({message: 'this is promise1'}))
 }
 async function promise2() {
   sleep(500)
-  return {message: "this is promise2"}
+  return {message: 'this is promise2'}
 }
-container.instance("promise1", promise1())
-container.instance("promise2", promise2())
+container.instance('promise1', promise1())
+container.instance('promise2', promise2())
 
 await container.boot() // boot!
 
-console.log(container.get("promise1")) // {message: "this is promise1"}
-console.log(container.get("promise2")) // {message: "this is promise2"}
+console.log(container.get('promise1')) // {message: 'this is promise1'}
+console.log(container.get('promise2')) // {message: 'this is promise2'}
 
-console.log(container.get("promise1") === container.get("promise1")) // true
-console.log(container.get("promise2") === container.get("promise2")) // true
+console.log(container.get('promise1') === container.get('promise1')) // true
+console.log(container.get('promise2') === container.get('promise2')) // true
 ```
 
 ### Bind resolver
 
 ```ts
-container.resolver("resolver1", () => ({message: "this is resolver"}))
-container.resolver("resolver2", () => {
+container.resolver('resolver1', () => ({message: 'this is resolver'}))
+container.resolver('resolver2', () => {
   return new Promise(resolve => {
-    resolve({message: "this is promise resolver"})
+    resolve({message: 'this is promise resolver'})
   })
 })
-container.resolver("resolver3", async () => {
+container.resolver('resolver3', async () => {
   sleep(500)
-  return {message: "this is async resolver"}
+  return {message: 'this is async resolver'}
 })
 
 await container.boot() // boot!
 
-console.log(container.get("resolver1")) // {message: "this is resolver"}
-console.log(container.get("resolver2")) // {message: "this is promise resolver"}
-console.log(container.get("resolver3")) // {message: "this is async resolver"}
+console.log(container.get('resolver1')) // {message: 'this is resolver'}
+console.log(container.get('resolver2')) // {message: 'this is promise resolver'}
+console.log(container.get('resolver3')) // {message: 'this is async resolver'}
 ```
 
 ### Bind class
 
 ```ts
-import { Inject } from "@graphity/container"
+import { Inject } from '@graphity/container'
 
 class Driver {
 }
 
 class Connection {
-  public constructor(@Inject("driver") public driver: Driver) {
+  public constructor(@Inject('driver') public driver: Driver) {
   }
 }
-container.bind("driver", Driver)
-container.bind("connection", Connection)
+container.bind('driver', Driver)
+container.bind('connection', Connection)
 
 await container.boot() // boot!
 
-const connection = container.get<Connection>("connection")
+const connection = container.get<Connection>('connection')
 
 console.log(connection) // Connection { driver: Driver {} }
 console.log(connection.driver) // Driver {}
@@ -108,17 +108,17 @@ console.log(connection.driver) // Driver {}
 ### create
 
 ```ts
-import { Inject } from "@graphity/container"
+import { Inject } from '@graphity/container'
 
 class Connection {
 }
 
 class Controller {
-  public constructor(@Inject("connection") public connection: Connection) {
+  public constructor(@Inject('connection') public connection: Connection) {
   }
 }
 
-container.bind("connection", Connection)
+container.bind('connection', Connection)
 
 await container.boot()
 
@@ -130,24 +130,24 @@ console.log(controller) // Controller { connection: Connection {} }
 ### invoke
 
 ```ts
-import { Inject } from "@graphity/container"
+import { Inject } from '@graphity/container'
 
 class Connection {
 }
 
 class Controller {
-  public retrieve(@Inject("connection") connection: Connection) {
+  public retrieve(@Inject('connection') connection: Connection) {
     return connection
   }
 }
 
-container.bind("connection", Connection)
+container.bind('connection', Connection)
 
 const controller = new Controller()
 
 await container.boot()
 
-console.log(await container.invoke(controller, "retrieve")) // Connection { }
+console.log(await container.invoke(controller, 'retrieve')) // Connection { }
 ```
 
 ### Service Provider
@@ -207,11 +207,11 @@ export class UserController {
 `entry.ts`
 
 ```ts
-import { SharedContainer } from '@graphity/container'
+import { Container } from '@graphity/container'
 import { typeorm } from './providers/typeorm'
 import { UserController } from './controllers/user-controller'
 
-const app = new SharedContainer()
+const app = new Container()
 app.register(typeorm)
 
 await app.boot()

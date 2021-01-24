@@ -1,6 +1,6 @@
 import { Name } from './common'
 
-export interface MetadataStorage {
+export interface MetadataStorable {
   injects: Map<Function, MetadataInject[]>
 }
 
