@@ -3,10 +3,10 @@ export * from './interfaces/common'
 export * from './interfaces/container'
 export * from './interfaces/metadata'
 
-export { UndefinedError } from './errors/undefined-error'
+export { UndefinedError } from './errors/UndefinedError'
 
 export { Inject } from './decorators/inject'
 
-export * from './metadata'
+export { DefaultMetadataStorage } from './metadata/DefaultMetadataStorage'
 
-export { SharedContainer } from './shared-container'
+export { SharedContainer } from './container/SharedContainer'

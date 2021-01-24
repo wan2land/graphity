@@ -18,7 +18,7 @@ npm install @graphity/container --save
 ## Usage
 
 ```javascript
-import { SharedContainer } from "@graphity/container"
+import { SharedContainer } from '@graphity/container'
 
 const container = new SharedContainer()
 ```
@@ -185,7 +185,7 @@ export const typeorm: Provider = {
 `controllers/user-controller.ts`
 
 ```ts
-import { Inject } from "@graphity/container"
+import { Inject } from '@graphity/container'
 import { Connection, Repository } from 'typeorm'
 import { User } from '../entities/user.ts'
 
@@ -207,7 +207,7 @@ export class UserController {
 `entry.ts`
 
 ```ts
-import { SharedContainer } from "@graphity/container"
+import { SharedContainer } from '@graphity/container'
 import { typeorm } from './providers/typeorm'
 import { UserController } from './controllers/user-controller'
 
@@ -220,7 +220,3 @@ const userController = await app.create(UserController)
 await userController.users() // call controller!
 
 ```
-
-## License
-
-MIT

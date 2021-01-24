@@ -1,5 +1,8 @@
 /* eslint-disable max-classes-per-file, @typescript-eslint/no-extraneous-class */
-import { Inject, SharedContainer, UndefinedError } from '../lib'
+import { Inject } from '../decorators/inject'
+import { UndefinedError } from '../errors/UndefinedError'
+import { SharedContainer } from './SharedContainer'
+
 
 function sleep(time: number) {
   return new Promise((resolve) => setTimeout(resolve, time))
@@ -15,7 +18,56 @@ async function catcha(handler: () => any): Promise<any> {
 
 class Something {}
 
-describe('testsuite of container', () => {
+describe('@graphity/container, container/SharedContainer', () => {
+  it('test inject', async () => {
+
+    class Mysql {
+      public name = 'mysql'
+    }
+
+    class Postgres {
+      public name = 'postgres'
+    }
+
+    class Mailer {
+      public name = 'mailer'
+    }
+
+
+    class TestInjectController {
+      public constructor(
+        @Inject(Mysql) @Inject(Postgres) public connection: any,
+        public queue: any,
+        @Inject(Mailer) public mailer: any,
+        @Inject(Mysql, (mysql) => mysql.name) public mysqlName: any,
+        @Inject(Postgres, (postgres) => Promise.resolve(postgres.name)) public postgresName: any,
+      ) {
+      }
+
+      public unknown(@Inject('unknown') unknown: any) {
+        return unknown
+      }
+    }
+
+    const container = new SharedContainer()
+
+    const mysql = new Mysql()
+    const postgres = new Postgres()
+    const mailer = new Mailer()
+
+    container.instance(Mysql, mysql)
+    container.instance(Postgres, postgres)
+    container.instance(Mailer, mailer)
+
+    const result = await container.create(TestInjectController)
+
+    expect(result.connection).toBe(mysql) // assign first only
+    expect(result.queue).toBeUndefined() // undefined..!
+    expect(result.mailer).toBe(mailer)
+    expect(result.mysqlName).toBe('mysql')
+    expect(result.postgresName).toBe('postgres')
+  })
+
   it('test instance', async () => {
     const container = new SharedContainer()
 

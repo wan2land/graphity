@@ -1,14 +1,28 @@
-import { UndefinedError } from './errors/undefined-error'
-import { ConstructType, Name } from './interfaces/common'
-import { Container, Provider, ProviderDescriptor } from './interfaces/container'
-import { MetadataInject } from './metadata'
-import { nameToString } from './utils/name'
+import { UndefinedError } from '../errors/UndefinedError'
+import { ConstructType, Name } from '../interfaces/common'
+import { Container, Provider, ProviderDescriptor } from '../interfaces/container'
+import { MetadataStorage } from '../interfaces/metadata'
+import { DefaultMetadataStorage } from '../metadata/DefaultMetadataStorage'
+import { nameToString } from '../utils/nameToString'
 
 type ContainerType = 'resolver' | 'bind' | 'instance' | 'promise'
 
+export interface SharedContainerOptions {
+  storage?: MetadataStorage
+}
+
 export class SharedContainer implements Container, ProviderDescriptor {
 
-  static instance = new SharedContainer()
+  static _instance: Container | null = null
+
+  static get instance() {
+    if (!SharedContainer._instance) {
+      SharedContainer._instance = new SharedContainer()
+    }
+    return SharedContainer._instance
+  }
+
+  storage: MetadataStorage
 
   types: Map<any, ContainerType>
   instances: Map<any, any>
@@ -23,7 +37,9 @@ export class SharedContainer implements Container, ProviderDescriptor {
 
   booted: Promise<any> | undefined
 
-  constructor() {
+  constructor(options: SharedContainerOptions = {}) {
+    this.storage = options.storage ?? DefaultMetadataStorage.getGlobalStorage()
+
     this.types = new Map<any, ContainerType>()
     this.instances = new Map<any, any>()
     this.promises = new Map<any, Promise<any>>()
@@ -37,7 +53,7 @@ export class SharedContainer implements Container, ProviderDescriptor {
   }
 
   setToGlobal() {
-    return (SharedContainer.instance = this)
+    return (SharedContainer._instance = this)
   }
 
   instance<T>(name: Name<T>, value: T | Promise<T>): void {
@@ -67,8 +83,8 @@ export class SharedContainer implements Container, ProviderDescriptor {
 
   async create<T>(ctor: ConstructType<T>): Promise<T> {
     const params = []
-    const options = (MetadataInject.get(ctor) || []).filter(({ propertyKey }) => !propertyKey)
-    for (const { index, name, resolver } of options) {
+    const metaInjects = (this.storage.injects.get(ctor) || []).filter(({ property }) => !property)
+    for (const { index, name, resolver } of metaInjects) {
       const instance = await this.resolve(name)
       params[index] = resolver ? await resolver(instance) : instance
     }
@@ -77,8 +93,8 @@ export class SharedContainer implements Container, ProviderDescriptor {
 
   async invoke<TIns, TRet = any>(instance: TIns, method: keyof TIns): Promise<TRet> {
     const params = []
-    const options = (MetadataInject.get((instance as any).constructor) || []).filter(({ propertyKey }) => propertyKey === method)
-    for (const { index, name, resolver } of options) {
+    const metaInjects = (this.storage.injects.get((instance as any).constructor) || []).filter(({ property }) => property === method)
+    for (const { index, name, resolver } of metaInjects) {
       const instance = await this.resolve(name)
       params[index] = resolver ? await resolver(instance) : instance
     }

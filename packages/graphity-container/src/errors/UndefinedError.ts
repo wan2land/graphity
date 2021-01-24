@@ -1,5 +1,5 @@
 import { Name } from '../interfaces/common'
-import { nameToString } from '../utils/name'
+import { nameToString } from '../utils/nameToString'
 
 export class UndefinedError extends Error {
   public constructor(
