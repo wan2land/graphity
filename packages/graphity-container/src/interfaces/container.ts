@@ -1,6 +1,6 @@
 import { ConstructType, Name } from './common'
 
-export interface Containable {
+export interface Containable extends ProviderDescriptor {
   create<T>(ctor: ConstructType<T>): Promise<T>
   invoke<TIns, TRet = any>(instance: TIns, method: keyof TIns): Promise<TRet>
   resolve<T>(name: Name<T>): Promise<T>

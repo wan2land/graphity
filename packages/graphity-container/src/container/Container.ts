@@ -1,6 +1,6 @@
 import { UndefinedError } from '../errors/UndefinedError'
 import { ConstructType, Name } from '../interfaces/common'
-import { Containable, Provider, ProviderDescriptor } from '../interfaces/container'
+import { Containable, Provider } from '../interfaces/container'
 import { MetadataStorable } from '../interfaces/metadata'
 import { MetadataStorage } from '../metadata/MetadataStorage'
 import { nameToString } from '../utils/nameToString'
@@ -11,11 +11,11 @@ export interface ContainerOptions {
   storage?: MetadataStorable
 }
 
-export class Container implements Containable, ProviderDescriptor {
+export class Container implements Containable {
 
   static _instance: Containable | null = null
 
-  static get instance() {
+  static get instance(): Containable {
     if (!Container._instance) {
       Container._instance = new Container()
     }
