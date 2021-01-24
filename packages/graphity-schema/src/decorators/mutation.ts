@@ -1,8 +1,8 @@
 import { isInputObjectType, GraphQLFieldConfigArgumentMap, GraphQLOutputType } from 'graphql'
 
-import { GraphQLContainer } from '../container/graphql-container'
-import { EntityFactory } from '../interfaces/metadata'
+import { EntityFactory, MetadataStorable } from '../interfaces/metadata'
 import { MiddlewareClass } from '../interfaces/middleware'
+import { MetadataStorage } from '../metadata/MetadataStorage'
 
 
 const DEFAULT_RETURNS = (node: GraphQLOutputType) => node
@@ -15,12 +15,12 @@ export interface MutationParams {
   returns?: (type: GraphQLOutputType) => GraphQLOutputType | Function
   description?: string
   deprecated?: string
-  container?: GraphQLContainer
+  storage?: MetadataStorable
 }
 
 export function Mutation(params: MutationParams = {}): MethodDecorator {
-  const container = params.container ?? GraphQLContainer.getGlobalContainer()
-  const metaMutations = container.metaMutations
+  const storage = params.storage ?? MetadataStorage.getGlobalStorage()
+  const metaMutations = storage.mutations
   return (target, property) => {
     let resolves = metaMutations.get(target.constructor)
     if (!resolves) {
@@ -30,7 +30,6 @@ export function Mutation(params: MutationParams = {}): MethodDecorator {
 
     const middleware = params.middlewares ?? []
     const middlewares = Array.isArray(middleware) ? middleware : [middleware]
-    middlewares.forEach(middleware => container.bind(middleware))
 
     const input = params.input
     resolves.push({

@@ -1,8 +1,8 @@
 import { isInputObjectType, GraphQLFieldConfigArgumentMap, GraphQLOutputType, GraphQLFieldResolver } from 'graphql'
 
-import { GraphQLContainer } from '../container/graphql-container'
-import { EntityFactory } from '../interfaces/metadata'
+import { EntityFactory, MetadataStorable } from '../interfaces/metadata'
 import { MiddlewareClass } from '../interfaces/middleware'
+import { MetadataStorage } from '../metadata/MetadataStorage'
 
 
 const DEFAULT_RETURNS = (node: GraphQLOutputType) => node
@@ -16,12 +16,12 @@ export interface SubscriptionParams {
   description?: string
   deprecated?: string
   subscribe: GraphQLFieldResolver<any, any, any>
-  container?: GraphQLContainer
+  storage?: MetadataStorable
 }
 
 export function Subscription(params: SubscriptionParams): MethodDecorator {
-  const container = params.container ?? GraphQLContainer.getGlobalContainer()
-  const metaSubscriptions = container.metaSubscriptions
+  const storage = params.storage ?? MetadataStorage.getGlobalStorage()
+  const metaSubscriptions = storage.subscriptions
   return (target, property) => {
     let resolves = metaSubscriptions.get(target.constructor)
     if (!resolves) {
@@ -31,7 +31,6 @@ export function Subscription(params: SubscriptionParams): MethodDecorator {
 
     const middleware = params.middlewares ?? []
     const middlewares = Array.isArray(middleware) ? middleware : [middleware]
-    middlewares.forEach(middleware => container.bind(middleware))
 
     const input = params.input
     resolves.push({
@@ -40,7 +39,7 @@ export function Subscription(params: SubscriptionParams): MethodDecorator {
       parent: params.parent ?? null,
       name: params.name ?? (typeof property === 'string' ? property : property.toString()),
       input: (isInputObjectType(input) ? input.getFields() : input) ?? null,
-      middlewares: Array.isArray(middleware) ? middleware : [middleware],
+      middlewares,
       returns: params.returns ?? DEFAULT_RETURNS,
       description: params.description ?? null,
       deprecated: params.deprecated ?? null,

@@ -1,16 +1,16 @@
 /* eslint-disable max-classes-per-file,@typescript-eslint/no-extraneous-class */
 import { GraphQLString, GraphQLObjectType, GraphQLNonNull, GraphQLList, GraphQLID } from 'graphql'
 
-import { GraphQLContainer } from '../container/graphql-container'
 import { Field } from '../decorators/field'
 import { GraphityEntity } from '../decorators/graphity-entity'
-import { toGraphQLObject } from './to-graphql-object'
+import { MetadataStorage } from '../metadata/MetadataStorage'
+import { toGraphQLObject } from './toGraphQLObject'
 
 
-describe('@graphity/schema, schema/to-graphql-object', () => {
+describe('@graphity/schema, schema/toGraphQLObject', () => {
 
   beforeEach(() => {
-    GraphQLContainer.clearGlobalContainer()
+    MetadataStorage.clearGlobalStorage()
   })
 
   it('test toGraphQLObject, undefined graphity entity', () => {

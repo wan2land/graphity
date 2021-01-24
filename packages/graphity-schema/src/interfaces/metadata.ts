@@ -1,9 +1,22 @@
-import { GraphQLFieldResolver, GraphQLOutputType, GraphQLFieldConfigArgumentMap } from 'graphql'
+import { GraphQLFieldResolver, GraphQLOutputType, GraphQLFieldConfigArgumentMap, GraphQLObjectType } from 'graphql'
 
 import { MiddlewareClass } from './middleware'
 
 export type EntityFactory = (type: null) => (GraphQLOutputType | Function)
 export type ReturnEntityFactory = (type: GraphQLOutputType) => (GraphQLOutputType | Function)
+
+export interface MetadataStorable {
+  resolvers: Map<Function, MetadataResolver>
+  queries: Map<Function, MetadataResolve[]>
+  mutations: Map<Function, MetadataResolve[]>
+  subscriptions: Map<Function, MetadataSubscriptionResolve[]>
+
+  entities: Map<Function, MetadataEntity>
+  fields: Map<Function, MetadataField[]>
+
+  cachedGraphQLObjects: Map<Function, GraphQLObjectType>
+}
+
 
 export interface MetadataResolver {
   target: Function

@@ -11,7 +11,7 @@ export { Query, QueryParams } from './decorators/query'
 export { Mutation, MutationParams } from './decorators/mutation'
 export { Subscription, SubscriptionParams } from './decorators/subscription'
 
-export { createGraphQLSchema } from './schema/create-graphql-schema'
-export { toGraphQLObject } from './schema/to-graphql-object'
+export { MetadataStorage } from './metadata/MetadataStorage'
 
-export { GraphQLContainer } from './container/graphql-container'
+export { createGraphQLSchema } from './schema/createGraphQLSchema'
+export { toGraphQLObject } from './schema/toGraphQLObject'

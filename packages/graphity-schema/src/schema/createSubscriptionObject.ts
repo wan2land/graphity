@@ -1,22 +1,19 @@
 import { GraphQLArgument, GraphQLObjectType, isObjectType } from 'graphql'
 
-import { GraphQLContainer } from '../container/graphql-container'
-import { Middleware } from '../interfaces/middleware'
-import { applyMiddlewares } from '../resolver/apply-middlewares'
-import { resolveEntityFactory, resolveReturnEntityFactory } from './resolve-entity-factory'
+import { MetadataStorable } from '../interfaces/metadata'
+import { resolveEntityFactory } from './resolveEntityFactory'
+import { resolveReturnEntityFactory } from './resolveReturnEntityFactory'
 
 
 export interface CreateSubscriptionObjectParams {
-  container: GraphQLContainer
+  storage: MetadataStorable
   name: string
-  middlewares: Middleware[]
   resolvers: Function[]
 }
 
 export function createSubscriptionObject({
-  container,
+  storage,
   name,
-  middlewares,
   resolvers,
 }: CreateSubscriptionObjectParams): GraphQLObjectType {
 
@@ -26,16 +23,16 @@ export function createSubscriptionObject({
   })
 
   for (const resolver of resolvers) {
-    const metaResolver = container.metaResolvers.get(resolver)
+    const metaResolver = storage.resolvers.get(resolver)
     if (!metaResolver) {
       continue
     }
 
-    const resolverObjectType = resolveEntityFactory(metaResolver.typeFactory, { container })
+    const resolverObjectType = resolveEntityFactory(metaResolver.typeFactory, { storage })
 
-    for (const metaSubscription of container.metaSubscriptions.get(resolver) ?? []) {
+    for (const metaSubscription of storage.subscriptions.get(resolver) ?? []) {
       const parentObjectType = typeof metaSubscription.parent === 'function'
-        ? resolveEntityFactory(metaSubscription.parent, { container })
+        ? resolveEntityFactory(metaSubscription.parent, { storage })
         : queryObjectType
 
       if (!isObjectType(parentObjectType)) {
@@ -44,10 +41,9 @@ export function createSubscriptionObject({
 
       const fields = parentObjectType.getFields()
 
-      const resolveTarget = container.get<any>(metaSubscription.target as any)
       fields[metaSubscription.name] = {
         name: metaSubscription.name,
-        type: resolveReturnEntityFactory(metaSubscription.returns, resolverObjectType, { container }),
+        type: resolveReturnEntityFactory(metaSubscription.returns, resolverObjectType, { storage }),
         args: metaSubscription.input
           ? Object.entries(metaSubscription.input).map<GraphQLArgument>(([name, arg]) => {
             return {
@@ -65,10 +61,6 @@ export function createSubscriptionObject({
         isDeprecated: typeof metaSubscription.deprecated === 'string',
         deprecationReason: typeof metaSubscription.deprecated === 'string' ? metaSubscription.deprecated : undefined,
         subscribe: metaSubscription.subscribe,
-        resolve: applyMiddlewares(
-          middlewares.concat(metaResolver.middlewares.concat(metaSubscription.middlewares).map(middleware => container.get(middleware))),
-          resolveTarget[metaSubscription.property].bind(resolveTarget),
-        ),
         extensions: null,
         astNode: null,
       }

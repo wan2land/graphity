@@ -1,8 +1,8 @@
 import { GraphQLFieldResolver, GraphQLOutputType, isOutputType } from 'graphql'
 
-import { GraphQLContainer } from '../container/graphql-container'
-import { EntityFactory } from '../interfaces/metadata'
+import { EntityFactory, MetadataStorable } from '../interfaces/metadata'
 import { MiddlewareClass } from '../interfaces/middleware'
+import { MetadataStorage } from '../metadata/MetadataStorage'
 
 
 export interface FieldParams {
@@ -11,12 +11,12 @@ export interface FieldParams {
   middlewares?: MiddlewareClass | MiddlewareClass[]
   description?: string
   deprecated?: string
-  container?: GraphQLContainer
+  storage?: MetadataStorable
 }
 
 export function Field(type: EntityFactory | GraphQLOutputType, params: FieldParams = {}): PropertyDecorator {
-  const container = params.container ?? GraphQLContainer.getGlobalContainer()
-  const metaFields = container.metaFields
+  const storage = params.storage ?? MetadataStorage.getGlobalStorage()
+  const metaFields = storage.fields
 
   return (target, property) => {
     let fields = metaFields.get(target.constructor)
@@ -27,7 +27,6 @@ export function Field(type: EntityFactory | GraphQLOutputType, params: FieldPara
 
     const middleware = params.middlewares ?? []
     const middlewares = Array.isArray(middleware) ? middleware : [middleware]
-    middlewares.forEach(middleware => container.bind(middleware))
 
     fields.push({
       target: target.constructor,

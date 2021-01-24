@@ -1,24 +1,24 @@
 import { GraphQLFieldConfigMap, GraphQLObjectType, isOutputType } from 'graphql'
 
-import { GraphQLContainer } from '../container/graphql-container'
-import { applyMiddlewares } from '../resolver/apply-middlewares'
+import { MetadataStorable } from '../interfaces/metadata'
+import { MetadataStorage } from '../metadata/MetadataStorage'
 
 
 export interface ToGraphQLObjectParams {
-  container?: GraphQLContainer
+  storage?: MetadataStorable
 }
 
 export function toGraphQLObject(entity: Function, params: ToGraphQLObjectParams = {}): GraphQLObjectType {
-  const container = params.container ?? GraphQLContainer.getGlobalContainer()
-  const metaEntity = container.metaEntities.get(entity)
+  const storage = params.storage ?? MetadataStorage.getGlobalStorage()
+  const metaEntity = storage.entities.get(entity)
 
-  let cachedObject = container.cachedGraphQLObjects.get(entity)
+  let cachedObject = storage.cachedGraphQLObjects.get(entity)
   if (!cachedObject) {
     cachedObject = new GraphQLObjectType({
       name: metaEntity?.name ?? entity.name,
       description: metaEntity?.description,
       fields: () => {
-        const metaFields = container.metaFields.get(entity) ?? []
+        const metaFields = storage.fields.get(entity) ?? []
         return metaFields.reduce<GraphQLFieldConfigMap<any, any>>((carry, metaField) => {
           const type = metaField.typeFactory(null)
           return Object.assign<GraphQLFieldConfigMap<any, any>, GraphQLFieldConfigMap<any, any>>(carry, {
@@ -26,16 +26,12 @@ export function toGraphQLObject(entity: Function, params: ToGraphQLObjectParams 
               type: isOutputType(type) ? type : toGraphQLObject(type, params),
               description: metaField.description ?? null,
               deprecationReason: metaField.deprecated ?? null,
-              resolve: applyMiddlewares(
-                metaField.middlewares.map(middleware => container.get(middleware)),
-                metaField.resolve ? metaField.resolve : (parent) => parent[metaField.name]
-              ),
             },
           })
         }, {})
       },
     })
-    container.cachedGraphQLObjects.set(entity, cachedObject)
+    storage.cachedGraphQLObjects.set(entity, cachedObject)
   }
   return cachedObject
 }
