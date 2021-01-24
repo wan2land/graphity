@@ -26,7 +26,7 @@ export interface MetadataResolver {
 
 export interface MetadataResolve {
   target: Function
-  property: string | symbol
+  property: PropertyKey
   parent: EntityFactory | null
   name: string
   input: GraphQLFieldConfigArgumentMap | null
@@ -48,7 +48,7 @@ export interface MetadataEntity {
 
 export interface MetadataField {
   target: Function
-  property: string | symbol
+  property: PropertyKey
   typeFactory: EntityFactory
   middlewares: MiddlewareClass[]
   name: string
