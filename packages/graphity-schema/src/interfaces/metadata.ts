@@ -1,9 +1,11 @@
-import { GraphQLFieldResolver, GraphQLOutputType, GraphQLFieldConfigArgumentMap, GraphQLObjectType } from 'graphql'
+import { GraphQLFieldResolver, GraphQLOutputType, GraphQLFieldConfigArgumentMap, GraphQLObjectType, GraphQLUnionType, GraphQLInterfaceType } from 'graphql'
 
 import { MiddlewareClass } from './middleware'
 
-export type EntityFactory = (type: null) => (GraphQLOutputType | Function)
-export type ReturnEntityFactory = (type: GraphQLOutputType) => (GraphQLOutputType | Function)
+export type GraphQLEntityType = GraphQLObjectType | GraphQLInterfaceType | GraphQLUnionType
+export type FieldTypeFactory = (type: null) => GraphQLOutputType
+export type ParentTypeFactory = (type: null) => (GraphQLEntityType | Function)
+export type ReturnTypeFactory = (type: GraphQLEntityType) => (GraphQLOutputType | Function)
 
 export interface MetadataStorable {
   resolvers: Map<Function, MetadataResolver>
@@ -20,18 +22,18 @@ export interface MetadataStorable {
 
 export interface MetadataResolver {
   target: Function
-  typeFactory: EntityFactory
+  typeFactory: ParentTypeFactory
   middlewares: MiddlewareClass[]
 }
 
 export interface MetadataResolve {
   target: Function
   property: PropertyKey
-  parent: EntityFactory | null
+  parent: ParentTypeFactory | null
   name: string
   input: GraphQLFieldConfigArgumentMap | null
   middlewares: MiddlewareClass[]
-  returns: ReturnEntityFactory
+  returns: ReturnTypeFactory
   description: string | null
   deprecated: string | null
 }
@@ -49,7 +51,7 @@ export interface MetadataEntity {
 export interface MetadataField {
   target: Function
   property: PropertyKey
-  typeFactory: EntityFactory
+  typeFactory: FieldTypeFactory
   middlewares: MiddlewareClass[]
   name: string
   description: string | null

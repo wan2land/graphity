@@ -1,4 +1,4 @@
-import { EntityFactory, MetadataStorable } from '../interfaces/metadata'
+import { ParentTypeFactory, MetadataStorable } from '../interfaces/metadata'
 import { MiddlewareClass } from '../interfaces/middleware'
 import { MetadataStorage } from '../metadata/MetadataStorage'
 
@@ -8,7 +8,7 @@ export interface GraphityResolverParams {
   storage?: MetadataStorable
 }
 
-export function GraphityResolver(typeFactory: EntityFactory, params: GraphityResolverParams = {}): ClassDecorator {
+export function GraphityResolver(typeFactory: ParentTypeFactory, params: GraphityResolverParams = {}): ClassDecorator {
   const storage = params.storage ?? MetadataStorage.getGlobalStorage()
   const metaResolvers = storage.resolvers
 
