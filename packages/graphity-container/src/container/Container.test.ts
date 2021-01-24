@@ -19,6 +19,13 @@ async function catcha(handler: () => any): Promise<any> {
 class Something {}
 
 describe('@graphity/container, container/Container', () => {
+  it('test predefined instances', () => {
+    const container = new Container()
+
+    expect(container.get(Container)).toBe(container)
+    expect(container.get('container')).toBe(container)
+  })
+
   it('test inject', async () => {
 
     class Mysql {

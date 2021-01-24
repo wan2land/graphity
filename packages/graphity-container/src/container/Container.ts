@@ -50,6 +50,10 @@ export class Container implements Containable {
     this.freezes = new Map<any, true>()
 
     this.providers = []
+
+    // predefined
+    this.instance(Container, this)
+    this.instance('container', this)
   }
 
   setToGlobal() {
