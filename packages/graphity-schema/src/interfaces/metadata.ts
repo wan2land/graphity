@@ -2,10 +2,9 @@ import { GraphQLFieldResolver, GraphQLOutputType, GraphQLFieldConfigArgumentMap,
 
 import { MiddlewareClass } from './middleware'
 
-export type GraphQLEntityType = GraphQLObjectType | GraphQLInterfaceType | GraphQLUnionType
 export type FieldTypeFactory = (type: null) => GraphQLOutputType
-export type ParentTypeFactory = (type: null) => (GraphQLEntityType | Function)
-export type ReturnTypeFactory = (type: GraphQLEntityType) => (GraphQLOutputType | Function)
+export type ParentTypeFactory = (type: null) => (GraphQLObjectType | Function)
+export type ReturnTypeFactory = (type: GraphQLObjectType) => (GraphQLOutputType | Function)
 
 export interface MetadataStorable {
   resolvers: Map<Function, MetadataResolver>
@@ -18,11 +17,11 @@ export interface MetadataStorable {
 
   getOrCreateGraphQLEntity(entity: Function, creator: () => GraphQLObjectType): GraphQLObjectType
 
-  saveGraphQLFieldResolve(entity: GraphQLEntityType, resolve: MetadataFieldResolve): void
-  saveGraphQLFieldResolves(entity: GraphQLEntityType, resolves: MetadataFieldResolve[]): void
+  saveGraphQLFieldResolve(entity: GraphQLObjectType, resolve: MetadataFieldResolve): void
+  saveGraphQLFieldResolves(entity: GraphQLObjectType, resolves: MetadataFieldResolve[]): void
 
-  getGraphQLFieldResolves(): Map<GraphQLEntityType, MetadataFieldResolve[]>
-  findGraphQLFieldResolves(entity: GraphQLEntityType): MetadataFieldResolve[]
+  getGraphQLFieldResolves(): Map<GraphQLObjectType, MetadataFieldResolve[]>
+  findGraphQLFieldResolves(entity: GraphQLObjectType): MetadataFieldResolve[]
 }
 
 export interface MetadataFieldResolve {

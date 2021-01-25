@@ -1,6 +1,6 @@
 import { GraphQLObjectType } from 'graphql'
 
-import { MetadataEntity, MetadataField, MetadataResolve, MetadataFieldResolve, MetadataResolver, MetadataStorable, MetadataSubscriptionResolve, GraphQLEntityType } from '../interfaces/metadata'
+import { MetadataEntity, MetadataField, MetadataResolve, MetadataFieldResolve, MetadataResolver, MetadataStorable, MetadataSubscriptionResolve } from '../interfaces/metadata'
 
 let globalStorage: MetadataStorable | null = null
 
@@ -26,7 +26,7 @@ export class MetadataStorage implements MetadataStorable {
   fields = new Map<Function, MetadataField[]>()
 
   entityToGqlObject = new Map<Function, GraphQLObjectType>()
-  gqlEntityToResolves = new Map<GraphQLEntityType, MetadataFieldResolve[]>()
+  gqlEntityToResolves = new Map<GraphQLObjectType, MetadataFieldResolve[]>()
 
   getOrCreateGraphQLEntity(entity: Function, creator: () => GraphQLObjectType): GraphQLObjectType {
     let gqlEntity = this.entityToGqlObject.get(entity)
@@ -37,7 +37,7 @@ export class MetadataStorage implements MetadataStorable {
     return gqlEntity
   }
 
-  saveGraphQLFieldResolve(entity: GraphQLEntityType, resolve: MetadataFieldResolve): void {
+  saveGraphQLFieldResolve(entity: GraphQLObjectType, resolve: MetadataFieldResolve): void {
     let fieldResolves = this.gqlEntityToResolves.get(entity)
     if (!fieldResolves) {
       fieldResolves = []
@@ -46,7 +46,7 @@ export class MetadataStorage implements MetadataStorable {
     fieldResolves.push(resolve)
   }
 
-  saveGraphQLFieldResolves(entity: GraphQLEntityType, resolves: MetadataFieldResolve[]): void {
+  saveGraphQLFieldResolves(entity: GraphQLObjectType, resolves: MetadataFieldResolve[]): void {
     let fieldResolves = this.gqlEntityToResolves.get(entity)
     if (!fieldResolves) {
       fieldResolves = []
@@ -54,11 +54,11 @@ export class MetadataStorage implements MetadataStorable {
     this.gqlEntityToResolves.set(entity, fieldResolves.concat(resolves))
   }
 
-  getGraphQLFieldResolves(): Map<GraphQLEntityType, MetadataFieldResolve[]> {
+  getGraphQLFieldResolves(): Map<GraphQLObjectType, MetadataFieldResolve[]> {
     return this.gqlEntityToResolves
   }
 
-  findGraphQLFieldResolves(entity: GraphQLEntityType): MetadataFieldResolve[] {
+  findGraphQLFieldResolves(entity: GraphQLObjectType): MetadataFieldResolve[] {
     return this.gqlEntityToResolves.get(entity) ?? []
   }
 }
