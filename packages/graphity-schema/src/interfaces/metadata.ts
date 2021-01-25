@@ -58,7 +58,8 @@ export interface MetadataSubscriptionResolve extends MetadataResolve {
 export interface MetadataEntity {
   target: Function
   name: string
-  description: string | null
+  interfaces: GraphQLInterfaceType[]
+  description?: string
 }
 
 export interface MetadataField {

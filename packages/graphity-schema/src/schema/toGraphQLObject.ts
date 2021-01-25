@@ -16,6 +16,7 @@ export function toGraphQLObject(entity: Function, params: ToGraphQLObjectParams 
     const gqlObject = new GraphQLObjectType({
       name: metaEntity?.name ?? entity.name,
       description: metaEntity?.description,
+      interfaces: metaEntity?.interfaces,
       fields: () => {
         const metaFields = storage.fields.get(entity) ?? []
         return metaFields.reduce<GraphQLFieldConfigMap<any, any>>((carry, metaField) => {

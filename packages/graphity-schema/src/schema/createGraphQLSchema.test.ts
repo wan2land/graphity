@@ -1,5 +1,5 @@
 /* eslint-disable max-classes-per-file,@typescript-eslint/no-extraneous-class */
-import { GraphQLNonNull, GraphQLID, GraphQLObjectType, GraphQLInt, GraphQLList, GraphQLString, GraphQLInputObjectType } from 'graphql'
+import { GraphQLNonNull, GraphQLID, GraphQLObjectType, GraphQLInt, GraphQLList, GraphQLString, GraphQLInputObjectType, GraphQLUnionType, GraphQLInterfaceType } from 'graphql'
 
 import { Field } from '../decorators/field'
 import { GraphityEntity } from '../decorators/graphity-entity'
@@ -9,6 +9,7 @@ import { Query } from '../decorators/query'
 import { MiddlewareCarry, MiddlewareClass, MiddlewareNext } from '../interfaces/middleware'
 import { MetadataStorage } from '../metadata/MetadataStorage'
 import { createGraphQLSchema } from './createGraphQLSchema'
+import { toGraphQLObject } from './toGraphQLObject'
 
 
 describe('@graphity/schema, schema/createGraphQLSchema', () => {
@@ -478,4 +479,158 @@ describe('@graphity/schema, schema/createGraphQLSchema', () => {
       },
     ])
   })
+
+  it('test createGraphQLSchema, union', async () => {
+    @GraphityEntity()
+    class Movie {
+      @Field(GraphQLNonNull(GraphQLID))
+      id!: string
+    }
+
+    @GraphityEntity()
+    class Actor {
+      @Field(GraphQLNonNull(GraphQLID))
+      id!: string
+    }
+
+    @GraphityResolver(() => new GraphQLUnionType({
+      name: 'Result',
+      types: [
+        toGraphQLObject(Movie),
+        toGraphQLObject(Actor),
+      ],
+      resolveType: (value) => {
+        if (value instanceof Movie) {
+          return toGraphQLObject(Movie)
+        }
+        return toGraphQLObject(Actor)
+      },
+    }))
+    class ResultResolver {
+      @Query({
+        returns: node => GraphQLNonNull(GraphQLList(GraphQLNonNull(node))),
+      })
+      resultPagination() {
+        //
+      }
+    }
+
+
+    const schema = createGraphQLSchema({
+      resolvers: [
+        ResultResolver,
+      ],
+    })
+
+    expect(schema).toEqualGraphQLSchema(`
+      type Actor {
+        id: ID!
+      }
+
+      type Movie {
+        id: ID!
+      }
+
+      type Query {
+        resultPagination: [Result!]!
+      }
+
+      union Result = Actor | Movie
+    `)
+
+    const storage = MetadataStorage.getGlobalStorage()
+
+    expect(storage.findGraphQLFieldResolves(schema.getQueryType()!)).toEqual([
+      {
+        name: 'resultPagination',
+        middlewares: [
+        ],
+        resolver: ResultResolver,
+        resolve: ResultResolver.prototype.resultPagination,
+      },
+    ])
+
+  })
+
+  it('test createGraphQLSchema, interface', async () => {
+
+    const GraphQLResult = new GraphQLInterfaceType({
+      name: 'Result',
+      fields: {
+        id: { type: GraphQLNonNull(GraphQLID) },
+      },
+    })
+
+    interface Result {
+      id: string
+    }
+
+    @GraphityEntity({
+      implements: GraphQLResult,
+    })
+    class Movie implements Result {
+      @Field(GraphQLNonNull(GraphQLID))
+      id!: string
+    }
+
+    @GraphityEntity({
+      implements: GraphQLResult,
+    })
+    class Actor implements Result {
+      @Field(GraphQLNonNull(GraphQLID))
+      id!: string
+    }
+
+    @GraphityResolver(() => GraphQLResult)
+    class ResultResolver {
+      @Query({
+        returns: node => GraphQLNonNull(GraphQLList(GraphQLNonNull(node))),
+      })
+      resultPagination() {
+        //
+      }
+    }
+
+
+    const schema = createGraphQLSchema({
+      resolvers: [
+        ResultResolver,
+      ],
+      entities: [
+        Movie,
+        Actor,
+      ],
+    })
+
+    expect(schema).toEqualGraphQLSchema(`
+      type Actor implements Result {
+        id: ID!
+      }
+
+      type Movie implements Result {
+        id: ID!
+      }
+
+      type Query {
+        resultPagination: [Result!]!
+      }
+
+      interface Result {
+        id: ID!
+      }
+    `)
+
+    const storage = MetadataStorage.getGlobalStorage()
+
+    expect(storage.findGraphQLFieldResolves(schema.getQueryType()!)).toEqual([
+      {
+        name: 'resultPagination',
+        middlewares: [
+        ],
+        resolver: ResultResolver,
+        resolve: ResultResolver.prototype.resultPagination,
+      },
+    ])
+  })
+
 })
