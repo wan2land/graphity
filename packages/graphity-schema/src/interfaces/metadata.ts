@@ -16,9 +16,22 @@ export interface MetadataStorable {
   entities: Map<Function, MetadataEntity>
   fields: Map<Function, MetadataField[]>
 
-  cachedGraphQLObjects: Map<Function, GraphQLObjectType>
+  getOrCreateGraphQLEntity(entity: Function, creator: () => GraphQLObjectType): GraphQLObjectType
+
+  saveGraphQLFieldResolve(entity: GraphQLEntityType, resolve: MetadataFieldResolve): void
+  saveGraphQLFieldResolves(entity: GraphQLEntityType, resolves: MetadataFieldResolve[]): void
+
+  getGraphQLFieldResolves(): Map<GraphQLEntityType, MetadataFieldResolve[]>
+  findGraphQLFieldResolves(entity: GraphQLEntityType): MetadataFieldResolve[]
 }
 
+export interface MetadataFieldResolve {
+  name: string
+  middlewares: MiddlewareClass[]
+  resolver?: Function
+  subscribe?: GraphQLFieldResolver<any, any>
+  resolve?: GraphQLFieldResolver<any, any> | null
+}
 
 export interface MetadataResolver {
   target: Function

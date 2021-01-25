@@ -1,7 +1,6 @@
 
 export * from './interfaces/metadata'
 export * from './interfaces/middleware'
-export * from './interfaces/container'
 
 export { GraphityEntity, GraphityEntityParams } from './decorators/graphity-entity'
 export { Field, FieldParams } from './decorators/field'

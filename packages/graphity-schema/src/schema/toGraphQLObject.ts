@@ -12,9 +12,8 @@ export function toGraphQLObject(entity: Function, params: ToGraphQLObjectParams 
   const storage = params.storage ?? MetadataStorage.getGlobalStorage()
   const metaEntity = storage.entities.get(entity)
 
-  let cachedObject = storage.cachedGraphQLObjects.get(entity)
-  if (!cachedObject) {
-    cachedObject = new GraphQLObjectType({
+  return storage.getOrCreateGraphQLEntity(entity, () => {
+    const gqlObject = new GraphQLObjectType({
       name: metaEntity?.name ?? entity.name,
       description: metaEntity?.description,
       fields: () => {
@@ -31,7 +30,13 @@ export function toGraphQLObject(entity: Function, params: ToGraphQLObjectParams 
         }, {})
       },
     })
-    storage.cachedGraphQLObjects.set(entity, cachedObject)
-  }
-  return cachedObject
+
+    storage.saveGraphQLFieldResolves(gqlObject, (storage.fields.get(entity) ?? []).map(metaField => ({
+      name: metaField.name,
+      middlewares: metaField.middlewares,
+      resolve: metaField.resolve,
+    })))
+
+    return gqlObject
+  })
 }

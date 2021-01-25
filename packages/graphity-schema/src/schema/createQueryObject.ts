@@ -1,6 +1,7 @@
 import { GraphQLArgument, GraphQLObjectType, isObjectType } from 'graphql'
 
 import { MetadataStorable } from '../interfaces/metadata'
+import { MiddlewareClass } from '../interfaces/middleware'
 import { resolveEntityFactory } from './resolveEntityFactory'
 import { resolveReturnEntityFactory } from './resolveReturnEntityFactory'
 
@@ -8,12 +9,14 @@ import { resolveReturnEntityFactory } from './resolveReturnEntityFactory'
 export interface CreateQueryObjectParams {
   storage: MetadataStorable
   name: string
+  middlewares: MiddlewareClass[]
   resolvers: Function[]
 }
 
 export function createQueryObject({
   storage,
   name,
+  middlewares,
   resolvers,
 }: CreateQueryObjectParams): GraphQLObjectType {
 
@@ -63,6 +66,15 @@ export function createQueryObject({
         extensions: null,
         astNode: null,
       }
+      storage.saveGraphQLFieldResolve(parentObjectType, {
+        name: metaQuery.name,
+        middlewares: parentObjectType === queryObjectType
+          ? middlewares.concat(metaResolver.middlewares, metaQuery.middlewares)
+          : metaResolver.middlewares.concat(metaQuery.middlewares),
+        resolver: metaQuery.target,
+        resolve: metaQuery.target.prototype[metaQuery.property],
+      })
+
     }
   }
   return queryObjectType

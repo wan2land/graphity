@@ -6,6 +6,7 @@ import { GraphityEntity } from '../decorators/graphity-entity'
 import { GraphityResolver } from '../decorators/graphity-resolver'
 import { Mutation } from '../decorators/mutation'
 import { Query } from '../decorators/query'
+import { MiddlewareCarry, MiddlewareClass, MiddlewareNext } from '../interfaces/middleware'
 import { MetadataStorage } from '../metadata/MetadataStorage'
 import { createGraphQLSchema } from './createGraphQLSchema'
 
@@ -287,5 +288,194 @@ describe('@graphity/schema, schema/createGraphQLSchema', () => {
         name: String!
       }
     `)
+  })
+
+  it('test createSchema middlewares', async () => {
+    function createAnonymousMiddleware(name: string): MiddlewareClass {
+      return class {
+        static middleware = name
+        handle({ parent, args, context, info }: MiddlewareCarry<any, any>, next: MiddlewareNext<any, any>) {
+          return next()
+        }
+      }
+    }
+
+    @GraphityEntity()
+    class Comment {
+      @Field(type => GraphQLNonNull(GraphQLID))
+      id!: string
+
+      @Field(type => GraphQLNonNull(GraphQLString), {
+        middlewares: [
+          createAnonymousMiddleware('Comment.name 1'),
+          createAnonymousMiddleware('Comment.name 2'),
+        ],
+      })
+      name!: string
+
+      @Field(type => GraphQLNonNull(GraphQLInt), {
+        resolve: () => 30,
+      })
+      age!: string
+    }
+
+    @GraphityResolver(returns => Comment, {
+      middlewares: [
+        createAnonymousMiddleware('Comment 1'),
+        createAnonymousMiddleware('Comment 2'),
+      ],
+    })
+    class CommentResolver {
+      @Query({
+        input: {
+          id: { type: GraphQLNonNull(GraphQLID) },
+        },
+        middlewares: createAnonymousMiddleware('Query.comment 1'),
+      })
+      comment() {
+        //
+      }
+
+      @Query({
+        parent: type => Comment,
+        middlewares: [
+          createAnonymousMiddleware('Comment.comments 1'),
+          createAnonymousMiddleware('Comment.comments 2'),
+        ],
+        returns: node => GraphQLNonNull(new GraphQLObjectType({
+          name: 'ListOfComments',
+          fields: {
+            count: { type: GraphQLNonNull(GraphQLInt) },
+            nodes: { type: GraphQLNonNull(GraphQLList(GraphQLNonNull(node))) },
+          },
+        })),
+      })
+      comments() {
+        //
+      }
+
+      @Mutation({
+        input: { id: { type: GraphQLNonNull(GraphQLID) } },
+      })
+      createComment() {
+        //
+      }
+
+      @Mutation({
+        input: { id: { type: GraphQLNonNull(GraphQLID) } },
+        middlewares: [
+          createAnonymousMiddleware('Mut.deleteComment 1'),
+          createAnonymousMiddleware('Mut.deleteComment 2'),
+        ],
+      })
+      deleteComment() {
+        //
+      }
+    }
+
+    const schema = createGraphQLSchema({
+      rootMiddlewares: [
+        createAnonymousMiddleware('Root 1'),
+        createAnonymousMiddleware('Root 2'),
+      ],
+      queryMiddlewares: [
+        createAnonymousMiddleware('Qry 1'),
+        createAnonymousMiddleware('Qry 2'),
+      ],
+      mutationMiddlewares: [
+        createAnonymousMiddleware('Mut 1'),
+        createAnonymousMiddleware('Mut 2'),
+      ],
+      subscriptionMiddlewares: [
+        createAnonymousMiddleware('Sub 1'),
+        createAnonymousMiddleware('Sub 2'),
+      ],
+      resolvers: [
+        CommentResolver,
+      ],
+    })
+
+    const storage = MetadataStorage.getGlobalStorage()
+
+    expect(storage.findGraphQLFieldResolves(schema.getQueryType()!)).toEqual([
+      {
+        name: 'comment',
+        middlewares: [
+          expect.objectContaining({ middleware: 'Root 1' }),
+          expect.objectContaining({ middleware: 'Root 2' }),
+          expect.objectContaining({ middleware: 'Qry 1' }),
+          expect.objectContaining({ middleware: 'Qry 2' }),
+          expect.objectContaining({ middleware: 'Comment 1' }),
+          expect.objectContaining({ middleware: 'Comment 2' }),
+          expect.objectContaining({ middleware: 'Query.comment 1' }),
+        ],
+        resolver: CommentResolver,
+        resolve: CommentResolver.prototype.comment,
+      },
+    ])
+
+    expect(storage.findGraphQLFieldResolves(schema.getMutationType()!)).toEqual([
+      {
+        name: 'createComment',
+        middlewares: [
+          expect.objectContaining({ middleware: 'Root 1' }),
+          expect.objectContaining({ middleware: 'Root 2' }),
+          expect.objectContaining({ middleware: 'Mut 1' }),
+          expect.objectContaining({ middleware: 'Mut 2' }),
+          expect.objectContaining({ middleware: 'Comment 1' }),
+          expect.objectContaining({ middleware: 'Comment 2' }),
+        ],
+        resolver: CommentResolver,
+        resolve: CommentResolver.prototype.createComment,
+      },
+      {
+        name: 'deleteComment',
+        middlewares: [
+          expect.objectContaining({ middleware: 'Root 1' }),
+          expect.objectContaining({ middleware: 'Root 2' }),
+          expect.objectContaining({ middleware: 'Mut 1' }),
+          expect.objectContaining({ middleware: 'Mut 2' }),
+          expect.objectContaining({ middleware: 'Comment 1' }),
+          expect.objectContaining({ middleware: 'Comment 2' }),
+          expect.objectContaining({ middleware: 'Mut.deleteComment 1' }),
+          expect.objectContaining({ middleware: 'Mut.deleteComment 2' }),
+        ],
+        resolver: CommentResolver,
+        resolve: CommentResolver.prototype.deleteComment,
+      },
+    ])
+
+    expect(storage.findGraphQLFieldResolves(schema.getType('Comment') as any)).toEqual([
+      {
+        name: 'id',
+        middlewares: [
+        ],
+        resolve: null,
+      },
+      {
+        name: 'name',
+        middlewares: [
+          expect.objectContaining({ middleware: 'Comment.name 1' }),
+          expect.objectContaining({ middleware: 'Comment.name 2' }),
+        ],
+        resolve: null,
+      },
+      {
+        name: 'age',
+        middlewares: [],
+        resolve: expect.any(Function),
+      },
+      {
+        name: 'comments',
+        middlewares: [
+          expect.objectContaining({ middleware: 'Comment 1' }),
+          expect.objectContaining({ middleware: 'Comment 2' }),
+          expect.objectContaining({ middleware: 'Comment.comments 1' }),
+          expect.objectContaining({ middleware: 'Comment.comments 2' }),
+        ],
+        resolver: CommentResolver,
+        resolve: CommentResolver.prototype.comments,
+      },
+    ])
   })
 })

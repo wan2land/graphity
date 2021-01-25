@@ -1,6 +1,7 @@
 import { GraphQLArgument, GraphQLObjectType, isObjectType } from 'graphql'
 
 import { MetadataStorable } from '../interfaces/metadata'
+import { MiddlewareClass } from '../interfaces/middleware'
 import { resolveEntityFactory } from './resolveEntityFactory'
 import { resolveReturnEntityFactory } from './resolveReturnEntityFactory'
 
@@ -8,12 +9,14 @@ import { resolveReturnEntityFactory } from './resolveReturnEntityFactory'
 export interface CreatMutationObjectParams {
   storage: MetadataStorable
   name: string
+  middlewares: MiddlewareClass[]
   resolvers: Function[]
 }
 
 export function createMutationObject({
   storage,
   name,
+  middlewares,
   resolvers,
 }: CreatMutationObjectParams): GraphQLObjectType {
 
@@ -63,6 +66,14 @@ export function createMutationObject({
         extensions: null,
         astNode: null,
       }
+      storage.saveGraphQLFieldResolve(parentObjectType, {
+        name: metaMutation.name,
+        middlewares: parentObjectType === mutationObjectType
+          ? middlewares.concat(metaResolver.middlewares, metaMutation.middlewares)
+          : metaResolver.middlewares.concat(metaMutation.middlewares),
+        resolver: metaMutation.target,
+        resolve: metaMutation.target.prototype[metaMutation.property],
+      })
     }
   }
   return mutationObjectType
