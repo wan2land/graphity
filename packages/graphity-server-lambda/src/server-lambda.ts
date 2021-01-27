@@ -1,6 +1,6 @@
 import { ApolloServer } from 'apollo-server-lambda'
 import { APIGatewayProxyCallback, APIGatewayProxyEvent, APIGatewayProxyHandler, Context } from 'aws-lambda'
-import { Graphity } from 'graphity'
+import { applyHttpContext, Graphity } from 'graphity'
 
 import { eventToHttpRequest } from './event-to-http-request'
 
@@ -26,10 +26,9 @@ export class ServerLambda {
   execute(event: APIGatewayProxyEvent, context: Context, callback: APIGatewayProxyCallback): void {
     if (!this.apolloHandlerPromise) {
       this.apolloHandlerPromise = this.graphity.boot().then(() => {
-        const contextBuilder = this.graphity.getContextBuilder()
         const apollo = new ApolloServer({
           schema: this.graphity.createSchema() as any,
-          context: (context: { event: APIGatewayProxyEvent}) => contextBuilder.buildHttpContext(eventToHttpRequest(context.event), context),
+          context: (context: { event: APIGatewayProxyEvent}) => applyHttpContext(this.graphity, eventToHttpRequest(context.event)),
         })
         return apollo.createHandler({
           cors: this._options.cors,
