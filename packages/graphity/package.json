@@ -1,6 +1,6 @@
 {
   "name": "graphity",
-  "version": "0.8.0-alpha.3",
+  "version": "0.8.0-alpha.4",
   "description": "GraphQL Typescript Framework",
   "keywords": [
     "graphql",
@@ -19,9 +19,9 @@
     "graphql": "^14.5.8 || ^15.0.0"
   },
   "dependencies": {
-    "@graphity/container": "^0.8.0-alpha.3",
-    "@graphity/schema": "^0.8.0-alpha.3",
-    "@graphity/types": "^0.7.0",
+    "@graphity/container": "^0.8.0-alpha.4",
+    "@graphity/schema": "^0.8.0-alpha.4",
+    "@graphity/types": "^0.8.0-alpha.4",
     "core-js": "^3.2.1",
     "jsonwebtoken": "^8.5.1"
   },
