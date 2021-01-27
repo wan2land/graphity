@@ -1,10 +1,21 @@
-import { Container } from '@graphity/container'
+import { Containable } from '@graphity/container'
+import { IncomingHttpHeaders } from 'http'
+
 
 import { GraphityAuth } from './auth'
-import { HttpRequest } from './graphql'
+import { PubSub } from './subscriptions'
+
+export interface HttpRequest {
+  host?: string
+  method: string
+  headers: IncomingHttpHeaders
+  path: string
+  query: Record<string, any>
+}
 
 export interface GraphityContext {
-  $request: HttpRequest
-  $container: Container
-  $auth?: GraphityAuth
+  $request?: HttpRequest
+  $container: Containable
+  $auth: GraphityAuth
+  $pubsub?: PubSub
 }

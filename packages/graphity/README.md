@@ -42,11 +42,11 @@ set this option in `tsconfig.json` file of your project.
 Let's create a Todo list using Graphity. The minimum unit in Graphity is Entity.
 
 ```ts
-import { Field, GraphQLEntity } from "graphity"
+import { Field, GraphityEntity } from "graphity"
 import { GraphQLBoolean, GraphQLID, GraphQLNonNull, GraphQLString } from "graphql"
 
 
-@GraphQLEntity({
+@GraphityEntity({
   description: "todo entity",
 })
 export class Todo {
@@ -81,7 +81,7 @@ Now let's create a **Resolver** that returns **Todo Entity**. If you create an e
 ```ts
 import {
   GraphQLListOf,
-  GraphQLResolver,
+  GraphityResolver,
   listOf,
   Mutation,
   Query
@@ -91,7 +91,7 @@ import { Todo } from "../entities/todo"
 
 let increment = 1
 
-@GraphQLResolver(type => Todo)
+@GraphityResolver(type => Todo)
 export class TodoResolver {
 
   public repo: Todo[] = []

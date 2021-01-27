@@ -1,12 +1,12 @@
 import { Middleware, MiddlewareCarry, MiddlewareClass, MiddlewareNext } from '@graphity/schema'
 
-import { GraphityError } from '../errors/graphity-error'
-import { UserIdentifier } from '../interfaces/auth'
-import { GraphityContext } from '../interfaces/graphity'
+import { GraphityError } from '../../errors/graphity-error'
+import { GraphityAuth } from '../../interfaces/auth'
+import { GraphityContext } from '../../interfaces/graphity'
 
-export function Authorized(
-  roles?: string | string[],
-  handler?: (auth: { roles?: string[], user?: UserIdentifier }, resource: any) => boolean | Promise<boolean>,
+export function Authorized<TRole extends string>(
+  roles?: TRole | TRole[],
+  handler?: (auth: GraphityAuth, resource: any) => boolean | Promise<boolean>,
 ): MiddlewareClass {
   return class implements Middleware<null, GraphityContext> {
     async handle({ context }: MiddlewareCarry<null, GraphityContext>, next: MiddlewareNext<null, GraphityContext>) {
