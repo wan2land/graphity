@@ -2,7 +2,6 @@
   "version": "0.8.0-alpha.3",
   "npmClient": "npm",
   "packages": [
-    "examples/*",
     "extensions/*",
     "packages/*"
   ]

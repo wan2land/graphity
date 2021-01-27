@@ -17,6 +17,7 @@
     "experimentalDecorators": true
   },
   "include": [
+    "examples/**/*.ts",
     "extensions/**/*.ts",
     "packages/**/*.ts",
     "types/**/*.d.ts"

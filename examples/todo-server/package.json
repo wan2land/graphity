@@ -1,12 +1,17 @@
 {
+  "name": "todo-server",
   "private": true,
   "scripts": {
+    "dev": "env-cmd -e dev nodemon --exec \"npm run build && node dist/entry.js\"",
     "start": "npm run build && node dist/entry.js",
     "build": "babel ./src --out-dir ./dist --extensions \".ts\""
   },
   "dependencies": {
-    "@graphity/server-express": "^0.7.0",
-    "graphity": "^0.7.0"
+    "@graphity/server-express": "file:../../packages/graphity-server-express",
+    "env-cmd": "^10.1.0",
+    "graphity": "file:../../packages/graphity",
+    "mysql2": "^2.2.5",
+    "typeorm": "^0.2.30"
   },
   "devDependencies": {
     "@babel/cli": "^7.6.4",
@@ -16,6 +21,7 @@
     "@babel/plugin-proposal-object-rest-spread": "^7.6.2",
     "@babel/preset-env": "^7.6.3",
     "@babel/preset-typescript": "^7.6.0",
+    "nodemon": "^2.0.7",
     "typescript": "^3.4.5"
   }
 }

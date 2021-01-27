@@ -35,7 +35,8 @@ set this option in `tsconfig.json` file of your project.
 
 ## Example
 
-[Todo App](./examples/todo)
+- [TodoMVC Server](./examples/todo-server)
+- [TodoMVC Client](./examples/todo-client)
 
 ## Documents
 
