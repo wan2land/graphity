@@ -23,6 +23,7 @@ export { GraphityError } from './errors/graphity-error'
 export { Graphity, GraphityOptions } from './foundation/Graphity'
 
 export { applyHttpContext } from './context/applyHttpContext'
+export { applyWsContextOnConnect } from './context/applyWsContextOnConnect'
 
 // auth (TODO split @graphity/auth)
 export { Authorized } from './auth/middlewares/authorized'

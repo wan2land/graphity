@@ -2,10 +2,11 @@
 import { AuthBuilder } from '../auth/AuthBuilder'
 import { Graphity } from '../foundation/Graphity'
 import { GraphityContext, HttpRequest } from '../interfaces/graphity'
+import { PubSub } from '../interfaces/subscriptions'
 import { toLowerCaseKey } from '../utils/toLowerCaseKey'
 
 
-export function applyHttpContext(graphity: Graphity, request: HttpRequest): Promise<GraphityContext> {
+export function applyHttpContext(graphity: Graphity, request: HttpRequest, pubsub?: PubSub): Promise<GraphityContext> {
   const httpHeaders = toLowerCaseKey(request.headers)
   const authorization = httpHeaders.authorization
   let accessToken = null as string | null
@@ -25,6 +26,7 @@ export function applyHttpContext(graphity: Graphity, request: HttpRequest): Prom
         $request: request,
         $container: graphity.container,
         $auth: auth,
+        $pubsub: pubsub,
       }
     })
 }

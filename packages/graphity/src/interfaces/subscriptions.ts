@@ -4,7 +4,7 @@ export interface Publishable {
 }
 
 export interface Subscribable {
-  asyncIterator<T>(eventName: string | string[]): Promise<AsyncIterable<T>> | AsyncIterable<T>
+  asyncIterator<T>(eventName: string | string[]): Promise<AsyncIterator<T>> | AsyncIterator<T>
 }
 
 export interface PubSub extends Publishable, Subscribable {
