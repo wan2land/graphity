@@ -20,6 +20,7 @@ export default {
     clientConfigs: {
       default: {
         httpEndpoint: 'http://localhost:8007/graphql',
+        wsEndpoint: 'ws://localhost:8007/graphql',
       },
     },
   },

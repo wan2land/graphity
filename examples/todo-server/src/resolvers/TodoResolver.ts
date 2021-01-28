@@ -113,7 +113,7 @@ export class TodoResolver {
 
     return this.repoTodos.save(nodes.map(node => this.repoTodos.merge(node, {
       completed: true,
-    }))).then((node) => context.$pubsub?.publish('TODOS_UPDATE', node).then(() => node))
+    }))).then((nodes) => context.$pubsub?.publish('TODOS_UPDATE', nodes).then(() => nodes))
   }
 
   @Mutation({
@@ -140,20 +140,16 @@ export class TodoResolver {
 
     return this.repoTodos.save(nodes.map(node => this.repoTodos.merge(node, {
       completed: false,
-    }))).then((node) => context.$pubsub?.publish('TODOS_UPDATE', node).then(() => node))
+    }))).then((nodes) => context.$pubsub?.publish('TODOS_UPDATE', nodes).then(() => nodes))
   }
 
   @Subscription({
-    input: {
-      id: { type: GraphQLNonNull(GraphQLID) },
+    subscribe: (_: null, params: any, context: GraphityContext) => {
+      return context.$pubsub!.subscribe<Todo[]>('TODOS_UPDATE')
     },
-    subscribe: (_, params: { id: string }, context: GraphityContext) => {
-      return withFilter(context.$pubsub!.subscribe<Todo>('TODOS_UPDATE'), (payload) => {
-        return `${payload.id}` === `${params.id}`
-      })
-    },
+    returns: GraphQLNonNullList,
   })
-  subscribeTodoUpdated(payload: Todo) {
+  subscribeTodosUpdated(payload: Todo[]) {
     return payload
   }
 
@@ -202,7 +198,7 @@ export class TodoResolver {
   }
 
   @Subscription({
-    subscribe: (_, params: { id: string }, context: GraphityContext) => {
+    subscribe: (_: null, params: any, context: GraphityContext) => {
       return context.$pubsub!.subscribe<Todo[]>('TODOS_DELETED')
     },
     returns: GraphQLNonNullList,

@@ -1,0 +1,7 @@
+subscription SubscribeTodosUpdated {
+  todos: subscribeTodosUpdated {
+    id
+    title
+    completed
+  }
+}

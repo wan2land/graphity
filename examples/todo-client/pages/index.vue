@@ -45,6 +45,9 @@ import DeleteTodos from '~/gql/DeleteTodos.gql'
 import UpdateTodo from '~/gql/UpdateTodo.gql'
 import CompleteTodos from '~/gql/CompleteTodos.gql'
 import UncompleteTodos from '~/gql/UncompleteTodos.gql'
+import SubscribeTodoCreated from '~/gql/SubscribeTodoCreated.gql'
+import SubscribeTodosUpdated from '~/gql/SubscribeTodosUpdated.gql'
+import SubscribeTodosDeleted from '~/gql/SubscribeTodosDeleted.gql'
 
 
 export default {
@@ -62,6 +65,62 @@ export default {
       editedTodoId: null,
       inputCreateTodo: null,
       inputEditTodo: null,
+      subTodoCreated: null,
+      subTodosUpdated: null,
+      subTodosDeleted: null,
+    }
+  },
+  mounted() {
+    this.subTodoCreated = this.$apollo.subscribe({
+      query: SubscribeTodoCreated,
+    }).subscribe({
+      next: async ({ data: { todo } }) => {
+        this.todos.unshift(todo)
+      },
+      error: (error) => {
+        console.log('on error in sub', error)
+      },
+    })
+    this.subTodosUpdated = this.$apollo.subscribe({
+      query: SubscribeTodosUpdated,
+    }).subscribe({
+      next: async ({ data: { todos } }) => {
+        for (const todo of todos) {
+          const todoIndex = this.todos.findIndex(({ id }) => id === todo.id)
+          if (todoIndex > -1) {
+            Object.assign(this.todos[todoIndex], todo)
+          }
+        }
+      },
+      error: (error) => {
+        console.log('on error in sub', error)
+      },
+    })
+    this.subTodosDeleted = this.$apollo.subscribe({
+      query: SubscribeTodosDeleted,
+    }).subscribe({
+      next: async ({ data: { todos } }) => {
+        for (const todo of todos) {
+          const todoIndex = this.todos.findIndex(({ id }) => id === todo.id)
+          if (todoIndex > -1) {
+            this.todos.splice(todoIndex, 1)
+          }
+        }
+      },
+      error: (error) => {
+        console.log('on error in sub', error)
+      },
+    })
+  },
+  beforeDestroy() {
+    if (this.subTodoCreated) {
+      this.subTodoCreated.unsubscribe()
+    }
+    if (this.subTodosUpdated) {
+      this.subTodosUpdated.unsubscribe()
+    }
+    if (this.subTodosDeleted) {
+      this.subTodosDeleted.unsubscribe()
     }
   },
   directives: {
@@ -121,19 +180,18 @@ export default {
       if (!value) {
         return
       }
-      const { todo } = await this.$apollo.mutate({
+      await this.$apollo.mutate({
         mutation: CreateTodo,
         variables: {
           input: {
             title: value,
           },
         },
-      }).then(({ data }) => data)
-      this.todos.unshift(todo)
+      })
       this.inputCreateTodo = null
     },
     async updateTodo(todo) {
-      const { todo: updatedTodo } = await this.$apollo.mutate({
+      await this.$apollo.mutate({
         mutation: UpdateTodo,
         variables: {
           id: todo.id,
@@ -142,63 +200,40 @@ export default {
             completed: todo.completed,
           },
         },
-      }).then(({ data }) => data)
-      const updatedTodoIndex = this.todos.findIndex(todo => todo.id === updatedTodo.id)
-      if (updatedTodoIndex > -1) {
-        Object.assign(this.todos[updatedTodoIndex], updatedTodo)
-      }
+      })
     },
     async toggleAllCompleteTodo(event) {
-      let updatedTodos = []
       if (event.target.checked) {
-        const { todos } = await this.$apollo.mutate({
+        await this.$apollo.mutate({
           mutation: CompleteTodos,
           variables: {
             ids: this.todos.filter(({ completed }) => !completed).map(({ id }) => id),
           },
-        }).then(({ data }) => data)
-        updatedTodos = todos
+        })
       } else {
-        const { todos } = await this.$apollo.mutate({
+        await this.$apollo.mutate({
           mutation: UncompleteTodos,
           variables: {
             ids: this.todos.filter(({ completed }) => completed).map(({ id }) => id),
           },
-        }).then(({ data }) => data)
-        updatedTodos = todos
-      }
-      for (const updatedTodo of updatedTodos) {
-        const updatedTodoIndex = this.todos.findIndex(todo => todo.id === updatedTodo.id)
-        if (updatedTodoIndex > -1) {
-          Object.assign(this.todos[updatedTodoIndex], updatedTodo)
-        }
+        })
       }
     },
     async deleteTodo(todo) {
-      const { todo: deletedTodo } = await this.$apollo.mutate({
+      await this.$apollo.mutate({
         mutation: DeleteTodo,
         variables: {
           id: todo.id,
         },
-      }).then(({ data }) => data)
-      const deletedTodoIndex = this.todos.findIndex(todo => todo.id === deletedTodo.id)
-      if (deletedTodoIndex > -1) {
-        this.todos.splice(deletedTodoIndex, 1)
-      }
+      })
     },
     async deleteComplete () {
-      const { todos: deletedTodos } = await this.$apollo.mutate({
+      await this.$apollo.mutate({
         mutation: DeleteTodos,
         variables: {
           ids: this.todos.filter(({ completed }) => completed).map(({ id }) => id),
         },
-      }).then(({ data }) => data)
-      for (const deletedTodo of deletedTodos) {
-        const deletedTodoIndex = this.todos.findIndex(todo => todo.id === deletedTodo.id)
-        if (deletedTodoIndex > -1) {
-          this.todos.splice(deletedTodoIndex, 1)
-        }
-      }
+      })
     },
   }
 }
