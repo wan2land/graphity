@@ -9,6 +9,7 @@
     "generate": "nuxt generate"
   },
   "dependencies": {
+    "@nuxtjs/apollo": "^4.0.1-rc.5",
     "core-js": "^3.8.2",
     "nuxt": "^2.14.12",
     "todomvc-app-css": "^2.3.0"

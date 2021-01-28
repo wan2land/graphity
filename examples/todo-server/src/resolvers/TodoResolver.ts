@@ -1,36 +1,25 @@
-import { GraphityResolver, GraphQLNonNullList, Inject, Mutation, Query } from 'graphity'
-import { GraphQLID, GraphQLInputObjectType, GraphQLNonNull, GraphQLString } from 'graphql'
-import { Connection, Repository } from 'typeorm'
+import { GraphityContext, GraphityResolver, GraphQLNonNullList, Inject, Mutation, Query, Subscription, withFilter } from 'graphity'
+import { GraphQLBoolean, GraphQLID, GraphQLInputObjectType, GraphQLNonNull, GraphQLString } from 'graphql'
+import { Connection, In, Repository } from 'typeorm'
 
 import { Todo } from '../entities/Todo'
 
-@GraphityResolver(type => Todo)
+
+@GraphityResolver(_ => Todo)
 export class TodoResolver {
 
   constructor(
-    @Inject(Connection) public repoTodos: Repository<Todo>,
+    @Inject(Connection, c => c.getRepository(Todo)) public repoTodos: Repository<Todo>,
   ) {
-    //
   }
 
   @Query({
-    returns: node => GraphQLNonNullList(node),
+    returns: GraphQLNonNullList,
   })
   todos() {
-    console.log(this)
-    return this.repoTodos.find()
-  }
-
-  @Query({
-    input: {
-      id: { type: GraphQLID },
-    },
-  })
-  todo(
-    _: null,
-    params: { id: string },
-  ) {
-    // return this.nodes.find(({ id }) => id === params.id)
+    return this.repoTodos.find({
+      order: { id: 'DESC' },
+    })
   }
 
   @Mutation({
@@ -39,7 +28,7 @@ export class TodoResolver {
         type: new GraphQLInputObjectType({
           name: 'InputCreateTodo',
           fields: {
-            contents: { type: GraphQLNonNull(GraphQLString) },
+            title: { type: GraphQLNonNull(GraphQLString) },
           },
         }),
       },
@@ -49,18 +38,23 @@ export class TodoResolver {
     _: null,
     params: {
       input: {
-        contents: string,
+        title: string,
       },
-    }
+    },
+    context: GraphityContext,
   ) {
-    // const id = increment++
-    // const node = Object.assign(new Todo(), {
-    //   id: `${id}`,
-    //   contents: params.input.contents,
-    //   isDone: false,
-    // })
-    // this.nodes.push(node)
-    // return node
+    return this.repoTodos.save(this.repoTodos.create({
+      title: params.input.title,
+    })).then((node) => context.$pubsub?.publish('TODO_CREATED', node).then(() => node))
+  }
+
+  @Subscription({
+    subscribe: (_, params, context: GraphityContext) => {
+      return context.$pubsub?.subscribe('TODO_CREATED')
+    },
+  })
+  subscribeTodoCreated(payload: Todo) {
+    return payload
   }
 
   @Mutation({
@@ -70,86 +64,150 @@ export class TodoResolver {
         type: new GraphQLInputObjectType({
           name: 'InputUpdateTodo',
           fields: {
-            contents: { type: GraphQLNonNull(GraphQLString) },
+            title: { type: GraphQLNonNull(GraphQLString) },
+            completed: { type: GraphQLNonNull(GraphQLBoolean) },
           },
         }),
       },
     },
   })
-  updateTodo(
+  async updateTodo(
     _: null,
     params: {
       id: string,
       input: {
-        contents: string,
+        title: string,
+        completed: boolean,
       },
     },
+    context: GraphityContext,
   ) {
-    // const node = this.nodes.find(({ id }) => id === params.id)
-    // if (!node) {
-    //   return null
-    // }
-    // return Object.assign(node, params.input)
+    const node = await this.repoTodos.findOneOrFail(params.id)
+    return this.repoTodos.save(this.repoTodos.merge(node, {
+      title: params.input.title,
+      completed: params.input.completed,
+    })).then((node) => context.$pubsub?.publish('TODOS_UPDATE', [node]).then(() => node))
   }
 
   @Mutation({
-    description: 'change \'isDone\' to true',
     input: {
-      id: { type: GraphQLNonNull(GraphQLID) },
+      ids: { type: GraphQLNonNullList(GraphQLID) },
     },
+    returns: GraphQLNonNullList,
   })
-  doneTodo(
+  async completeTodos(
     _: null,
-    input: {
-      id: string,
+    params: {
+      ids: string[],
     },
+    context: GraphityContext,
   ) {
-    // const node = this.nodes.find(({ id }) => id === input.id)
-    // if (!node) {
-    //   return null
-    // }
-    // return Object.assign(node, {
-    //   isDone: true,
-    // })
+    if (params.ids.length === 0) {
+      return []
+    }
+
+    const nodes = await this.repoTodos.findByIds(params.ids)
+    if (nodes.length === 0) {
+      return []
+    }
+
+    return this.repoTodos.save(nodes.map(node => this.repoTodos.merge(node, {
+      completed: true,
+    }))).then((node) => context.$pubsub?.publish('TODOS_UPDATE', node).then(() => node))
   }
 
   @Mutation({
-    description: 'change \'isDone\' to false',
+    input: {
+      ids: { type: GraphQLNonNullList(GraphQLID) },
+    },
+    returns: GraphQLNonNullList,
+  })
+  async uncompleteTodos(
+    _: null,
+    params: {
+      ids: string[],
+    },
+    context: GraphityContext,
+  ) {
+    if (params.ids.length === 0) {
+      return []
+    }
+
+    const nodes = await this.repoTodos.findByIds(params.ids)
+    if (nodes.length === 0) {
+      return []
+    }
+
+    return this.repoTodos.save(nodes.map(node => this.repoTodos.merge(node, {
+      completed: false,
+    }))).then((node) => context.$pubsub?.publish('TODOS_UPDATE', node).then(() => node))
+  }
+
+  @Subscription({
+    input: {
+      id: { type: GraphQLNonNull(GraphQLID) },
+    },
+    subscribe: (_, params: { id: string }, context: GraphityContext) => {
+      return withFilter(context.$pubsub!.subscribe<Todo>('TODOS_UPDATE'), (payload) => {
+        return `${payload.id}` === `${params.id}`
+      })
+    },
+  })
+  subscribeTodoUpdated(payload: Todo) {
+    return payload
+  }
+
+  @Mutation({
     input: {
       id: { type: GraphQLNonNull(GraphQLID) },
     },
   })
-  undoneTodo(
+  async deleteTodo(
     _: null,
     params: {
       id: string,
     },
+    context: GraphityContext
   ) {
-    // const node = this.nodes.find(({ id }) => id === params.id)
-    // if (!node) {
-    //   return null
-    // }
-    // return Object.assign(node, {
-    //   isDone: false,
-    // })
+    const node = await this.repoTodos.findOneOrFail(params.id)
+    await this.repoTodos.delete({ id: node.id })
+    await context.$pubsub?.publish('TODOS_DELETED', [node])
+    return node
   }
 
   @Mutation({
     input: {
-      id: { type: GraphQLNonNull(GraphQLID) },
+      ids: { type: GraphQLNonNullList(GraphQLID) },
     },
+    returns: GraphQLNonNullList,
   })
-  deleteTodo(
+  async deleteTodos(
     _: null,
-    input: {
-      id: string,
+    params: {
+      ids: string[],
     },
+    context: GraphityContext
   ) {
-    // const node = this.nodes.find(({ id }) => id === input.id)
-    // if (!node) {
-    //   return null
-    // }
-    // this.nodes.splice(this.nodes.indexOf(node), 1)
-    // return node
+    if (params.ids.length === 0) {
+      return []
+    }
+    const nodes = await this.repoTodos.findByIds(params.ids)
+    if (nodes.length === 0) {
+      return []
+    }
+
+    await this.repoTodos.delete({ id: In(nodes.map(({ id }) => id)) })
+    await context.$pubsub?.publish('TODOS_DELETED', nodes)
+    return nodes
+  }
+
+  @Subscription({
+    subscribe: (_, params: { id: string }, context: GraphityContext) => {
+      return context.$pubsub!.subscribe<Todo[]>('TODOS_DELETED')
+    },
+    returns: GraphQLNonNullList,
+  })
+  subscribeTodosDeleted(payload: Todo[]) {
+    return payload
   }
 }

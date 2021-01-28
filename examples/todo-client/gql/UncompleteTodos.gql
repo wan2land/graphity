@@ -1,0 +1,11 @@
+mutation UncompleteTodos(
+  $ids: [ID!]!
+) {
+  todos: uncompleteTodos(
+    ids: $ids
+  ) {
+    id
+    title
+    completed
+  }
+}

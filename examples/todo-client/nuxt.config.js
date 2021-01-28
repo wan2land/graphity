@@ -13,5 +13,14 @@ export default {
   css: [
     { src: 'todomvc-app-css/index.css' },
   ],
-  components: true,
+  modules: [
+    '@nuxtjs/apollo',
+  ],
+  apollo: {
+    clientConfigs: {
+      default: {
+        httpEndpoint: 'http://localhost:8007/graphql',
+      },
+    },
+  },
 }

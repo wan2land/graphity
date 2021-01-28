@@ -8,8 +8,7 @@
       "es2017",
       "esnext.asynciterable"
     ],
-    "emitDeclarationOnly": true,
-    "declaration": true,
+    "declaration": false,
     "pretty": true,
     "sourceMap": true,
     "strict": true,

@@ -6,7 +6,7 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
 @GraphityEntity({
   description: 'Todo Entity',
 })
-@Entity({ name: 'todo' })
+@Entity({ name: 'todos' })
 export class Todo {
   @Field(type => GraphQLNonNull(GraphQLID))
   @PrimaryGeneratedColumn()
