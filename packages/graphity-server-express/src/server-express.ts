@@ -1,16 +1,20 @@
 import { ApolloServer } from 'apollo-server-express'
 import express, { Express } from 'express'
-import { applyHttpContext, applyWsContextOnConnect, Graphity, PubSub } from 'graphity'
+import { applyHttpContext, applyWsContextOnConnect, Graphity, PubSub, ApolloPubSub, ApolloPubSubAdapter } from 'graphity'
 import { subscribe, execute } from 'graphql'
-import { PubSub as ApolloPubSub } from 'graphql-subscriptions'
+import { PubSub as DefaultPubSub } from 'graphql-subscriptions'
 import { createServer, Server } from 'http'
 import portfinder from 'portfinder'
 
 import { reqToHttpRequest } from './req-to-http-request'
 
+function isApolloPubSub(pubsub: PubSub | ApolloPubSub): pubsub is ApolloPubSub {
+  return !!(pubsub as any).asyncIterator
+}
+
 export interface ServerExpressOptions {
   express?: Express
-  pubsub?: PubSub
+  pubsub?: PubSub | ApolloPubSub
 }
 
 export class ServerExpress {
@@ -23,7 +27,11 @@ export class ServerExpress {
     public options: ServerExpressOptions = {}
   ) {
     this.server = options.express ?? express()
-    this.pubsub = options.pubsub ?? new ApolloPubSub()
+    if (options.pubsub) {
+      this.pubsub = isApolloPubSub(options.pubsub) ? new ApolloPubSubAdapter(options.pubsub) : options.pubsub
+    } else {
+      this.pubsub = new ApolloPubSubAdapter(new DefaultPubSub())
+    }
   }
 
   async start(port = 8000, host?: string): Promise<{ apollo: ApolloServer, host: string, port: number }> {
@@ -34,7 +42,7 @@ export class ServerExpress {
       const schema = this.graphity.createSchema()
       const apollo = new ApolloServer({
         schema,
-        context: (context) => applyHttpContext(this.graphity, reqToHttpRequest(context.req), this.pubsub),
+        context: (context: any) => applyHttpContext(this.graphity, reqToHttpRequest(context.req), this.pubsub),
       })
       apollo.applyMiddleware({ app: this.server })
 
@@ -52,8 +60,8 @@ export class ServerExpress {
                 || params.Authorization
                 || params.authorization
                 // https://github.com/apollographql/subscriptions-transport-ws/issues/171#issuecomment-358306164
-                || params.headers.Authorization
-                || params.headers.authorization
+                || params.headers?.Authorization
+                || params.headers?.authorization
 
               return applyWsContextOnConnect(this.graphity, accessToken, this.pubsub)
             },

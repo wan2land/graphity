@@ -25,6 +25,9 @@ export { Graphity, GraphityOptions } from './foundation/Graphity'
 export { applyHttpContext } from './context/applyHttpContext'
 export { applyWsContextOnConnect } from './context/applyWsContextOnConnect'
 
+export { ApolloPubSubAdapter } from './subscriptions/ApolloPubSubAdapter'
+export { withFilter } from './subscriptions/withFilter'
+
 // auth (TODO split @graphity/auth)
 export { Authorized } from './auth/middlewares/authorized'
 export { AuthBuilder } from './auth/AuthBuilder'
