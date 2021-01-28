@@ -1,0 +1,4 @@
+# Write your query or mutation here
+query QueryGithubAuthRequestUri {
+  requestUri: githubAuthRequestUri
+}

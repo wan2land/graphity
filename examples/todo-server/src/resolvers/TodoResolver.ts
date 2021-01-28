@@ -1,4 +1,4 @@
-import { GraphityContext, GraphityResolver, GraphQLNonNullList, Inject, Mutation, Query, Subscription, withFilter } from 'graphity'
+import { Authorized, GraphityContext, GraphityResolver, GraphQLNonNullList, Inject, Mutation, Query, Subscription, withFilter } from 'graphity'
 import { GraphQLBoolean, GraphQLID, GraphQLInputObjectType, GraphQLNonNull, GraphQLString } from 'graphql'
 import { Connection, In, Repository } from 'typeorm'
 
@@ -14,10 +14,16 @@ export class TodoResolver {
   }
 
   @Query({
+    middlewares: [
+      Authorized('user'),
+    ],
     returns: GraphQLNonNullList,
   })
-  todos() {
+  todos(_: null, params: any, context: GraphityContext) {
     return this.repoTodos.find({
+      where: {
+        userId: context.$auth.user!.id,
+      },
       order: { id: 'DESC' },
     })
   }
@@ -33,6 +39,9 @@ export class TodoResolver {
         }),
       },
     },
+    middlewares: [
+      Authorized('user'),
+    ],
   })
   createTodo(
     _: null,
@@ -44,13 +53,19 @@ export class TodoResolver {
     context: GraphityContext,
   ) {
     return this.repoTodos.save(this.repoTodos.create({
+      userId: context.$auth.user!.id,
       title: params.input.title,
     })).then((node) => context.$pubsub?.publish('TODO_CREATED', node).then(() => node))
   }
 
   @Subscription({
-    subscribe: (_, params, context: GraphityContext) => {
-      return context.$pubsub?.subscribe('TODO_CREATED')
+    middlewares: [
+      Authorized('user'),
+    ],
+    subscribe: (_, params: any, context: GraphityContext) => {
+      return withFilter(context.$pubsub!.subscribe<Todo>('TODO_CREATED'), (todo) => {
+        return `${todo.userId}` === `${context.$auth.user!.id}`
+      })
     },
   })
   subscribeTodoCreated(payload: Todo) {
@@ -70,6 +85,9 @@ export class TodoResolver {
         }),
       },
     },
+    middlewares: [
+      Authorized('user'),
+    ],
   })
   async updateTodo(
     _: null,
@@ -82,7 +100,10 @@ export class TodoResolver {
     },
     context: GraphityContext,
   ) {
-    const node = await this.repoTodos.findOneOrFail(params.id)
+    const node = await this.repoTodos.findOneOrFail({
+      id: params.id,
+      userId: context.$auth.user!.id,
+    })
     return this.repoTodos.save(this.repoTodos.merge(node, {
       title: params.input.title,
       completed: params.input.completed,
@@ -93,6 +114,9 @@ export class TodoResolver {
     input: {
       ids: { type: GraphQLNonNullList(GraphQLID) },
     },
+    middlewares: [
+      Authorized('user'),
+    ],
     returns: GraphQLNonNullList,
   })
   async completeTodos(
@@ -106,7 +130,10 @@ export class TodoResolver {
       return []
     }
 
-    const nodes = await this.repoTodos.findByIds(params.ids)
+    const nodes = await this.repoTodos.find({
+      id: In(params.ids),
+      userId: context.$auth.user!.id,
+    })
     if (nodes.length === 0) {
       return []
     }
@@ -120,6 +147,9 @@ export class TodoResolver {
     input: {
       ids: { type: GraphQLNonNullList(GraphQLID) },
     },
+    middlewares: [
+      Authorized('user'),
+    ],
     returns: GraphQLNonNullList,
   })
   async uncompleteTodos(
@@ -133,7 +163,10 @@ export class TodoResolver {
       return []
     }
 
-    const nodes = await this.repoTodos.findByIds(params.ids)
+    const nodes = await this.repoTodos.find({
+      id: In(params.ids),
+      userId: context.$auth.user!.id,
+    })
     if (nodes.length === 0) {
       return []
     }
@@ -144,16 +177,29 @@ export class TodoResolver {
   }
 
   @Subscription({
+    middlewares: [
+      Authorized('user'),
+    ],
     subscribe: (_: null, params: any, context: GraphityContext) => {
-      return context.$pubsub!.subscribe<Todo[]>('TODOS_UPDATE')
+      return withFilter(context.$pubsub!.subscribe<Todo[]>('TODOS_UPDATE'), (todos) => {
+        for (const todo of todos) {
+          if (`${todo.userId}` === `${context.$auth.user!.id}`) {
+            return true
+          }
+        }
+        return false
+      })
     },
     returns: GraphQLNonNullList,
   })
-  subscribeTodosUpdated(payload: Todo[]) {
-    return payload
+  subscribeTodosUpdated(todos: Todo[], params: any, context: GraphityContext) {
+    return todos.filter(todo => `${todo.userId}` === `${context.$auth.user!.id}`)
   }
 
   @Mutation({
+    middlewares: [
+      Authorized('user'),
+    ],
     input: {
       id: { type: GraphQLNonNull(GraphQLID) },
     },
@@ -165,13 +211,19 @@ export class TodoResolver {
     },
     context: GraphityContext
   ) {
-    const node = await this.repoTodos.findOneOrFail(params.id)
+    const node = await this.repoTodos.findOneOrFail({
+      id: params.id,
+      userId: context.$auth.user!.id,
+    })
     await this.repoTodos.delete({ id: node.id })
     await context.$pubsub?.publish('TODOS_DELETED', [node])
     return node
   }
 
   @Mutation({
+    middlewares: [
+      Authorized('user'),
+    ],
     input: {
       ids: { type: GraphQLNonNullList(GraphQLID) },
     },
@@ -187,7 +239,10 @@ export class TodoResolver {
     if (params.ids.length === 0) {
       return []
     }
-    const nodes = await this.repoTodos.findByIds(params.ids)
+    const nodes = await this.repoTodos.find({
+      id: In(params.ids),
+      userId: context.$auth.user!.id,
+    })
     if (nodes.length === 0) {
       return []
     }
@@ -198,12 +253,22 @@ export class TodoResolver {
   }
 
   @Subscription({
+    middlewares: [
+      Authorized('user'),
+    ],
     subscribe: (_: null, params: any, context: GraphityContext) => {
-      return context.$pubsub!.subscribe<Todo[]>('TODOS_DELETED')
+      return withFilter(context.$pubsub!.subscribe<Todo[]>('TODOS_DELETED'), (todos) => {
+        for (const todo of todos) {
+          if (`${todo.userId}` === `${context.$auth.user!.id}`) {
+            return true
+          }
+        }
+        return false
+      })
     },
     returns: GraphQLNonNullList,
   })
-  subscribeTodosDeleted(payload: Todo[]) {
-    return payload
+  subscribeTodosDeleted(todos: Todo[], params: any, context: GraphityContext) {
+    return todos.filter(todo => `${todo.userId}` === `${context.$auth.user!.id}`)
   }
 }

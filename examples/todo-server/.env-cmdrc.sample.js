@@ -14,6 +14,10 @@ module.exports = {
     DB_DATABASE: 'todomvc',
     DB_USERNAME: 'todomvc',
     DB_PASSWORD: '',
+
+    GITHUB_CLIENT_ID: '',
+    GITHUB_CLIENT_SECRET: '',
+    GITHUB_REDIRECT_URI: '',
   },
   prod: {
     NODE_ENV: 'production',
@@ -29,5 +33,9 @@ module.exports = {
     DB_DATABASE: 'todomvc',
     DB_USERNAME: 'todomvc',
     DB_PASSWORD: '',
+
+    GITHUB_CLIENT_ID: '',
+    GITHUB_CLIENT_SECRET: '',
+    GITHUB_REDIRECT_URI: '',
   },
 }
