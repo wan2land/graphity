@@ -29,5 +29,5 @@ export { ApolloPubSubAdapter } from './subscriptions/ApolloPubSubAdapter'
 export { withFilter } from './subscriptions/withFilter'
 
 // auth (TODO split @graphity/auth)
-export { Authorized } from './auth/middlewares/authorized'
+export { Authorized } from './auth/middleware/Authorized'
 export { AuthBuilder } from './auth/AuthBuilder'
