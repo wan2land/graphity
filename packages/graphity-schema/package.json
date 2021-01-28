@@ -23,5 +23,6 @@
   },
   "peerDependencies": {
     "graphql": "^14.5.8 || ^15.0.0"
-  }
+  },
+  "gitHead": "d0de41e0d7b29738d339b4bec07e2b2c1d20908b"
 }

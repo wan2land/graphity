@@ -1,10 +1,10 @@
-import { GraphQLObjectType, isOutputType } from 'graphql'
+import { isType } from 'graphql'
 
-import { ReturnTypeFactory } from '../interfaces/metadata'
+import { GraphQLEntityType, ReturnTypeFactory } from '../interfaces/metadata'
 import { toGraphQLObject, ToGraphQLObjectParams } from './toGraphQLObject'
 
 
-export function resolveReturnEntityFactory(factory: ReturnTypeFactory, type: GraphQLObjectType, params?: ToGraphQLObjectParams) {
+export function resolveReturnEntityFactory(factory: ReturnTypeFactory, type: GraphQLEntityType, params?: ToGraphQLObjectParams) {
   const ctorOrType = factory(type)
-  return isOutputType(ctorOrType) ? ctorOrType : toGraphQLObject(ctorOrType, params)
+  return isType(ctorOrType) ? ctorOrType : toGraphQLObject(ctorOrType, params)
 }

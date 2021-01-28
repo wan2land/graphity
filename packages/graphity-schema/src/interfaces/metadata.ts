@@ -1,10 +1,12 @@
-import { GraphQLFieldResolver, GraphQLOutputType, GraphQLFieldConfigArgumentMap, GraphQLObjectType, GraphQLUnionType, GraphQLInterfaceType } from 'graphql'
+import { GraphQLFieldResolver, GraphQLOutputType, GraphQLFieldConfigArgumentMap, GraphQLObjectType, GraphQLInterfaceType, GraphQLUnionType, GraphQLScalarType, GraphQLEnumType } from 'graphql'
 
 import { MiddlewareClass } from './middleware'
 
-export type FieldTypeFactory = (type: null) => GraphQLOutputType
-export type ParentTypeFactory = (type: null) => (GraphQLObjectType | Function)
-export type ReturnTypeFactory = (type: GraphQLObjectType) => (GraphQLOutputType | Function)
+export type GraphQLEntityType = GraphQLScalarType | GraphQLObjectType | GraphQLInterfaceType | GraphQLUnionType | GraphQLEnumType
+
+export type FieldTypeFactory = (type: null) => (GraphQLOutputType | Function)
+export type ParentTypeFactory = (type: null) => (GraphQLEntityType | Function)
+export type ReturnTypeFactory = (type: GraphQLEntityType) => (GraphQLOutputType | Function)
 
 export interface MetadataStorable {
   resolvers: Map<Function, MetadataResolver>
