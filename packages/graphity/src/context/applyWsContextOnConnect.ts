@@ -8,8 +8,8 @@ import { PubSub } from '../interfaces/subscriptions'
 export function applyWsContextOnConnect(graphity: Graphity, accessToken: string, pubsub?: PubSub): Promise<GraphityContext> {
   return graphity.boot()
     .then(() => {
-      if (graphity.container.has(AuthBuilder as any)) {
-        return graphity.container.get<AuthBuilder>(AuthBuilder as any).buildAuth(accessToken)
+      if (graphity.container.has(AuthBuilder)) {
+        return graphity.container.get(AuthBuilder).buildAuth(accessToken)
       }
       return Promise.resolve({ roles: [] })
     })

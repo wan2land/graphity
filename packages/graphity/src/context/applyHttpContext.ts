@@ -16,8 +16,8 @@ export function applyHttpContext(graphity: Graphity, request: HttpRequest, pubsu
   }
   return graphity.boot()
     .then(() => {
-      if (graphity.container.has(AuthBuilder as any)) {
-        return graphity.container.get<AuthBuilder>(AuthBuilder as any).buildAuth(accessToken)
+      if (graphity.container.has(AuthBuilder)) {
+        return graphity.container.get(AuthBuilder).buildAuth(accessToken)
       }
       return Promise.resolve({ roles: [] })
     })
