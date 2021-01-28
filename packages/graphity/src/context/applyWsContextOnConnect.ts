@@ -5,7 +5,7 @@ import { GraphityContext } from '../interfaces/graphity'
 import { PubSub } from '../interfaces/subscriptions'
 
 
-export function applyWsContextOnConnect(graphity: Graphity, accessToken: string, pubsub?: PubSub): Promise<GraphityContext> {
+export function applyWsContextOnConnect(graphity: Graphity, accessToken?: string | null, pubsub?: PubSub): Promise<GraphityContext> {
   return graphity.boot()
     .then(() => {
       if (graphity.container.has(AuthBuilder)) {

@@ -57,7 +57,7 @@ export class JwtAuthBuilder<TRole extends string> extends AuthBuilder<TRole> {
     }))
   }
 
-  buildAuth(accessToken: string | null): Promise<GraphityAuth> {
+  buildAuth(accessToken?: string | null): Promise<GraphityAuth> {
     if (!accessToken) {
       return Promise.resolve({
         roles: [],

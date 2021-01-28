@@ -55,7 +55,7 @@ export class ServerExpress {
             subscribe,
             execute,
             onConnect: (params: any) => {
-              const accessToken = params.authToken // https://www.apollographql.com/docs/graphql-subscriptions/authentication/
+              const authorization: string | undefined = params.authToken // https://www.apollographql.com/docs/graphql-subscriptions/authentication/
                 // https://github.com/apollographql/subscriptions-transport-ws/issues/171#issuecomment-316376468
                 || params.Authorization
                 || params.authorization
@@ -63,6 +63,11 @@ export class ServerExpress {
                 || params.headers?.Authorization
                 || params.headers?.authorization
 
+              let accessToken = null as string | null
+              if (authorization) {
+                const [_, token] = (Array.isArray(authorization) ? authorization[0] : authorization).split(/^bearer\s+/i)
+                accessToken = token || null
+              }
               return applyWsContextOnConnect(this.graphity, accessToken, this.pubsub)
             },
           }, {

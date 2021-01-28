@@ -22,7 +22,7 @@ export class AuthBuilder<TRole extends string> {
     throw new Error('It must be implemented.')
   }
 
-  buildAuth(accessToken: string | null): Promise<GraphityAuth> {
+  buildAuth(accessToken?: string | null): Promise<GraphityAuth> {
     throw new Error('It must be implemented.')
   }
 }
