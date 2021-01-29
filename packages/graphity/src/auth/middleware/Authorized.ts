@@ -2,7 +2,7 @@ import { Middleware, MiddlewareCarry, MiddlewareClass, MiddlewareNext } from '@g
 
 import { GraphityError } from '../../errors/graphity-error'
 import { GraphityAuth } from '../../interfaces/auth'
-import { GraphityContext } from '../../interfaces/graphity'
+import { GraphityContext } from '../../interfaces/context'
 
 export function Authorized<TRole extends string = string>(): MiddlewareClass
 export function Authorized<TRole extends string = string>(role: TRole | TRole[]): MiddlewareClass

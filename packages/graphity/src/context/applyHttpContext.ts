@@ -1,19 +1,12 @@
 
 import { Graphity } from '../foundation/Graphity'
 import { AuthBuilder } from '../interfaces/auth'
-import { GraphityContext, HttpRequest } from '../interfaces/graphity'
-import { PubSub } from '../interfaces/subscriptions'
-import { toLowerCaseKey } from '../utils/toLowerCaseKey'
+import { GraphityContext, HttpRequest } from '../interfaces/context'
+import { findAccessToken } from './findAccessToken'
 
 
-export function applyHttpContext(graphity: Graphity, request: HttpRequest, pubsub?: PubSub): Promise<GraphityContext> {
-  const httpHeaders = toLowerCaseKey(request.headers)
-  const authorization = httpHeaders.authorization
-  let accessToken = null as string | null
-  if (authorization) {
-    const [_, token] = (Array.isArray(authorization) ? authorization[0] : authorization).split(/^bearer\s+/i)
-    accessToken = token || null
-  }
+export function applyHttpContext(graphity: Graphity, request: HttpRequest): Promise<GraphityContext> {
+  const accessToken = findAccessToken(request.headers)
   return graphity.boot()
     .then(() => {
       if (graphity.container.has(AuthBuilder)) {
@@ -26,7 +19,6 @@ export function applyHttpContext(graphity: Graphity, request: HttpRequest, pubsu
         $request: request,
         $container: graphity.container,
         $auth: auth,
-        $pubsub: pubsub,
       }
     })
 }

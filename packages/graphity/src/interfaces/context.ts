@@ -1,7 +1,6 @@
 import { Containable } from '@graphity/container'
 import { IncomingHttpHeaders } from 'http'
 
-
 import { GraphityAuth, UserIdentifier } from './auth'
 import { PubSub } from './subscriptions'
 

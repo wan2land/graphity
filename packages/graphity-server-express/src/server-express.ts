@@ -1,6 +1,6 @@
 import { ApolloServer } from 'apollo-server-express'
 import express, { Express } from 'express'
-import { applyHttpContext, applyWsContextOnConnect, Graphity, PubSub, ApolloPubSub, ApolloPubSubAdapter } from 'graphity'
+import { applyHttpContext, applyWsContextOnConnect, Graphity, PubSub, ApolloPubSub, ApolloPubSubAdapter, GraphityContext, applyWsContextOnOperation } from 'graphity'
 import { subscribe, execute } from 'graphql'
 import { PubSub as DefaultPubSub } from 'graphql-subscriptions'
 import { createServer, Server } from 'http'
@@ -42,7 +42,12 @@ export class ServerExpress {
       const schema = this.graphity.createSchema()
       const apollo = new ApolloServer({
         schema,
-        context: (context: any) => applyHttpContext(this.graphity, reqToHttpRequest(context.req), this.pubsub),
+        context: (context: any): Promise<GraphityContext> => {
+          return applyHttpContext(this.graphity, reqToHttpRequest(context.req)).then((context) => ({
+            ...context,
+            $pubsub: this.pubsub,
+          }))
+        },
       })
       apollo.applyMiddleware({ app: this.server })
 
@@ -54,22 +59,14 @@ export class ServerExpress {
             schema,
             subscribe,
             execute,
-            onConnect: (params: any) => {
-              const authorization: string | undefined = params.authToken // https://www.apollographql.com/docs/graphql-subscriptions/authentication/
-                // https://github.com/apollographql/subscriptions-transport-ws/issues/171#issuecomment-316376468
-                || params.Authorization
-                || params.authorization
-                // https://github.com/apollographql/subscriptions-transport-ws/issues/171#issuecomment-358306164
-                || params.headers?.Authorization
-                || params.headers?.authorization
-
-              let accessToken = null as string | null
-              if (authorization) {
-                const [_, token] = (Array.isArray(authorization) ? authorization[0] : authorization).split(/^bearer\s+/i)
-                accessToken = token || null
-              }
-              return applyWsContextOnConnect(this.graphity, accessToken, this.pubsub)
-            },
+            onConnect: (params: any) => applyWsContextOnConnect(this.graphity, params),
+            onOperation: (_: any, connection: any) => applyWsContextOnOperation(this.graphity).then(context => Object.assign(connection, {
+              context: {
+                ...connection.context,
+                ...context,
+                $pubsub: this.pubsub,
+              },
+            })),
           }, {
             server,
             path: '/graphql',

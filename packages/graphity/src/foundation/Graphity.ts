@@ -3,7 +3,7 @@ import { createGraphQLSchema, MiddlewareClass, MetadataStorable as SchemaMetadat
 import { GraphQLNamedType, GraphQLSchema } from 'graphql'
 
 import { createFieldResolver } from '../graphql/createFieldResolver'
-import { GraphityContext } from '../interfaces/graphity'
+import { GraphityContext } from '../interfaces/context'
 
 
 export interface GraphityOptions {

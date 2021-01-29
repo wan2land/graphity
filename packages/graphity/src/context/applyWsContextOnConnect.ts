@@ -1,11 +1,11 @@
 
 import { Graphity } from '../foundation/Graphity'
-import { AuthBuilder } from '../interfaces/auth'
-import { GraphityContext } from '../interfaces/graphity'
-import { PubSub } from '../interfaces/subscriptions'
+import { AuthBuilder, GraphityAuth } from '../interfaces/auth'
+import { findAccessToken } from './findAccessToken'
 
 
-export function applyWsContextOnConnect(graphity: Graphity, accessToken?: string | null, pubsub?: PubSub): Promise<GraphityContext> {
+export function applyWsContextOnConnect(graphity: Graphity, connectionParams: any): Promise<{ $auth: GraphityAuth }> {
+  const accessToken = findAccessToken(connectionParams)
   return graphity.boot()
     .then(() => {
       if (graphity.container.has(AuthBuilder)) {
@@ -13,11 +13,9 @@ export function applyWsContextOnConnect(graphity: Graphity, accessToken?: string
       }
       return Promise.resolve({ roles: [] })
     })
-    .then((auth): GraphityContext => {
+    .then((auth) => {
       return {
-        $container: graphity.container,
         $auth: auth,
-        $pubsub: pubsub,
       }
     })
 }
