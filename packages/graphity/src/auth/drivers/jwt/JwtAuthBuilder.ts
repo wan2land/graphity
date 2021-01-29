@@ -1,7 +1,6 @@
 import { JsonWebTokenError, Secret, sign, SignOptions, verify, VerifyOptions } from 'jsonwebtoken'
 
-import { GraphityAuth, UserIdentifier } from '../../../interfaces/auth'
-import { AuthBuilder, CreateTokenOptions } from '../../AuthBuilder'
+import { GraphityAuth, UserIdentifier, AuthBuilder, CreateTokenOptions } from '../../../interfaces/auth'
 import { JwtOptions } from './interfaces'
 
 export interface JwtAuthBuilderOptions {
@@ -17,7 +16,7 @@ interface TokenPayload<TRole extends string> extends UserIdentifier {
   role?: TRole | TRole[]
 }
 
-export class JwtAuthBuilder<TUser extends UserIdentifier, TRole extends string> extends AuthBuilder<TUser, TRole> {
+export class JwtAuthBuilder<TUser extends UserIdentifier = UserIdentifier, TRole extends string = string> extends AuthBuilder<TUser, TRole> {
 
   constructor(
     public options: JwtAuthBuilderOptions,
@@ -25,7 +24,7 @@ export class JwtAuthBuilder<TUser extends UserIdentifier, TRole extends string> 
     super()
   }
 
-  createAccessToken(user: TUser, { role, ...options }: CreateTokenOptions<TRole> = {}): Promise<string> {
+  createAccessToken(user: UserIdentifier, { role, ...options }: CreateTokenOptions<TRole> = {}): Promise<string> {
     return Promise.resolve(this._sign({ ...user, role }, {
       expiresIn: '7d',
       audience: 'app',
@@ -34,7 +33,7 @@ export class JwtAuthBuilder<TUser extends UserIdentifier, TRole extends string> 
     }))
   }
 
-  createRefreshToken(user: TUser, { role, ...options }: CreateTokenOptions<TRole> = {}): Promise<string> {
+  createRefreshToken(user: UserIdentifier, { role, ...options }: CreateTokenOptions<TRole> = {}): Promise<string> {
     return Promise.resolve(this._sign({ ...user, role }, {
       expiresIn: '7d',
       audience: 'refresh',
@@ -54,7 +53,7 @@ export class JwtAuthBuilder<TUser extends UserIdentifier, TRole extends string> 
     }
   }
 
-  buildAuth(accessToken?: string | null): Promise<GraphityAuth> {
+  buildAuth(accessToken?: string | null): Promise<GraphityAuth<TUser, TRole>> {
     if (!accessToken) {
       return Promise.resolve({
         roles: [],
@@ -65,7 +64,7 @@ export class JwtAuthBuilder<TUser extends UserIdentifier, TRole extends string> 
         audience: this.options.accessToken?.audience ?? 'app',
       })
       return Promise.resolve({
-        user,
+        user: user as TUser,
         roles: role && (Array.isArray(role) ? role : [role]) || [],
       })
     } catch (e) {

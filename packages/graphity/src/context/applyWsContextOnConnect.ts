@@ -1,6 +1,6 @@
 
-import { AuthBuilder } from '../auth/AuthBuilder'
 import { Graphity } from '../foundation/Graphity'
+import { AuthBuilder } from '../interfaces/auth'
 import { GraphityContext } from '../interfaces/graphity'
 import { PubSub } from '../interfaces/subscriptions'
 

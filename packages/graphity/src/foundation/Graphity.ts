@@ -1,6 +1,6 @@
 import { Provider, Containable, Container, ConstructType } from '@graphity/container'
 import { createGraphQLSchema, MiddlewareClass, MetadataStorable as SchemaMetadataStorable, MetadataStorage as SchemaMetadataStorage } from '@graphity/schema'
-import { GraphQLNamedType, GraphQLSchema, isInterfaceType, isObjectType, isUnionType } from 'graphql'
+import { GraphQLNamedType, GraphQLSchema } from 'graphql'
 
 import { createFieldResolver } from '../graphql/createFieldResolver'
 import { GraphityContext } from '../interfaces/graphity'

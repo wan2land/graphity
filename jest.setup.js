@@ -30,4 +30,32 @@ expect.extend({
       normalizeGraphQL(expected)
     )
   },
+  toEqualError(received, Ctor, data) {
+    if (received.constructor !== Ctor) {
+      return {
+        pass: false,
+        message: () => [
+          `Expected constructor: ${this.utils.EXPECTED_COLOR(Ctor.name || '(anonymouse class)')}`,
+          `Received constructor: ${this.utils.RECEIVED_COLOR(received.constructor.name)}`,
+        ].join('\n'),
+      }
+    }
+
+    for (const [key, value] of Object.entries(data || {})) {
+      if (received[key] !== value) {
+        return {
+          pass: false,
+          message: () => [
+            `Expected property ${key}: ${this.utils.EXPECTED_COLOR(this.utils.stringify(value))}`,
+            `Received property ${key}: ${this.utils.RECEIVED_COLOR(this.utils.stringify(received[key]))}`,
+          ].join('\n'),
+        }
+      }
+    }
+
+    return {
+      pass: true,
+      message: () => '',
+    }
+  },
 })

@@ -1,6 +1,6 @@
 
-import { AuthBuilder } from '../auth/AuthBuilder'
 import { Graphity } from '../foundation/Graphity'
+import { AuthBuilder } from '../interfaces/auth'
 import { GraphityContext, HttpRequest } from '../interfaces/graphity'
 import { PubSub } from '../interfaces/subscriptions'
 import { toLowerCaseKey } from '../utils/toLowerCaseKey'

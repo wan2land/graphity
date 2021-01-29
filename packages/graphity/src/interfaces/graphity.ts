@@ -2,7 +2,7 @@ import { Containable } from '@graphity/container'
 import { IncomingHttpHeaders } from 'http'
 
 
-import { GraphityAuth } from './auth'
+import { GraphityAuth, UserIdentifier } from './auth'
 import { PubSub } from './subscriptions'
 
 export interface HttpRequest {
@@ -13,9 +13,9 @@ export interface HttpRequest {
   query: Record<string, any>
 }
 
-export interface GraphityContext {
+export interface GraphityContext<TUser extends UserIdentifier = UserIdentifier, TRole extends string = string> {
   $request?: HttpRequest
   $container: Containable
-  $auth: GraphityAuth
+  $auth?: GraphityAuth<TUser, TRole>
   $pubsub?: PubSub
 }
