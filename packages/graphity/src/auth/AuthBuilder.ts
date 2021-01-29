@@ -5,20 +5,16 @@ export interface CreateTokenOptions<TRole extends string> {
   role?: TRole | TRole[]
 }
 
-export interface RefreshTokenOptions {
-  expiresIn?: number
-}
-
-export class AuthBuilder<TRole extends string> {
-  createAccessToken(user: UserIdentifier, options?: CreateTokenOptions<TRole>): Promise<string> {
+export class AuthBuilder<TUser extends UserIdentifier, TRole extends string> {
+  createAccessToken(user: TUser, options?: CreateTokenOptions<TRole>): Promise<string> {
     throw new Error('It must be implemented.')
   }
 
-  refreshAccessToken(refreshToken: string, options?: RefreshTokenOptions): Promise<string> {
+  createRefreshToken(user: TUser, options?: CreateTokenOptions<TRole>): Promise<string> {
     throw new Error('It must be implemented.')
   }
 
-  createRefreshToken(user: UserIdentifier, options?: CreateTokenOptions<TRole>): Promise<string> {
+  showRefreshToken(refreshToken: string): Promise<{ user: TUser, role?: TRole | TRole[] }> {
     throw new Error('It must be implemented.')
   }
 

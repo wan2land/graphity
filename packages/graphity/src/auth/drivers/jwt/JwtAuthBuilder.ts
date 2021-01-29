@@ -1,7 +1,7 @@
 import { JsonWebTokenError, Secret, sign, SignOptions, verify, VerifyOptions } from 'jsonwebtoken'
 
 import { GraphityAuth, UserIdentifier } from '../../../interfaces/auth'
-import { AuthBuilder, CreateTokenOptions, RefreshTokenOptions } from '../../AuthBuilder'
+import { AuthBuilder, CreateTokenOptions } from '../../AuthBuilder'
 import { JwtOptions } from './interfaces'
 
 export interface JwtAuthBuilderOptions {
@@ -17,7 +17,7 @@ interface TokenPayload<TRole extends string> extends UserIdentifier {
   role?: TRole | TRole[]
 }
 
-export class JwtAuthBuilder<TRole extends string> extends AuthBuilder<TRole> {
+export class JwtAuthBuilder<TUser extends UserIdentifier, TRole extends string> extends AuthBuilder<TUser, TRole> {
 
   constructor(
     public options: JwtAuthBuilderOptions,
@@ -25,7 +25,7 @@ export class JwtAuthBuilder<TRole extends string> extends AuthBuilder<TRole> {
     super()
   }
 
-  createAccessToken(user: UserIdentifier, { role, ...options }: CreateTokenOptions<TRole> = {}): Promise<string> {
+  createAccessToken(user: TUser, { role, ...options }: CreateTokenOptions<TRole> = {}): Promise<string> {
     return Promise.resolve(this._sign({ ...user, role }, {
       expiresIn: '7d',
       audience: 'app',
@@ -34,27 +34,24 @@ export class JwtAuthBuilder<TRole extends string> extends AuthBuilder<TRole> {
     }))
   }
 
-  refreshAccessToken(refreshToken: string, options: RefreshTokenOptions = {}): Promise<string> {
-    try {
-      const { role, aud, iat, exp, ...user } = this._verify<TokenPayload<TRole>>(refreshToken, {
-        audience: this.options.refreshToken?.audience ?? 'refresh',
-      })
-      return this.createAccessToken(user, {
-        ...options,
-        role,
-      })
-    } catch (e) {
-      return Promise.reject(e)
-    }
-  }
-
-  createRefreshToken(user: UserIdentifier, { role, ...options }: CreateTokenOptions<TRole> = {}): Promise<string> {
+  createRefreshToken(user: TUser, { role, ...options }: CreateTokenOptions<TRole> = {}): Promise<string> {
     return Promise.resolve(this._sign({ ...user, role }, {
       expiresIn: '7d',
       audience: 'refresh',
       ...this.options.refreshToken,
       ...options,
     }))
+  }
+
+  showRefreshToken(refreshToken: string): Promise<{ user: TUser, role?: TRole | TRole[] }> {
+    try {
+      const { role, aud, iat, exp, ...user } = this._verify<TokenPayload<TRole>>(refreshToken, {
+        audience: this.options.refreshToken?.audience ?? 'refresh',
+      })
+      return Promise.resolve({ user: user as TUser, role })
+    } catch (e) {
+      return Promise.reject(e)
+    }
   }
 
   buildAuth(accessToken?: string | null): Promise<GraphityAuth> {

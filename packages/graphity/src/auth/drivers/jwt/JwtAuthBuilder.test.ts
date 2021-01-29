@@ -120,41 +120,37 @@ describe('graphity, auth/drivers/jwt/JwtAuthBuilder', () => {
     expect(() => verify(refreshToken, HS256_SECRET)).toThrowError('jwt expired')
   })
 
-  it('test refreshAccessToken success', async () => {
-    expect(verify(await appAuth.refreshAccessToken(await appAuth.createRefreshToken({ id: 1 })), HS256_SECRET)).toEqual({
-      id: 1,
-      aud: 'app',
-      iat: expect.any(Number),
-      exp: expect.any(Number),
+  it('test showRefreshToken success', async () => {
+    expect(await appAuth.showRefreshToken(await appAuth.createRefreshToken({ id: 1 }))).toEqual({
+      user: {
+        id: 1,
+      },
     })
 
-    expect(verify(await graphityAuth.refreshAccessToken(await graphityAuth.createRefreshToken({ id: 1 })), RS256_PUBLIC)).toEqual({
-      id: 1,
-      aud: 'graphity-access',
-      iat: expect.any(Number),
-      exp: expect.any(Number),
+    expect(await graphityAuth.showRefreshToken(await graphityAuth.createRefreshToken({ id: 1 }))).toEqual({
+      user: {
+        id: 1,
+      },
     })
 
-    expect(verify(await appAuth.refreshAccessToken(await appAuth.createRefreshToken({ id: 1, username: 'wan4land' } as any)), HS256_SECRET)).toEqual({
-      id: 1,
-      username: 'wan4land',
-      aud: 'app',
-      iat: expect.any(Number),
-      exp: expect.any(Number),
+    expect(await appAuth.showRefreshToken(await appAuth.createRefreshToken({ id: 1, username: 'wan4land' } as any))).toEqual({
+      user: {
+        id: 1,
+        username: 'wan4land',
+      },
     })
 
-    expect(verify(await appAuth.refreshAccessToken(await appAuth.createRefreshToken({ id: 1 }, { role: 'user' })), HS256_SECRET)).toEqual({
-      id: 1,
+    expect(await appAuth.showRefreshToken(await appAuth.createRefreshToken({ id: 1 }, { role: 'user' }))).toEqual({
+      user: {
+        id: 1,
+      },
       role: 'user',
-      aud: 'app',
-      iat: expect.any(Number),
-      exp: expect.any(Number),
     })
   })
 
-  it('test refreshAccessToken fail', async () => {
-    await expect(appAuth.refreshAccessToken(await appAuth.createAccessToken({ id: 1 }))).rejects.toEqual(new JsonWebTokenError('jwt audience invalid. expected: refresh'))
-    await expect(graphityAuth.refreshAccessToken(await graphityAuth.createAccessToken({ id: 1 }))).rejects.toEqual(new JsonWebTokenError('jwt audience invalid. expected: graphity-refresh'))
+  it('test showRefreshToken fail', async () => {
+    await expect(appAuth.showRefreshToken(await appAuth.createAccessToken({ id: 1 }))).rejects.toEqual(new JsonWebTokenError('jwt audience invalid. expected: refresh'))
+    await expect(graphityAuth.showRefreshToken(await graphityAuth.createAccessToken({ id: 1 }))).rejects.toEqual(new JsonWebTokenError('jwt audience invalid. expected: graphity-refresh'))
   })
 
   it('test buildAuth success', async () => {
