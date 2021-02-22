@@ -25,7 +25,7 @@
     "portfinder": "^1.0.25"
   },
   "devDependencies": {
-    "graphity": "^0.8.0-alpha.11"
+    "graphity": "0.8.0-alpha.11"
   },
   "peerDependencies": {
     "graphity": "^0.8.0-alpha.7"
