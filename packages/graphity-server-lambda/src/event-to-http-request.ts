@@ -18,5 +18,6 @@ export function eventToHttpRequest(event: APIGatewayProxyEvent | APIGatewayProxy
       || (event as APIGatewayProxyEventV2).requestContext.http.path
       || '/',
     query: event.queryStringParameters ?? {},
+    raw: event,
   }
 }

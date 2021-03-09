@@ -10,6 +10,7 @@ export interface HttpRequest {
   headers: IncomingHttpHeaders
   path: string
   query: Record<string, any>
+  raw: any
 }
 
 export interface GraphityContext<TUser extends UserIdentifier = UserIdentifier, TRole extends string = string> {

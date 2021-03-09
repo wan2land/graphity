@@ -11,5 +11,6 @@ export function reqToHttpRequest(req: Request): HttpRequest {
     headers,
     path: req.path,
     query: req.query ?? {},
+    raw: req,
   }
 }
