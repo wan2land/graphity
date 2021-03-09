@@ -29,6 +29,7 @@ describe('testsuite of req-to-http-request', () => {
       query: {
         hello: 'world',
       },
+      raw: expect.anything(),
     })
   })
 })

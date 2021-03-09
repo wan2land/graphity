@@ -25,6 +25,7 @@ module.exports = {
           },
           extendDefaults: true,
         }],
+        'no-redeclare': 'off',
       },
     },
     {

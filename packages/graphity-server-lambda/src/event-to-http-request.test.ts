@@ -108,6 +108,7 @@ describe('testsuite of event-to-http-request', () => {
       query: {
         hello: 'world',
       },
+      raw: expect.anything(),
     })
   })
 })
