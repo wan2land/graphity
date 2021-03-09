@@ -1,4 +1,4 @@
-import { ApolloServer } from 'apollo-server-express'
+import { ApolloServer, ApolloServerExpressConfig } from 'apollo-server-express'
 import express, { Express } from 'express'
 import { applyHttpContext, applyWsContextOnConnect, Graphity, PubSub, ApolloPubSub, ApolloPubSubAdapter, GraphityContext, applyWsContextOnOperation } from 'graphity'
 import { subscribe, execute } from 'graphql'
@@ -14,6 +14,7 @@ function isApolloPubSub(pubsub: PubSub | ApolloPubSub): pubsub is ApolloPubSub {
 
 export interface ServerExpressOptions {
   express?: Express
+  apolloOptions?: Omit<ApolloServerExpressConfig, 'schema' | 'context'>
   pubsub?: PubSub | ApolloPubSub
 }
 
@@ -41,6 +42,7 @@ export class ServerExpress {
     ]).then(([startPort]) => {
       const schema = this.graphity.createSchema()
       const apollo = new ApolloServer({
+        ...this.options.apolloOptions,
         schema,
         context: (context: any): Promise<GraphityContext> => {
           return applyHttpContext(this.graphity, reqToHttpRequest(context.req)).then((context) => ({

@@ -1,4 +1,4 @@
-import { ApolloServer } from 'apollo-server-lambda'
+import { ApolloServer, Config } from 'apollo-server-lambda'
 import { APIGatewayProxyCallback, APIGatewayProxyEvent, APIGatewayProxyHandler, Context } from 'aws-lambda'
 import { applyHttpContext, Graphity } from 'graphity'
 
@@ -6,6 +6,7 @@ import { eventToHttpRequest } from './event-to-http-request'
 
 export interface ServerLambdaOptions {
   callbackWaitsForEmptyEventLoop?: boolean
+  apolloOptions?: Omit<Config, 'schema' | 'context'>
   cors?: {
     origin?: boolean | string | string[],
     methods?: string | string[],
@@ -27,6 +28,7 @@ export class ServerLambda {
     if (!this.apolloHandlerPromise) {
       this.apolloHandlerPromise = this.graphity.boot().then(() => {
         const apollo = new ApolloServer({
+          ...this._options.apolloOptions,
           schema: this.graphity.createSchema() as any,
           context: (context: { event: APIGatewayProxyEvent}) => applyHttpContext(this.graphity, eventToHttpRequest(context.event)),
         })
