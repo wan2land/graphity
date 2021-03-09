@@ -25,12 +25,14 @@ export class JwtAuthBuilder<TUser extends UserIdentifier = UserIdentifier, TRole
   }
 
   createAccessToken(user: UserIdentifier, { role, ...options }: CreateTokenOptions<TRole> = {}): Promise<string> {
-    return Promise.resolve(this._sign({ ...user, role }, {
+    const signOption: SignOptions = Object.entries({
       expiresIn: '7d',
       audience: 'app',
       ...this.options.accessToken,
       ...options,
-    }))
+    }).filter(([_, value]) => value !== null && value !== undefined)
+      .reduce((carry, [key, value]) => Object.assign(carry, { [key]: value }), {})
+    return Promise.resolve(this._sign({ ...user, role }, signOption))
   }
 
   createRefreshToken(user: UserIdentifier, { role, ...options }: CreateTokenOptions<TRole> = {}): Promise<string> {
