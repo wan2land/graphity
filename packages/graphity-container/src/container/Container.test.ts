@@ -1,5 +1,5 @@
 /* eslint-disable max-classes-per-file, @typescript-eslint/no-extraneous-class */
-import { Inject } from '../decorators/inject'
+import { Inject } from '../decorator/Inject'
 import { UndefinedError } from '../errors/UndefinedError'
 import { Container } from './Container'
 
@@ -42,6 +42,10 @@ describe('@graphity/container, container/Container', () => {
 
 
     class TestInjectController {
+
+      @Inject(Mysql)
+      _connection: any
+
       public constructor(
         @Inject(Mysql) @Inject(Postgres) public connection: any,
         public queue: any,
@@ -69,6 +73,7 @@ describe('@graphity/container, container/Container', () => {
     const result = await container.create(TestInjectController)
 
     expect(result.connection).toBe(mysql) // assign first only
+    expect(result._connection).toBe(mysql) // assign first only
     expect(result.queue).toBeUndefined() // undefined..!
     expect(result.mailer).toBe(mailer)
     expect(result.mysqlName).toBe('mysql')

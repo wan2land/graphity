@@ -5,7 +5,7 @@ export * from './interfaces/metadata'
 
 export { UndefinedError } from './errors/UndefinedError'
 
-export { Inject } from './decorators/inject'
+export { Inject } from './decorator/Inject'
 
 export { MetadataStorage } from './metadata/MetadataStorage'
 

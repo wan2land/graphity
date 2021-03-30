@@ -1,5 +1,5 @@
 
-import { MetadataInject, MetadataStorable } from '../interfaces/metadata'
+import { MetadataInjectParam, MetadataInjectProp, MetadataStorable } from '../interfaces/metadata'
 
 let globalStorage: MetadataStorable | null = null
 
@@ -16,5 +16,6 @@ export class MetadataStorage implements MetadataStorable {
     return globalStorage
   }
 
-  injects = new Map<Function, MetadataInject[]>()
+  injectParams = new Map<Function, MetadataInjectParam[]>()
+  injectProps = new Map<Function, MetadataInjectProp[]>()
 }
