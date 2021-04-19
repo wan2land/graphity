@@ -20,7 +20,7 @@
     "build": "rimraf ./lib && tsc && babel ./src --out-dir ./lib --extensions \".ts\" --ignore \"src/**/*.test.ts\""
   },
   "dependencies": {
-    "apollo-server-express": "^2.11.0",
+    "apollo-server-express": "^2.19.0",
     "core-js": "^3.2.1",
     "portfinder": "^1.0.25"
   },
