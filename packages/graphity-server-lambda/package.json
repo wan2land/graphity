@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "apollo-server-lambda": "^2.11.0",
-    "core-js": "^3.2.1"
+    "core-js": "^3.7.0"
   },
   "devDependencies": {
     "graphity": "^0.8.0-alpha.13"
