@@ -1,6 +1,6 @@
 {
   "name": "@graphity-extensions/restful",
-  "version": "0.7.0",
+  "version": "0.9.0",
   "description": "GraphQL Schema to RestFUL API.",
   "keywords": [
     "transformer",
