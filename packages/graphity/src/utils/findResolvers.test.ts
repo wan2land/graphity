@@ -1,9 +1,11 @@
 /* eslint-disable max-classes-per-file */
-
 import { MetadataStorage } from '@graphity/schema'
+import fastGlob from 'fast-glob'
 
 import { findResolvers } from './findResolvers'
 
+
+jest.mock('fast-glob')
 
 describe('graphity, utils/findResolvers', () => {
   it('test findResolvers', () => {
@@ -17,10 +19,17 @@ describe('graphity, utils/findResolvers', () => {
     class ObjectResolver {} // eslint-disable-line @typescript-eslint/no-extraneous-class
     class ObjectNothing {} // eslint-disable-line @typescript-eslint/no-extraneous-class
 
-    jest.mock('./single-resolver', () => SingleResolver, { virtual: true })
-    jest.mock('./single-nothing', () => SingleNothing, { virtual: true })
-    jest.mock('./array', () => [ArrayResolver, ArrayNothing], { virtual: true })
-    jest.mock('./object', () => ({ ObjectResolver, ObjectNothing }), { virtual: true })
+    (fastGlob.sync as any).mockReturnValue([
+      './resolvers/single-resolver',
+      './resolvers/single-nothing',
+      './vendor/resolvers/array',
+      './vendor/resolvers/object',
+    ])
+
+    jest.mock('./resolvers/single-resolver', () => SingleResolver, { virtual: true })
+    jest.mock('./resolvers/single-nothing', () => SingleNothing, { virtual: true })
+    jest.mock('./vendor/resolvers/array', () => [ArrayResolver, ArrayNothing], { virtual: true })
+    jest.mock('./vendor/resolvers/object', () => ({ ObjectResolver, ObjectNothing }), { virtual: true })
 
     const storage = new MetadataStorage()
     storage.resolvers.set(JustResolver1, { target: JustResolver1, typeFactory: () => JustResolver1, middlewares: [] })
@@ -31,19 +40,19 @@ describe('graphity, utils/findResolvers', () => {
 
     const resolvers = findResolvers(storage, [
       JustResolver1,
-      './single-resolver',
-      './single-nothing',
-      './array',
-      './object',
+      './resolvers/**/*.js',
+      './vendor/resolvers/**/*.js',
       JustResolver2,
     ])
 
+
+    expect((fastGlob.sync as any).mock.calls[0]).toEqual([['./resolvers/**/*.js', './vendor/resolvers/**/*.js']])
     expect(resolvers).toStrictEqual([
       JustResolver1,
+      JustResolver2,
       SingleResolver,
       ArrayResolver,
       ObjectResolver,
-      JustResolver2,
     ])
   })
 })
