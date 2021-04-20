@@ -4,11 +4,13 @@ export {
   Containable,
   Container,
   Inject,
-  MetadataInject,
+  MetadataInjectParam,
+  MetadataInjectProp,
   Name,
   Provider,
   ProviderDescriptor,
   UndefinedError,
+  metadata as metadataContainer,
 } from '@graphity/container'
 export * from '@graphity/schema'
 
