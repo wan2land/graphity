@@ -7,6 +7,6 @@ export { UndefinedError } from './errors/UndefinedError'
 
 export { Inject } from './decorator/Inject'
 
-export { MetadataStorage } from './metadata/MetadataStorage'
+export { metadata } from './metadata/metadata'
 
 export { Container } from './container/Container'

@@ -1,9 +1,7 @@
 import { Name } from '../interfaces/common'
-import { MetadataStorable } from '../interfaces/metadata'
-import { MetadataStorage } from '../metadata/MetadataStorage'
+import { metadata } from '../metadata/metadata'
 
 export interface InjectParams<T> {
-  storage?: MetadataStorable
   resolver?: (instance: T) => any
 }
 
@@ -11,18 +9,14 @@ export function Inject<T>(name: Name<T>): (target: any, property: string | symbo
 export function Inject<T>(name: Name<T>, immediatelyResolver: (instance: T) => any): (target: any, property: string | symbol, parameterIndex?: number) => void
 export function Inject<T>(name: Name<T>, params: InjectParams<T>): (target: any, property: string | symbol, parameterIndex?: number) => void
 export function Inject<T>(name: Name<T>, resolverOrParams?: ((instance: T) => any) | InjectParams<T>) {
-  let storage = MetadataStorage.getGlobalStorage()
   let resolver: ((instance: T) => any) | null = null
   if (typeof resolverOrParams === 'function') {
     resolver = resolverOrParams
   } else if (typeof resolverOrParams === 'object') {
     resolver = resolverOrParams.resolver ?? null
-    if (resolverOrParams.storage) {
-      storage = resolverOrParams.storage
-    }
   }
-  const metaInejctParams = storage.injectParams
-  const metaInejctProps = storage.injectProps
+  const metaInejctParams = metadata.injectParams
+  const metaInejctProps = metadata.injectProps
 
   return (target: any, property: string | symbol, index?: number) => {
     target = (property ? target.constructor : target)

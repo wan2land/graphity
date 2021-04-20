@@ -1,10 +1,5 @@
 import { Name } from './common'
 
-export interface MetadataStorable {
-  injectParams: Map<Function, MetadataInjectParam[]>
-  injectProps: Map<Function, MetadataInjectProp[]>
-}
-
 export interface MetadataInjectParam {
   target: Function
   property: PropertyKey | null

@@ -1,15 +1,10 @@
 import { UndefinedError } from '../errors/UndefinedError'
 import { ConstructType, Name } from '../interfaces/common'
 import { Containable, Provider } from '../interfaces/container'
-import { MetadataStorable } from '../interfaces/metadata'
-import { MetadataStorage } from '../metadata/MetadataStorage'
+import { metadata } from '../metadata/metadata'
 import { nameToString } from '../utils/nameToString'
 
 type ContainerType = 'resolver' | 'bind' | 'instance' | 'promise'
-
-export interface ContainerOptions {
-  storage?: MetadataStorable
-}
 
 export class Container implements Containable {
 
@@ -21,8 +16,6 @@ export class Container implements Containable {
     }
     return Container._instance
   }
-
-  storage: MetadataStorable
 
   types: Map<any, ContainerType>
   instances: Map<any, any>
@@ -37,9 +30,7 @@ export class Container implements Containable {
 
   booted: Promise<any> | undefined
 
-  constructor(options: ContainerOptions = {}) {
-    this.storage = options.storage ?? MetadataStorage.getGlobalStorage()
-
+  constructor() {
     this.types = new Map<any, ContainerType>()
     this.instances = new Map<any, any>()
     this.promises = new Map<any, Promise<any>>()
@@ -87,14 +78,14 @@ export class Container implements Containable {
 
   async create<T>(ctor: ConstructType<T>): Promise<T> {
     const params = [] as any[]
-    const metaParams = (this.storage.injectParams.get(ctor) || []).filter(({ property }) => !property)
+    const metaParams = (metadata.injectParams.get(ctor) || []).filter(({ property }) => !property)
     await Promise.all(metaParams.map(async ({ index, name, resolver }) => {
       const param = await this.resolve(name)
       params[index] = resolver ? await resolver(param) : param
     }))
     const instance = new (ctor as any)(...params)
 
-    const metaProps = this.storage.injectProps.get(ctor) || []
+    const metaProps = metadata.injectProps.get(ctor) || []
     await Promise.all(metaProps.map(async ({ name, resolver, property }) => {
       const prop = await this.resolve(name)
       instance[property] = resolver ? await resolver(prop) : prop
@@ -104,7 +95,7 @@ export class Container implements Containable {
 
   async invoke<TIns, TRet = any>(instance: TIns, method: keyof TIns): Promise<TRet> {
     const params = []
-    const metaInjects = (this.storage.injectParams.get((instance as any).constructor) || []).filter(({ property }) => property === method)
+    const metaInjects = (metadata.injectParams.get((instance as any).constructor) || []).filter(({ property }) => property === method)
     for (const { index, name, resolver } of metaInjects) {
       const instance = await this.resolve(name)
       params[index] = resolver ? await resolver(instance) : instance
