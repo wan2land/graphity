@@ -1,6 +1,6 @@
 {
   "name": "@graphity/schema",
-  "version": "0.8.0-alpha.13",
+  "version": "0.8.0",
   "description": "GraphQL Decorator utility.",
   "keywords": [
     "types",
