@@ -3,7 +3,7 @@ import { createGraphQLSchema, MiddlewareClass, MetadataStorable as SchemaMetadat
 import { GraphQLNamedType, GraphQLSchema } from 'graphql'
 
 import { createFieldResolver } from '../graphql/createFieldResolver'
-import { GraphityContext } from '../interfaces/context'
+import { findResolvers } from '../utils/findResolvers'
 
 
 export interface GraphityOptions {
@@ -17,12 +17,12 @@ export interface GraphityOptions {
   mutationMiddlewares?: MiddlewareClass[]
   subscriptionMiddlewares?: MiddlewareClass[]
 
-  resolvers?: Function[]
+  resolvers?: (Function | string)[]
   entities?: Function[]
   types?: GraphQLNamedType[]
 }
 
-export class Graphity<TContext = GraphityContext> {
+export class Graphity {
 
   container: Containable
   schemaStorage: SchemaMetadataStorable
@@ -47,7 +47,7 @@ export class Graphity<TContext = GraphityContext> {
     this.mutationMiddlewares = options.mutationMiddlewares ?? []
     this.subscriptionMiddlewares = options.subscriptionMiddlewares ?? []
 
-    this.resolvers = options.resolvers ?? []
+    this.resolvers = findResolvers(this.schemaStorage, options.resolvers ?? [])
     this.entities = options.entities
     this.types = options.types
 
