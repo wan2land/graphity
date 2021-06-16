@@ -28,7 +28,7 @@
     "graphity": "^0.9.0"
   },
   "peerDependencies": {
-    "graphity": "^0.8.0-alpha.7"
+    "graphity": "*"
   },
   "gitHead": "739211f48969b00d15c626bf9450af2f92764888"
 }
