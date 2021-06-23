@@ -1,6 +1,6 @@
 import { isInputObjectType, GraphQLFieldConfigArgumentMap, GraphQLOutputType, GraphQLFieldResolver } from 'graphql'
 
-import { ParentTypeFactory, MetadataStorable } from '../interfaces/metadata'
+import { ParentTypeFactory, MetadataStorable, GraphQLEntityType } from '../interfaces/metadata'
 import { MiddlewareClass } from '../interfaces/middleware'
 import { MetadataStorage } from '../metadata/MetadataStorage'
 
@@ -12,7 +12,7 @@ export interface SubscriptionParams {
   parent?: ParentTypeFactory
   input?: GraphQLFieldConfigArgumentMap
   middlewares?: MiddlewareClass | MiddlewareClass[]
-  returns?: (type: GraphQLOutputType) => GraphQLOutputType | Function
+  returns?: (type: GraphQLEntityType) => GraphQLOutputType | Function
   description?: string
   deprecated?: string
   subscribe: GraphQLFieldResolver<any, any, any>
