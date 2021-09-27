@@ -33,7 +33,9 @@ export class ServerLambda {
           context: (context: { event: APIGatewayProxyEvent}) => applyHttpContext(this.graphity, eventToHttpRequest(context.event)),
         })
         return apollo.createHandler({
-          cors: this._options.cors,
+          expressGetMiddlewareOptions: {
+            cors: this._options.cors,
+          },
         })
       })
     }
