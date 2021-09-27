@@ -15,7 +15,7 @@ export function createExpressAdapter(schema: GraphQLSchema, options: CreateOptio
   const router = Router()
   for (const endpoint of options.endpoints || []) {
     const method = endpoint.method.toLowerCase() as 'get' | 'post' | 'delete' | 'put'
-    const path = endpoint.path[0] === '/' ? endpoint.path : `/${endpoint.path}`
+    const path = endpoint.path.startsWith('/') ? endpoint.path : `/${endpoint.path}`
     router[method](path, async (req, res) => {
       try {
         const { document, values, transform } = await endpoint.query(req)
@@ -25,7 +25,7 @@ export function createExpressAdapter(schema: GraphQLSchema, options: CreateOptio
         })
       } catch (error) {
         res.status(500).json({
-          message: error.message,
+          message: (error as Error).message,
           error,
         })
       }
