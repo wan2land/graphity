@@ -20,7 +20,7 @@
     "build": "rimraf ./lib && tsc && babel ./src --out-dir ./lib --extensions \".ts\" --ignore \"src/**/*.test.ts\""
   },
   "peerDependencies": {
-    "graphql": "^14.5.8 || ^15.0.0"
+    "graphql": "^15.0.0"
   },
   "dependencies": {
     "core-js": "^3.2.1",
