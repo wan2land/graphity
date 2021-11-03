@@ -22,7 +22,7 @@
   "dependencies": {
     "apollo-server-express": "^3.3.0",
     "core-js": "^3.2.1",
-    "graphql-subscriptions": "^1.2.1",
+    "graphql-subscriptions": "^2.0.0",
     "portfinder": "^1.0.25",
     "subscriptions-transport-ws": "^0.9.19"
   },
